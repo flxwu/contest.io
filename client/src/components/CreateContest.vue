@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <div id="createcontest">
     <!-- Layout container -->
     <v-container>
@@ -244,3 +245,9 @@ export default {
   margin-bottom: -15px;
 }
 </style>
+=======
+  <div>
+    <p>Create Contest</p>
+  </div>
+</template>
+>>>>>>> 42c75345... feat$(Vue): Add structure for several pages

@@ -1,5 +1,8 @@
 <template>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View
   <div id="createcontest">
     <!-- Layout container -->
     <v-container>
@@ -10,6 +13,7 @@
           <!-- Add tasks -->
           <v-flex xs10 id="taskselection">
             <!-- TODO: Add Filter and Search options -->
+<<<<<<< HEAD
             <div style="width: 100%;">
               <v-text-field style="float: left" prepend-icon="search" v-model="searchtitle" label="Search by name" solo-inverted class="ml-0 search" :clearable="true" flat></v-text-field>
               <v-select style="float: right; width: 50%; margin-bottom: 10px;" v-model="selectedtags" label="Search by tags" chips tags solo prepend-icon="filter_list" append-icon="" clearable>
@@ -22,12 +26,18 @@
             </div>
             <!-- container for task selection -->
             <div style="height: 320px; overflow: scroll; margin-top: 60px; min-width: 100%;">
+=======
+            <v-text-field prepend-icon="search" v-model="searchtitle" label="Search by name" solo-inverted class="mx-0 search" clearable="true" flat></v-text-field>
+            <!-- container for task selection -->
+            <div style="height: 320px; overflow: scroll;">
+>>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View
               <v-list>
 
                 <template v-for="item in filteredItems">
 
                    <v-subheader v-if="item.header" :key="item.id">{{ item.header }}</v-subheader>
 
+<<<<<<< HEAD
                    <v-divider :key="item.id"></v-divider>
 
                    <v-list-tile avatar :key="item.id" @click="alert()">
@@ -35,6 +45,15 @@
                      <v-list-tile-action>
                        <!-- <v-btn absolute fab center small color="light-green accent-3"> -->
                          <v-icon @click="addTask(item.id)">add</v-icon>
+=======
+                   <v-divider></v-divider>
+
+                   <v-list-tile avatar :key="item.id" @click="">
+
+                     <v-list-tile-action>
+                       <!-- <v-btn absolute fab center small color="light-green accent-3"> -->
+                         <v-icon>add</v-icon>
+>>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View
                        <!-- </v-btn> -->
                      </v-list-tile-action>
 
@@ -42,11 +61,19 @@
                        <v-list-tile-title v-html="item.title"></v-list-tile-title>
                     </v-list-tile-content>
 
+<<<<<<< HEAD
                     <v-chip :key="tag" small v-for="tag in item.tags.slice(0, 4)" >{{ tag }}</v-chip>
 
                    </v-list-tile>
 
                    <v-divider :key="item.id"></v-divider>
+=======
+                    <v-chip small v-for="tag in item.tags.slice(0, 4)" >{{ tag }}</v-chip>
+
+                   </v-list-tile>
+
+                   <v-divider></v-divider>
+>>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View
 
                  </template>
 
@@ -55,10 +82,16 @@
 
             <!-- Task list -->
             <v-subheader style="margin-top: 5%;"> Tasks Selected so far </v-subheader>
+<<<<<<< HEAD
             <p v-if="!tasks.length" style="color: red;">No tasks selected! Browse above tasks and click the '+' icon to add them!</p>
             <v-expansion-panel popout>
 
              <v-expansion-panel-content v-for="item in tasks" :key="item.id">
+=======
+            <v-expansion-panel popout>
+
+             <v-expansion-panel-content v-for="item in tasks" :key="item.title">
+>>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View
 
                <div slot="header">{{ item.title }}</div>
 
@@ -73,7 +106,11 @@
 
                 <!-- TODO: add link to codeforces -->
                 <v-card-actions>
+<<<<<<< HEAD
                   <v-btn flat color="red" @click="removeTask(item.id)">Remove</v-btn>
+=======
+                  <v-btn flat color="red" to="https://www.codeforces.org">Remove</v-btn>
+>>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View
                   <v-btn flat color="orange" to="https://www.codeforces.org">Solve</v-btn>
                 </v-card-actions>
 
@@ -89,6 +126,7 @@
 
           <!-- Misc Setup (Start / End time), Groups, etc. -->
           <v-flex xs4>
+<<<<<<< HEAD
             <v-card>
               <v-card-text>
                 <v-text v-if="contestdate">Contest End: {{ contestdate | moment("dddd, MMMM Do YYYY") }} (23:59)</v-text>
@@ -124,12 +162,16 @@
                 </v-menu>
               </v-card-text>
             </v-card>
+=======
+
+>>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View
           </v-flex>
 
         </v-layout>
       </v-form>
 
     </v-container>
+<<<<<<< HEAD
   </div>
 </template>
 
@@ -251,3 +293,75 @@ export default {
   </div>
 </template>
 >>>>>>> 42c75345... feat$(Vue): Add structure for several pages
+=======
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'createcontest',
+  components: {
+
+  },
+  data () {
+    return {
+      searchtitle: "",
+      items: [
+        { id: 1, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'] },
+        { id: 2, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'] },
+        { id: 3, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 4, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 5, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 6, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 7, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 8, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 9, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 10, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 11, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 12, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 13, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 14, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 15, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 16, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 17, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 18, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 19, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 20, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'] }
+      ],
+    tasks: [
+      { title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'] },
+      { title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'] },
+      { title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] }
+    ]
+    }
+  },
+  computed: {
+    filteredItems() {
+      return this.items.filter((i) => {
+        if(this.searchtitle)
+          return i.title.includes(this.searchtitle)
+        else
+          return true
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+.vlink {
+  cursor: pointer;
+}
+
+#taskselection {
+  margin-left: -10%;
+}
+
+.search {
+  width: 45%;
+  margin-bottom: 5px;
+}
+</style>
+>>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View

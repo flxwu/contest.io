@@ -14,6 +14,7 @@
           <v-flex xs10 id="taskselection">
             <!-- TODO: Add Filter and Search options -->
 <<<<<<< HEAD
+<<<<<<< HEAD
             <div style="width: 100%;">
               <v-text-field style="float: left" prepend-icon="search" v-model="searchtitle" label="Search by name" solo-inverted class="ml-0 search" :clearable="true" flat></v-text-field>
               <v-select style="float: right; width: 50%; margin-bottom: 10px;" v-model="selectedtags" label="Search by tags" chips tags solo prepend-icon="filter_list" append-icon="" clearable>
@@ -28,6 +29,14 @@
             <div style="height: 320px; overflow: scroll; margin-top: 60px; min-width: 100%;">
 =======
             <v-text-field prepend-icon="search" v-model="searchtitle" label="Search by name" solo-inverted class="mx-0 search" clearable="true" flat></v-text-field>
+=======
+            <div style="width: 100%;">
+              <v-text-field prepend-icon="search" v-model="searchtitle" label="Search by name" solo-inverted class="mx-0 search" :clearable="true" flat></v-text-field>
+              <v-menu style="margin-left: 84.5%; margin-top: -40px;">
+                <v-btn color="primary" dark slot="activator">Filter by tag</v-btn>
+              </v-menu>
+            </div>
+>>>>>>> 7ce92709... feat$(Vue): Add task manipulation
             <!-- container for task selection -->
             <div style="height: 320px; overflow: scroll;">
 >>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View
@@ -52,8 +61,12 @@
 
                      <v-list-tile-action>
                        <!-- <v-btn absolute fab center small color="light-green accent-3"> -->
+<<<<<<< HEAD
                          <v-icon>add</v-icon>
 >>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View
+=======
+                         <v-icon @click="addTask(item.id)">add</v-icon>
+>>>>>>> 7ce92709... feat$(Vue): Add task manipulation
                        <!-- </v-btn> -->
                      </v-list-tile-action>
 
@@ -90,8 +103,12 @@
 =======
             <v-expansion-panel popout>
 
+<<<<<<< HEAD
              <v-expansion-panel-content v-for="item in tasks" :key="item.title">
 >>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View
+=======
+             <v-expansion-panel-content v-for="item in tasks" :key="item.id">
+>>>>>>> 7ce92709... feat$(Vue): Add task manipulation
 
                <div slot="header">{{ item.title }}</div>
 
@@ -107,10 +124,14 @@
                 <!-- TODO: add link to codeforces -->
                 <v-card-actions>
 <<<<<<< HEAD
+<<<<<<< HEAD
                   <v-btn flat color="red" @click="removeTask(item.id)">Remove</v-btn>
 =======
                   <v-btn flat color="red" to="https://www.codeforces.org">Remove</v-btn>
 >>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View
+=======
+                  <v-btn flat color="red" @click="removeTask(item.id)">Remove</v-btn>
+>>>>>>> 7ce92709... feat$(Vue): Add task manipulation
                   <v-btn flat color="orange" to="https://www.codeforces.org">Solve</v-btn>
                 </v-card-actions>
 
@@ -331,12 +352,26 @@ export default {
       ],
     tasks: [
       { title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'] },
-      { title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'] },
-      { title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] }
+      { title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'] }
     ]
     }
   },
+  methods: {
+    // This method moves task object from items array to tasks array
+    addTask(id) {
+      var temp = this.items.find(x => x.id === id)
+      this.items.splice(this.items.indexOf(temp), 1);
+      this.tasks.push(temp);
+    },
+    // This method moves task object from tasks array to items array
+    removeTask(id) {
+      var temp = this.tasks.find(x => x.id === id)
+      this.tasks.splice(this.tasks.indexOf(temp), 1);
+      this.items.push(temp);
+    }
+  },
   computed: {
+    // This filters tasks by title
     filteredItems() {
       return this.items.filter((i) => {
         if(this.searchtitle)
@@ -361,7 +396,7 @@ export default {
 
 .search {
   width: 45%;
-  margin-bottom: 5px;
+  margin-bottom: -15px;
 }
 </style>
 >>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View

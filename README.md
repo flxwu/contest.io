@@ -1,4 +1,4 @@
-[![Waffle.io - Columns and their card count](https://badge.waffle.io/flxwu/contest.io.png?columns=all)](https://waffle.io/flxwu/contest.io?utm_source=badge)
+[![Waffle.io - Columns and their card count](https://badge.waffle.io/flxwu/contest.io.png?columns=all)](https://waffle.io/flxwu/contest.io?utm_source=badge)[![Gitter Room](https://img.shields.io/gitter/room/contest-io/Lobby.svg)](https://gitter.im/contest-io/Lobby)
 # contest.io
 
 ## Setup

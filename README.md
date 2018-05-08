@@ -1,4 +1,4 @@
-[![Waffle.io - Columns and their card count](https://badge.waffle.io/flxwu/contest.io.png?columns=all)](https://waffle.io/flxwu/contest.io?utm_source=badge)[![Gitter Room](https://img.shields.io/gitter/room/contest-io/Lobby.svg)](https://gitter.im/contest-io/Lobby)
+[![Waffle.io - Columns and their card count](https://badge.waffle.io/flxwu/contest.io.png?columns=all)](https://waffle.io/flxwu/contest.io?utm_source=badge) [![Gitter Room](https://img.shields.io/gitter/room/contest-io/Lobby.svg)](https://gitter.im/contest-io/Lobby) [![Package Version](https://img.shields.io/github/package-json/v/flxwu/contest.io.svg)](https://github.com/flxwu/contest.io/blob/master/package.json)
 # contest.io
 
 ## Setup

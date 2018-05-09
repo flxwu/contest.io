@@ -39,6 +39,9 @@ def before_request():
         g.user = models.select_user(params=('*'), conditions=(
             "{}=\"{}\"".format(settings.DB_COLUMNS.USER_USERID, session['user_id'])))
 
+@app.route('/robots.txt')
+ def serve_robots():
+    return app.send_static_file('/static/robots.txt')
 
 @app.route('/')
 def index():

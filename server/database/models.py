@@ -6,7 +6,7 @@ import datetime
 DATABASE_PATH = "server/database/database.db"
 
 
-def insert_task(name, tags, url):
+def insert_task(name: str, tags: list, url: str):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         stringified_tags = json.dumps(tags)
@@ -53,7 +53,7 @@ def select_task(params=(), conditions=()):
         return response
 
 
-def insert_contest(name, date_start, date_end, visible, contestgroup):
+def insert_contest(name: str, date_start: str, date_end: str, visible: int, contestgroups: list):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         random_code = secrets.token_hex(16)
@@ -66,7 +66,7 @@ def insert_contest(name, date_start, date_end, visible, contestgroup):
         dbcon.commit()
 
 
-def insert_user(name, usertype, oauth_token):
+def insert_user(name: str, usertype: str, oauth_token: str):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         cur.execute(

@@ -40,7 +40,7 @@ def before_request():
             "{}=\"{}\"".format(settings.DB_COLUMNS.USER_USERID, session['user_id'])))
 
 @app.route('/robots.txt')
- def serve_robots():
+def serve_robots():
     return app.send_static_file('/static/robots.txt')
 
 @app.route('/')
@@ -151,9 +151,32 @@ def api_tasks():
 
         # @FRONT-END tasktags have to be parsed -> JSON.parse
         return json.dumps(returnJSON)
+    elif request.method == 'POST':
+        return None
     else:
         return None
 
+@app.route('/api/contests', methods=['GET', 'POST', 'DELETE'])
+def api_contests():
+    if request.method == 'GET':
+        return None
+    elif request.method == 'POST':
+        postJSON = request.get_json()
+        if not postJSON:
+            return None
+        else:
+            contestCode = models.insert_contest(
+                postJSON[settings.DB_COLUMNS.CONTEST_CONTESTNAME],
+                postJSON[settings.DB_COLUMNS.CONTEST_DATE_START],
+                postJSON[settings.DB_COLUMNS.CONTEST_DATE_END],
+                postJSON[settings.DB_COLUMNS.CONTEST_VISIBLE],
+                postJSON[settings.DB_COLUMNS.CONTEST_CONTESTGROUPS]
+            )
+            return contestCode
+    elif request.method == 'DELETE':
+        return None
+    else:
+        return None
 
 @app.route('/sockjs-node/<path>')
 def sockjs(path):

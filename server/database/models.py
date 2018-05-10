@@ -1,7 +1,8 @@
 import sqlite3 as sql
 import json
-import secrets
+import secrets 
 import datetime
+from dateutil import parser
 
 DATABASE_PATH = "server/database/database.db"
 
@@ -50,20 +51,22 @@ def select_task(params=(), conditions=()):
     if len(response) == 0:
         return None
     else:
-        return response
+        return response 
 
 
 def insert_contest(name: str, date_start: str, date_end: str, visible: int, contestgroups: list):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         random_code = secrets.token_hex(16)
-        date_start = datetime.datetime(*date_start)
-        date_end = datetime.datetime(*date_end)
+        date_start = parser.parse(date_start)
+        date_end = parser.parse(date_end)
+        contestgroups = json.dumps(contestgroups)
         cur.execute(
-            "INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible, contestgroup) VALUES (?,?,?,?,?,?)",
-            (random_code, name, date_start, date_end, visible, contestgroup)
+            "INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible, contestgroups) VALUES (?,?,?,?,?,?)",
+            (random_code, name, date_start, date_end, visible, contestgroups)
         )
         dbcon.commit()
+        return random_code
 
 
 def insert_user(name: str, usertype: str, oauth_token: str):

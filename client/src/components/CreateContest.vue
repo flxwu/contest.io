@@ -364,8 +364,8 @@ export default {
       dialog2: false,
       first: 0,
       items: [
-        { id: 1, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'] },
-        { id: 2, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'] },
+        { id: 1, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'] },
+        { id: 2, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce'] },
         { id: 3, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] },
         { id: 4, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'] },
         { id: 5, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'] },
@@ -429,16 +429,9 @@ export default {
     // This filters tasks by title
     filteredItems() {
       return this.items.filter((i) => {
-          if(this.selectedtags && this.searchtitle) {
-            for (var tag in this.selectedtags) {
-              if(!i.tags.includes(tag))
-                return false
-            }
+          if(this.searchtitle) {
             return i.title.includes(this.searchtitle)
-          } else if(this.searchtitle){
-            return i.title.includes(this.searchtitle)
-          }
-          else {
+          } else {
             return true
           }
       })

@@ -13,15 +13,7 @@
               <img src="https://vuetifyjs.com/static/doc-images/lists/1.jpg" alt="avatar">
               <div><v-subheader style="width: 200px;">Herr Hörner</v-subheader></div>
             </router-link>
-<<<<<<< HEAD
-<<<<<<< HEAD
             <v-expansion-panel popout>
-=======
-            <v-expansion-panel>
->>>>>>> 42c75345... feat$(Vue): Add structure for several pages
-=======
-            <v-expansion-panel popout>
->>>>>>> b5418cad... feat$(Vue, view): Add Contest Create View
 
              <v-expansion-panel-content v-for="item in items" :key="item.title">
 

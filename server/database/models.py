@@ -6,6 +6,11 @@ from dateutil import parser
 
 DATABASE_PATH = "server/database/database.db"
 
+def dict_factory(cursor, row):
+    d = {}
+    for idx,col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
 
 def insert_task(name: str, tags: list, url: str):
     with sql.connect(DATABASE_PATH) as dbcon:
@@ -21,6 +26,7 @@ def insert_task(name: str, tags: list, url: str):
 
 def select_task(params=(), conditions=()):
     with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory
         cur = dbcon.cursor()
         if cur.rowcount == 0:
             return None
@@ -67,7 +73,41 @@ def insert_contest(name: str, date_start: str, date_end: str, visible: int, cont
         )
         dbcon.commit()
         return random_code
+    
+def select_contest(params=(), conditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if params == () and conditions == ():
+            queryresult = cur.execute("SELECT * FROM Contest")
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(params, tuple):
+                params = (params,)
+            if not isinstance(conditions, tuple):
+                conditions = (conditions,)
 
+            if params != ():
+                queryString = "SELECT"
+                # add a format-placeholder for every parameter
+                for paramString in params:
+                    queryString += " {},".format(paramString)
+                queryString = queryString[:-1]
+                queryString += " FROM Contest"
+            if conditions != ():
+                queryString += " WHERE"
+                for conditionString in conditions:
+                    queryString += " {} AND".format(conditionString)
+                queryString = queryString[:-4]
+            queryresult = cur.execute(queryString)
+
+    response = queryresult.fetchone()
+    if not response:
+        return None
+    else:
+        return response
 
 def insert_user(name: str, usertype: str, oauth_token: str):
     with sql.connect(DATABASE_PATH) as dbcon:
@@ -81,6 +121,7 @@ def insert_user(name: str, usertype: str, oauth_token: str):
 
 def select_user(params=(), conditions=()):
     with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory
         cur = dbcon.cursor()
         if cur.rowcount == 0:
             return None

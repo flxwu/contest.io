@@ -25,9 +25,9 @@ yarn install
 cd client/ && yarn install
 ```
 
-Create database
+Create/Recreate database (also on changes to `server/database/schema.sql`)
 ```
-sqlite3 server/database/database.db < server/database/schema.sql
+yarn db-rewrite
 ```
 
 ## Running
@@ -50,6 +50,9 @@ cd client/ && yarn dev
 ```
 
 ## .env Variables
+
+We are applying the [12-factor](http://12factor.net/) principles to protect our application secrets. Therefore, the app settings are managed using [dotenv](https://github.com/theskumar/python-dotenv). For the BackEnd to work, save the following values in your root `.env` file:
+
 ```
 GITHUB_CLIENT_ID=...
 GITHUB_CLIENT_SECRET=...

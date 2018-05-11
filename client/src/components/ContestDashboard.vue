@@ -25,7 +25,7 @@
 
                 <!-- Tags -->
                 <div class="chiptag">
-                  <v-chip small  v-for="tag in JSON.parse(item.tags)">{{ tag }}</v-chip>
+                  <v-chip small :key="tag"  v-for="tag in JSON.parse(item.tags)">{{ tag }}</v-chip>
                 </div>
 
                 <!-- TODO: add link to codeforces -->

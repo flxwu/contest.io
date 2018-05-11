@@ -1,24 +1,33 @@
 import sqlite3 as sql
 import json
-import secrets 
-import datetime
+import secrets
 from dateutil import parser
 
-DATABASE_PATH = "server/database/database.db"
+DATABASE_PATH = 'server/database/database.db'
+
 
 def dict_factory(cursor, row):
-    d = {}
-    for idx,col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
+    rowsDict = {}
+    for idx, col in enumerate(cursor.description):
+        rowsDict[col[0]] = row[idx]
+    return rowsDict
 
-def insert_task(name: str, tags: list, url: str):
+
+def recreate_table(tableName: str):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
-        stringified_tags = json.dumps(tags)
+        cur.execute('DELETE FROM {}'.format(tableName))
         cur.execute(
-            "INSERT INTO Task (taskname, tasktags, codeforces_url) VALUES (?,?,?)",
-            (name, stringified_tags, url)
+            'DELETE FROM sqlite_sequence WHERE name = "{}"'.format(tableName))
+
+
+def insert_task(name: str, tags: list, url: str, cfID: int, cfIndex: str):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        tags = json.dumps(tags)
+        cur.execute(
+            'INSERT INTO Task (taskname, tasktags, codeforces_url, codeforces_id, codeforces_index) VALUES (?,?,?,?,?)',
+            (name, tags, url, cfID, cfIndex)
         )
         cur.close()
         dbcon.commit()
@@ -31,7 +40,7 @@ def select_task(params=(), conditions=()):
         if cur.rowcount == 0:
             return None
         if params == () and conditions == ():
-            queryresult = cur.execute("SELECT * FROM Task")
+            queryresult = cur.execute('SELECT * FROM Task')
         else:
             # convert one-value tuples to real tuples
             if not isinstance(params, tuple):
@@ -40,16 +49,16 @@ def select_task(params=(), conditions=()):
                 conditions = (conditions,)
 
             if params != ():
-                queryString = "SELECT"
+                queryString = 'SELECT'
                 # add a format-placeholder for every parameter
                 for paramString in params:
-                    queryString += " {},".format(paramString)
+                    queryString += ' {},'.format(paramString)
                 queryString = queryString[:-1]
-                queryString += " FROM Task"
+                queryString += ' FROM Task'
             if conditions != ():
-                queryString += " WHERE"
+                queryString += ' WHERE'
                 for conditionString in conditions:
-                    queryString += " {} AND".format(conditionString)
+                    queryString += ' {} AND'.format(conditionString)
                 queryString = queryString[:-4]
             queryresult = cur.execute(queryString)
 
@@ -57,23 +66,33 @@ def select_task(params=(), conditions=()):
     if len(response) == 0:
         return None
     else:
-        return response 
+        return response
 
 
-def insert_contest(name: str, date_start: str, date_end: str, visible: int, contestgroups: list):
+def insert_contest(
+        name: str,
+        dateStart: str,
+        dateEnd: str,
+        visible: int,
+        contestgroups: list):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
-        random_code = secrets.token_hex(16)
-        date_start = parser.parse(date_start)
-        date_end = parser.parse(date_end)
+        randomCode = secrets.token_hex(16)
+        dateStart = parser.parse(dateStart)
+        dateEnd = parser.parse(dateEnd)
         contestgroups = json.dumps(contestgroups)
         cur.execute(
-            "INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible, contestgroups) VALUES (?,?,?,?,?,?)",
-            (random_code, name, date_start, date_end, visible, contestgroups)
-        )
+            'INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible, contestgroups) VALUES (?,?,?,?,?,?)',
+            (randomCode,
+                name,
+                dateStart,
+                dateEnd,
+                visible,
+                contestgroups))
         dbcon.commit()
-        return random_code
-    
+        return randomCode
+
+
 def select_contest(params=(), conditions=()):
     with sql.connect(DATABASE_PATH) as dbcon:
         dbcon.row_factory = dict_factory
@@ -81,7 +100,7 @@ def select_contest(params=(), conditions=()):
         if cur.rowcount == 0:
             return None
         if params == () and conditions == ():
-            queryresult = cur.execute("SELECT * FROM Contest")
+            queryresult = cur.execute('SELECT * FROM Contest')
         else:
             # convert one-value tuples to real tuples
             if not isinstance(params, tuple):
@@ -90,16 +109,16 @@ def select_contest(params=(), conditions=()):
                 conditions = (conditions,)
 
             if params != ():
-                queryString = "SELECT"
+                queryString = 'SELECT'
                 # add a format-placeholder for every parameter
                 for paramString in params:
-                    queryString += " {},".format(paramString)
+                    queryString += ' {},'.format(paramString)
                 queryString = queryString[:-1]
-                queryString += " FROM Contest"
+                queryString += ' FROM Contest'
             if conditions != ():
-                queryString += " WHERE"
+                queryString += ' WHERE'
                 for conditionString in conditions:
-                    queryString += " {} AND".format(conditionString)
+                    queryString += ' {} AND'.format(conditionString)
                 queryString = queryString[:-4]
             queryresult = cur.execute(queryString)
 
@@ -109,12 +128,13 @@ def select_contest(params=(), conditions=()):
     else:
         return response
 
-def insert_user(name: str, usertype: str, oauth_token: str):
+
+def insert_user(name: str, usertype: str, oauthToken: str):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         cur.execute(
-            "INSERT INTO User (username, usertype, oauth_token) VALUES (?,?,?)",
-            (name, usertype, oauth_token)
+            'INSERT INTO User (username, usertype, oauth_token) VALUES (?,?,?)',
+            (name, usertype, oauthToken)
         )
         dbcon.commit()
 
@@ -126,7 +146,7 @@ def select_user(params=(), conditions=()):
         if cur.rowcount == 0:
             return None
         if params == () and conditions == ():
-            queryresult = cur.execute("SELECT * FROM User")
+            queryresult = cur.execute('SELECT * FROM User')
         else:
             # convert one-value tuples to real tuples
             if not isinstance(params, tuple):
@@ -135,16 +155,16 @@ def select_user(params=(), conditions=()):
                 conditions = (conditions,)
 
             if params != ():
-                queryString = "SELECT"
+                queryString = 'SELECT'
                 # add a format-placeholder for every parameter
                 for paramString in params:
-                    queryString += " {},".format(paramString)
+                    queryString += ' {},'.format(paramString)
                 queryString = queryString[:-1]
-                queryString += " FROM User"
+                queryString += ' FROM User'
             if conditions != ():
-                queryString += " WHERE"
+                queryString += ' WHERE'
                 for conditionString in conditions:
-                    queryString += " {} AND".format(conditionString)
+                    queryString += ' {} AND'.format(conditionString)
                 queryString = queryString[:-4]
             queryresult = cur.execute(queryString)
 
@@ -155,48 +175,48 @@ def select_user(params=(), conditions=()):
         return response
 
 
-def update_user(updatedValues=(), set_conditions=()):
+def update_user(updatedValues=(), setConditions=()):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         if cur.rowcount == 0:
             return None
 
-        if updatedValues == () and set_conditions == ():
+        if updatedValues == () and setConditions == ():
             return None
         else:
             # convert one-value tuples to real tuples
             if not isinstance(updatedValues, tuple):
                 updatedValues = (updatedValues,)
-            if not isinstance(set_conditions, tuple):
-                set_conditions = (set_conditions,)
+            if not isinstance(setConditions, tuple):
+                setConditions = (setConditions,)
 
             if updatedValues != ():
-                queryString = "UPDATE User SET"
+                queryString = 'UPDATE User SET'
                 # add a format-placeholder for every parameter
                 for updateString in updatedValues:
-                    queryString += " {},".format(updateString)
+                    queryString += ' {},'.format(updateString)
                 queryString = queryString[:-1]
-            if set_conditions != ():
-                queryString += " WHERE"
-                for conditionString in set_conditions:
-                    queryString += " {} AND".format(conditionString)
+            if setConditions != ():
+                queryString += ' WHERE'
+                for conditionString in setConditions:
+                    queryString += ' {} AND'.format(conditionString)
                 queryString = queryString[:-4]
             cur.execute(queryString)
 
 
-def delete_user(delete_conditions=()):
+def delete_user(deleteConditions=()):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         if cur.rowcount == 0:
             return None
-        if delete_conditions == ():
+        if deleteConditions == ():
             return None
         else:
-            if not isinstance(delete_conditions, tuple):
-                delete_conditions = (delete_conditions,)
+            if not isinstance(deleteConditions, tuple):
+                deleteConditions = (deleteConditions,)
 
-            queryString = "DELETE FROM User WHERE"
-            for conditionString in delete_conditions:
-                queryString += " {} AND".format(conditionString)
+            queryString = 'DELETE FROM User WHERE'
+            for conditionString in deleteConditions:
+                queryString += ' {} AND'.format(conditionString)
             queryString = queryString[:-4]
             cur.execute(queryString)

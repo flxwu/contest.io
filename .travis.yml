@@ -30,3 +30,7 @@ matrix:
       script:
         - cd client/ && yarn lint --ext .js,.vue
         - cd client/ && yarn build
+      cache:
+        directories:
+          - "node_modules"
+          - "client/node_modules"

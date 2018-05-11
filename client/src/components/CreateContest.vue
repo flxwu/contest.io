@@ -120,6 +120,8 @@
                 </v-menu>
               </v-card-text>
             </v-card>
+
+            <v-btn large class="light-green accent-3 green--text text--darken-4" style="margin-top: 10px; width: 100%; margin-left: 0px;" to="">Create Contest</v-btn>
           </v-flex>
 
         </v-layout>

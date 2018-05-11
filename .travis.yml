@@ -12,7 +12,7 @@ matrix:
         - pip3 install -r requirements.txt
         - pip3 install -e .
       before_script:
-        - .travis/writetoenv.sh
+        - chmod +x .travis/writetoenv.sh && .travis/writetoenv.sh
       script:
         - pylint server
         # - nosetests

@@ -10,7 +10,7 @@
           <v-flex xs10 id="taskselection">
             <v-text-field prepend-icon="search" v-model="searchtitle" label="Search by name" solo-inverted class="mx-0 search" clearable flat></v-text-field>
             <div style="width: 100%;">
-              <v-select style="float: right; width: 50%; margin-bottom: 10px; margin-top: -32px;" v-model="selectedtags" label="Search by tags" chips tags solo prepend-icon="filter_list" append-icon="" clearable>
+              <v-select style="float: right; width: 50%; margin-top: -32px;" v-model="selectedtags" label="Search by tags" chips tags solo prepend-icon="filter_list" append-icon="" clearable>
                 <template slot="selection" slot-scope="data">
                   <v-chip :selected="data.selected" close @input="removeSelectedTag(data.item)" >
                     <span>{{ data.item }}</span>&nbsp;
@@ -18,7 +18,7 @@
                 </template>
               </v-select>
             </div>
-            <div style="height: 320px; overflow: scroll; margin-top: 60px; min-width: 100%;">
+            <div style="height: 320px; overflow: scroll; margin-top: 40px; min-width: 100%;">
               <v-list>
 
                 <template v-for="item in filteredItems()">
@@ -212,8 +212,7 @@ export default {
     filteredItems() {
       return this.items.filter((i) => {
           if(this.searchtitle) {
-            console.log(this.searchtitle)
-            return i.title.includes(this.searchtitle)
+            return i.title.includes(this.searchtitle) && i.tags.join('').includes(this.selectedtags.join(''))
           } else {
             return false
           }

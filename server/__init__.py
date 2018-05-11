@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify, request, g, session, redirect, url_for, flash
+from flask_cors import CORS
 from werkzeug.routing import BaseConverter
 from http import HTTPStatus
 import requests
@@ -18,6 +19,8 @@ class RegexConverter(BaseConverter):
 app = Flask(__name__,
             static_folder="../client/dist/static",
             template_folder="../client/dist")
+# CORS
+CORS(app)
 # Flask app config
 app.config['GITHUB_CLIENT_ID'] = settings.GITHUB_CLIENT_ID
 app.config['GITHUB_CLIENT_SECRET'] = settings.GITHUB_CLIENT_SECRET

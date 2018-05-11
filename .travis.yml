@@ -1,0 +1,30 @@
+matrix:
+  include:
+    - language: python
+      python: 
+        - "3.4"
+        - "3.5"
+        - "3.6"
+      env:
+        - FLASK=1.0.2
+      install:
+        - pip3 install Flask==$FLASK
+        - pip3 install -r requirements.txt
+        - pip3 install -e .
+      script:
+        - pylint server
+        # - nosetests
+
+    - language: node_js
+      node_js:
+        - "node"
+        - "8"
+      install:
+        - yarn add eslint
+        - yarn install
+        - cd client/ && yarn install
+      before_script:
+        - yarn db-rewrite
+      script:
+        - cd client/ && yarn lint --ext .js,.vue
+        - cd client/ && yarn build

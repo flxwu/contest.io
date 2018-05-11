@@ -8,7 +8,7 @@
 
           <!-- Add tasks -->
           <v-flex xs10 id="taskselection">
-            <v-text-field prepend-icon="search" v-model="searchtitle" label="Search by name" solo-inverted class="mx-0 search" clearable="true" flat></v-text-field>
+            <v-text-field prepend-icon="search" v-model="searchtitle" label="Search by name" solo-inverted class="mx-0 search" clearable flat></v-text-field>
             <div style="width: 100%;">
               <v-select style="float: right; width: 50%; margin-bottom: 10px;" v-model="selectedtags" label="Search by tags" chips tags solo prepend-icon="filter_list" append-icon="" clearable>
                 <template slot="selection" slot-scope="data">
@@ -88,7 +88,7 @@
             <v-card>
               <v-card-text>
                 <v-text v-if="contestdate">Contest End: {{ contestdate | moment("dddd, MMMM Do YYYY") }} (23:59)</v-text>
-                <v-btn small="true" color="primary" dark @click.stop="dialog2 = true">Chose a date...</v-btn>
+                <v-btn small color="primary" dark @click.stop="dialog2 = true">Chose a date...</v-btn>
 
                 <v-dialog v-model="dialog2" max-width="500px">
                   <v-card>
@@ -109,7 +109,7 @@
                 <v-text>Groups:</v-text><br><v-divider></v-divider>
                 <v-chip :key="group.name" v-for="group in selectedgroups" close @input="unselectGroup(group.name)">   {{ group.name }}</v-chip>
                 <v-menu v-if="groups.length">
-                  <v-btn small="true" color="primary" dark slot="activator" fab><v-icon>add</v-icon></v-btn>
+                  <v-btn small color="primary" dark slot="activator" fab><v-icon>add</v-icon></v-btn>
                   <!-- TODO: Get all groups this person is admin of -->
                   <v-list>
                     <v-list-tile v-if="!groups.length && !selectedgroups.length" style="color: red;">You are not a group admin!</v-list-tile>
@@ -142,7 +142,7 @@ export default {
     return {
       searchtitle: "",
       searchtags: "",
-      contestdate: null,
+      contestdate: "",
       dialog2: false,
       first: 0,
       items: [
@@ -212,9 +212,10 @@ export default {
     filteredItems() {
       return this.items.filter((i) => {
           if(this.searchtitle) {
+            console.log(this.searchtitle)
             return i.title.includes(this.searchtitle)
           } else {
-            return true
+            return false
           }
       })
     },

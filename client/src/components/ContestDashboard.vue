@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 
 export default {
   name: 'contestdashboard',
@@ -74,13 +75,12 @@ export default {
   },
   data () {
     return {
-      items: [
-        { title: 'Task 1: Get your life together' },
-        { title: 'Task 2: Procrastinate Task 1 until your life is over' },
-        { title: 'Task 3: Drink bleech to get over your depression' },
-        { title: 'Task 4: Live the good life!' }
-      ]
+      items: []
     }
+  },
+  mounted() {
+    axios.get("http://localhost:5000/api/tasks?tags=geometry")
+      .then(response => {this.items = response.data})
   }
 }
 </script>

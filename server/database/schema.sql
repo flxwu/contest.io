@@ -20,8 +20,8 @@ create table if not exists Contest (
     date_start timestamp not null,
     date_end timestamp not null,
     visible integer default 0,
-    contestgroup integer not null,
-    foreign key(contestgroup) references in_group(groupid)
+    -- Json-stringified contestgroups array of groupid s 
+    contestgroups text not null
 );
 
 create table if not exists Task (

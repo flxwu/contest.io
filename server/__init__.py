@@ -1,5 +1,7 @@
 from flask import Flask, render_template, jsonify, request, g, session, redirect, url_for, flash
+from flask_cors import CORS
 from werkzeug.routing import BaseConverter
+from http import HTTPStatus
 import requests
 import json
 import flask_github
@@ -17,6 +19,8 @@ class RegexConverter(BaseConverter):
 app = Flask(__name__,
             static_folder="../client/dist/static",
             template_folder="../client/dist")
+# CORS
+CORS(app)
 # Flask app config
 app.config['GITHUB_CLIENT_ID'] = settings.GITHUB_CLIENT_ID
 app.config['GITHUB_CLIENT_SECRET'] = settings.GITHUB_CLIENT_SECRET
@@ -37,8 +41,11 @@ def before_request():
     g.user = None
     if 'user_id' in session:
         g.user = models.select_user(params=('*'), conditions=(
-            "{}=\"{}\"".format(settings.DB_COLUMNS.USER_USERID, session['user_id'])))
+            '{}=\"{}\"'.format(settings.DB_COLUMNS.USER_USERID, session['user_id'])))
 
+@app.route('/robots.txt')
+def serve_robots():
+    return app.send_static_file('/static/robots.txt')
 
 @app.route('/')
 def index():
@@ -78,7 +85,7 @@ def auth_GithubCallback(oauth_token):
         return redirect(next_url)
 
     user = models.select_user(params=('*'), conditions=(
-        "{}=\"{}\"".format(settings.DB_COLUMNS.USER_OAUTH_TOKEN, oauth_token)))
+        '{}=\"{}\"'.format(settings.DB_COLUMNS.USER_OAUTH_TOKEN, oauth_token)))
     if user is None:
         models.insert_user(
             'defaultUser', settings.NORMAL_USERTYPE, oauth_token)
@@ -96,31 +103,31 @@ def auth_user():
     # update inserted User
     userData = github.get('user')
     userLoginName = userData['login']
-    
+
     # check if user already exists
     user = models.select_user(params=('*'), conditions=(
-        "{}=\"{}\"".format(settings.DB_COLUMNS.USER_USERNAME, userLoginName)))
+        '{}=\"{}\"'.format(settings.DB_COLUMNS.USER_USERNAME, userLoginName)))
     if user == None:
         models.update_user(
-            updatedValues=("{}=\"{}\"".format(
+            updatedValues=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.USER_USERNAME, userLoginName)),
-            set_conditions=("{}=\"{}\"".format(
+            set_conditions=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.USER_USERID,
                 session.get('user_id', None)
             )))
     else:
         models.delete_user(delete_conditions=(
-            "{}=\"{}\"".format(settings.DB_COLUMNS.USER_USERNAME, 'defaultUser')
+            '{}=\"{}\"'.format(settings.DB_COLUMNS.USER_USERNAME, 'defaultUser')
         ))
         models.update_user(
-            updatedValues=("{}=\"{}\"".format(
+            updatedValues=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.USER_OAUTH_TOKEN, session.get('oauth_token', None))),
-            set_conditions=("{}=\"{}\"".format(
+            set_conditions=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.USER_USERNAME,
                 userLoginName
             )))
         user = models.select_user(params=('*'), conditions=(
-            "{}=\"{}\"".format(settings.DB_COLUMNS.USER_USERNAME, userLoginName)))
+            '{}=\"{}\"'.format(settings.DB_COLUMNS.USER_USERNAME, userLoginName)))
         session.pop('user_id', None)
         session['user_id'] = user[0]
     return str(userData)
@@ -138,7 +145,7 @@ def api_tasks():
             tasks_in_database = models.select_task(params=('*'))
         else:
             tasks_in_database = models.select_task(params=('*'), conditions=(
-                "{} LIKE '%{}%'".format(settings.DB_COLUMNS.TASK_TASKTAGS, queryparam_tags(None))))
+                '{} LIKE \'%{}%\''.format(settings.DB_COLUMNS.TASK_TASKTAGS, queryparam_tags(None))))
 
         if tasks_in_database is not None:
             returnJSON = tasks_in_database
@@ -148,9 +155,55 @@ def api_tasks():
 
         # @FRONT-END tasktags have to be parsed -> JSON.parse
         return json.dumps(returnJSON)
+    elif request.method == 'POST':
+        return None
     else:
         return None
 
+@app.route('/api/contests', methods=['GET', 'POST', 'DELETE'])
+def api_contests():
+    """
+    Contest Endpoint: POST with Content-Type = application/json
+    {
+	    "contestname": "testContest-1",
+	    "date_start": "2017-05-12",
+	    "date_end": "2017-06-12",
+	    "visible": 1,
+	    "contestgroups": [1, 2, 3]
+    }
+    """
+    if request.method == 'GET':
+        def queryparam_code(): return request.args.get(
+            'code') if request.args.get('code') else None
+        
+        if queryparam_code() == None:
+            content = {"Error": "\'code\' parameter missing"}
+            return content, HTTPStatus.BAD_REQUEST
+        returnJSON = models.select_contest(
+            params=('*'),
+            conditions=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.CONTEST_CONTESTCODE,
+                queryparam_code()
+            ))
+        )
+        return json.dumps(returnJSON)
+    elif request.method == 'POST':
+        postJSON = request.get_json()
+        if not postJSON:
+            return None
+        else:
+            contestCode = models.insert_contest(
+                postJSON[settings.DB_COLUMNS.CONTEST_CONTESTNAME],
+                postJSON[settings.DB_COLUMNS.CONTEST_DATE_START],
+                postJSON[settings.DB_COLUMNS.CONTEST_DATE_END],
+                postJSON[settings.DB_COLUMNS.CONTEST_VISIBLE],
+                postJSON[settings.DB_COLUMNS.CONTEST_CONTESTGROUPS]
+            )
+            return contestCode
+    elif request.method == 'DELETE':
+        return None
+    else:
+        return None
 
 @app.route('/sockjs-node/<path>')
 def sockjs(path):

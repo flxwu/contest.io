@@ -7,30 +7,30 @@
 
         <v-flex xs6>
             <!-- Task LIst -->
-            <v-subheader class="display-1" style="margin-top: 2% !important;">Contest 1</v-subheader>
+            <v-subheader class="display-1" style="margin-top: 2% !important;">Contest {{ $route.params.id }}</v-subheader>
 
             <router-link tag="v-avatar" to="/profile/1" class="grey lighten-4 avatar vlink" size="35px">
               <img src="https://vuetifyjs.com/static/doc-images/lists/1.jpg" alt="avatar">
               <div><v-subheader style="width: 200px;">Herr Hörner</v-subheader></div>
             </router-link>
-            <v-expansion-panel>
+            <v-expansion-panel popout>
 
-             <v-expansion-panel-content v-for="item in items" :key="item.title">
+             <v-expansion-panel-content v-for="item in items" :key="item.taskid">
 
-               <div slot="header">{{ item.title }}</div>
+               <div slot="header">{{ item.taskname }}</div>
 
               <v-card>
 
-                <v-card-text>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</v-card-text>
+                <!-- <v-card-text>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</v-card-text> -->
 
                 <!-- Tags -->
-                <div class="text-xs-center chiptag">
-                  <v-chip close small>Bruteforce</v-chip>
+                <div class="chiptag">
+                  <v-chip small :key="tag"  v-for="tag in JSON.parse(item.tags)">{{ tag }}</v-chip>
                 </div>
 
                 <!-- TODO: add link to codeforces -->
                 <v-card-actions>
-                  <v-btn flat color="orange" to="https://www.codeforces.org">Solve</v-btn>
+                  <v-btn flat color="orange" :href="item.codeforces_url">Solve</v-btn>
                 </v-card-actions>
 
               </v-card>
@@ -51,7 +51,7 @@
               <div  style="width: 100% !important">
                 <h3 class="headline mb-0">Progress</h3>
                 <v-divider></v-divider>
-                <div>0 / 4 Tasks completed (0%)</div>
+                <div>0 / {{ items.length }} Tasks completed (<span>{{ (0 / items.length) * 100 }}%</span>)</div>
                 <div>Time remaining: 5 days, 11 hours</div>
               </div>
             </v-card-title>
@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 
 export default {
   name: 'contestdashboard',
@@ -75,12 +76,13 @@ export default {
   data () {
     return {
       items: [
-        { title: 'Task 1: Get your life together' },
-        { title: 'Task 2: Procrastinate Task 1 until your life is over' },
-        { title: 'Task 3: Drink bleech to get over your depression' },
-        { title: 'Task 4: Live the good life!' }
+        { taskid: 1, taskname: "TEst", tags: "[\"data structures\", \"dsu\", \"geometry\", \"trees\"]" }
       ]
     }
+  },
+  mounted() {
+    axios.get("http://localhost:5000/api/tasks?tags=geometry")
+      .then(response => {this.items = response.data})
   }
 }
 </script>
@@ -97,7 +99,7 @@ export default {
 }
 
 .chiptag {
-  margin-left: -70%;
+  margin-left: 10px;
 }
 
 .vlink {

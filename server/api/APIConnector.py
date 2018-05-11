@@ -50,4 +50,6 @@ class Tasks(EndpointInterface):
                     name,
                     tags,
                     url,
+                    contestId,
+                    index
                 )

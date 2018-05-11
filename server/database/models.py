@@ -1,12 +1,18 @@
 import sqlite3 as sql
 import json
-import secrets
+import secrets 
 import datetime
+from dateutil import parser
 
 DATABASE_PATH = "server/database/database.db"
 
+def dict_factory(cursor, row):
+    d = {}
+    for idx,col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
 
-def insert_task(name, tags, url):
+def insert_task(name: str, tags: list, url: str):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         stringified_tags = json.dumps(tags)
@@ -20,6 +26,7 @@ def insert_task(name, tags, url):
 
 def select_task(params=(), conditions=()):
     with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory
         cur = dbcon.cursor()
         if cur.rowcount == 0:
             return None
@@ -50,23 +57,59 @@ def select_task(params=(), conditions=()):
     if len(response) == 0:
         return None
     else:
-        return response
+        return response 
 
 
-def insert_contest(name, date_start, date_end, visible, contestgroup):
+def insert_contest(name: str, date_start: str, date_end: str, visible: int, contestgroups: list):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         random_code = secrets.token_hex(16)
-        date_start = datetime.datetime(*date_start)
-        date_end = datetime.datetime(*date_end)
+        date_start = parser.parse(date_start)
+        date_end = parser.parse(date_end)
+        contestgroups = json.dumps(contestgroups)
         cur.execute(
-            "INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible, contestgroup) VALUES (?,?,?,?,?,?)",
-            (random_code, name, date_start, date_end, visible, contestgroup)
+            "INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible, contestgroups) VALUES (?,?,?,?,?,?)",
+            (random_code, name, date_start, date_end, visible, contestgroups)
         )
         dbcon.commit()
+        return random_code
+    
+def select_contest(params=(), conditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if params == () and conditions == ():
+            queryresult = cur.execute("SELECT * FROM Contest")
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(params, tuple):
+                params = (params,)
+            if not isinstance(conditions, tuple):
+                conditions = (conditions,)
 
+            if params != ():
+                queryString = "SELECT"
+                # add a format-placeholder for every parameter
+                for paramString in params:
+                    queryString += " {},".format(paramString)
+                queryString = queryString[:-1]
+                queryString += " FROM Contest"
+            if conditions != ():
+                queryString += " WHERE"
+                for conditionString in conditions:
+                    queryString += " {} AND".format(conditionString)
+                queryString = queryString[:-4]
+            queryresult = cur.execute(queryString)
 
-def insert_user(name, usertype, oauth_token):
+    response = queryresult.fetchone()
+    if not response:
+        return None
+    else:
+        return response
+
+def insert_user(name: str, usertype: str, oauth_token: str):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         cur.execute(
@@ -78,6 +121,7 @@ def insert_user(name, usertype, oauth_token):
 
 def select_user(params=(), conditions=()):
     with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory
         cur = dbcon.cursor()
         if cur.rowcount == 0:
             return None

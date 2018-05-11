@@ -11,6 +11,8 @@ matrix:
         - pip3 install Flask==$FLASK
         - pip3 install -r requirements.txt
         - pip3 install -e .
+      before_script:
+        - .travis/writetoenv.sh
       script:
         - pylint server
         # - nosetests

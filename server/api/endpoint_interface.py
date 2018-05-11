@@ -4,13 +4,13 @@ from abc import ABCMeta, abstractmethod
 class EndpointInterface(metaclass=ABCMeta):
     @property
     @abstractmethod
-    def endpointURL(self):
+    def endpoint_url(self):
         raise NotImplementedError
 
     @abstractmethod
     def get(self, tags=None):
         raise NotImplementedError
-        
+
     @abstractmethod
-    def insertToDatabase(self):
+    def insert_to_database(self):
         raise NotImplementedError

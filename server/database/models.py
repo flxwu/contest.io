@@ -4,7 +4,7 @@ import secrets
 import datetime
 from dateutil import parser
 
-DATABASE_PATH = "server/database/database.db"
+DATABASE_PATH = 'server/database/database.db'
 
 def dict_factory(cursor, row):
     d = {}
@@ -23,8 +23,8 @@ def insert_task(name: str, tags: list, url: str, cfID: int, cfIndex: str):
         cur = dbcon.cursor()
         tags = json.dumps(tags)
         cur.execute(
-            "INSERT INTO Task (taskname, tasktags, codeforces_url) VALUES (?,?,?)",
-            (name, stringified_tags, url)
+            'INSERT INTO Task (taskname, tasktags, codeforces_url, codeforces_id, codeforces_index) VALUES (?,?,?,?,?)',
+            (name, tags, url, cfID, cfIndex)
         )
         cur.close()
         dbcon.commit()
@@ -37,7 +37,7 @@ def select_task(params=(), conditions=()):
         if cur.rowcount == 0:
             return None
         if params == () and conditions == ():
-            queryresult = cur.execute("SELECT * FROM Task")
+            queryresult = cur.execute('SELECT * FROM Task')
         else:
             # convert one-value tuples to real tuples
             if not isinstance(params, tuple):
@@ -46,16 +46,16 @@ def select_task(params=(), conditions=()):
                 conditions = (conditions,)
 
             if params != ():
-                queryString = "SELECT"
+                queryString = 'SELECT'
                 # add a format-placeholder for every parameter
                 for paramString in params:
-                    queryString += " {},".format(paramString)
+                    queryString += ' {},'.format(paramString)
                 queryString = queryString[:-1]
-                queryString += " FROM Task"
+                queryString += ' FROM Task'
             if conditions != ():
-                queryString += " WHERE"
+                queryString += ' WHERE'
                 for conditionString in conditions:
-                    queryString += " {} AND".format(conditionString)
+                    queryString += ' {} AND'.format(conditionString)
                 queryString = queryString[:-4]
             queryresult = cur.execute(queryString)
 
@@ -74,7 +74,7 @@ def insert_contest(name: str, date_start: str, date_end: str, visible: int, cont
         date_end = parser.parse(date_end)
         contestgroups = json.dumps(contestgroups)
         cur.execute(
-            "INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible, contestgroups) VALUES (?,?,?,?,?,?)",
+            'INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible, contestgroups) VALUES (?,?,?,?,?,?)',
             (random_code, name, date_start, date_end, visible, contestgroups)
         )
         dbcon.commit()
@@ -87,7 +87,7 @@ def select_contest(params=(), conditions=()):
         if cur.rowcount == 0:
             return None
         if params == () and conditions == ():
-            queryresult = cur.execute("SELECT * FROM Contest")
+            queryresult = cur.execute('SELECT * FROM Contest')
         else:
             # convert one-value tuples to real tuples
             if not isinstance(params, tuple):
@@ -96,16 +96,16 @@ def select_contest(params=(), conditions=()):
                 conditions = (conditions,)
 
             if params != ():
-                queryString = "SELECT"
+                queryString = 'SELECT'
                 # add a format-placeholder for every parameter
                 for paramString in params:
-                    queryString += " {},".format(paramString)
+                    queryString += ' {},'.format(paramString)
                 queryString = queryString[:-1]
-                queryString += " FROM Contest"
+                queryString += ' FROM Contest'
             if conditions != ():
-                queryString += " WHERE"
+                queryString += ' WHERE'
                 for conditionString in conditions:
-                    queryString += " {} AND".format(conditionString)
+                    queryString += ' {} AND'.format(conditionString)
                 queryString = queryString[:-4]
             queryresult = cur.execute(queryString)
 
@@ -119,7 +119,7 @@ def insert_user(name: str, usertype: str, oauth_token: str):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         cur.execute(
-            "INSERT INTO User (username, usertype, oauth_token) VALUES (?,?,?)",
+            'INSERT INTO User (username, usertype, oauth_token) VALUES (?,?,?)',
             (name, usertype, oauth_token)
         )
         dbcon.commit()
@@ -132,7 +132,7 @@ def select_user(params=(), conditions=()):
         if cur.rowcount == 0:
             return None
         if params == () and conditions == ():
-            queryresult = cur.execute("SELECT * FROM User")
+            queryresult = cur.execute('SELECT * FROM User')
         else:
             # convert one-value tuples to real tuples
             if not isinstance(params, tuple):
@@ -141,16 +141,16 @@ def select_user(params=(), conditions=()):
                 conditions = (conditions,)
 
             if params != ():
-                queryString = "SELECT"
+                queryString = 'SELECT'
                 # add a format-placeholder for every parameter
                 for paramString in params:
-                    queryString += " {},".format(paramString)
+                    queryString += ' {},'.format(paramString)
                 queryString = queryString[:-1]
-                queryString += " FROM User"
+                queryString += ' FROM User'
             if conditions != ():
-                queryString += " WHERE"
+                queryString += ' WHERE'
                 for conditionString in conditions:
-                    queryString += " {} AND".format(conditionString)
+                    queryString += ' {} AND'.format(conditionString)
                 queryString = queryString[:-4]
             queryresult = cur.execute(queryString)
 
@@ -177,15 +177,15 @@ def update_user(updatedValues=(), set_conditions=()):
                 set_conditions = (set_conditions,)
 
             if updatedValues != ():
-                queryString = "UPDATE User SET"
+                queryString = 'UPDATE User SET'
                 # add a format-placeholder for every parameter
                 for updateString in updatedValues:
-                    queryString += " {},".format(updateString)
+                    queryString += ' {},'.format(updateString)
                 queryString = queryString[:-1]
             if set_conditions != ():
-                queryString += " WHERE"
+                queryString += ' WHERE'
                 for conditionString in set_conditions:
-                    queryString += " {} AND".format(conditionString)
+                    queryString += ' {} AND'.format(conditionString)
                 queryString = queryString[:-4]
             cur.execute(queryString)
 
@@ -201,8 +201,8 @@ def delete_user(delete_conditions=()):
             if not isinstance(delete_conditions, tuple):
                 delete_conditions = (delete_conditions,)
 
-            queryString = "DELETE FROM User WHERE"
+            queryString = 'DELETE FROM User WHERE'
             for conditionString in delete_conditions:
-                queryString += " {} AND".format(conditionString)
+                queryString += ' {} AND'.format(conditionString)
             queryString = queryString[:-4]
             cur.execute(queryString)

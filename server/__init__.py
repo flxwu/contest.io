@@ -1,9 +1,9 @@
-from flask import Flask, render_template, jsonify, request, g, session, redirect, url_for, flash
+from flask import Flask, jsonify, render_template, jsonify, request, g, session, redirect, url_for, flash
 from flask_cors import CORS
 from werkzeug.routing import BaseConverter
 from http import HTTPStatus
-import requests
 import json
+import requests
 import flask_github
 import server.api.APIConnector as APIConnector
 import server.database.models as models
@@ -45,7 +45,11 @@ def before_request():
 
 @app.route('/robots.txt')
 def serve_robots():
-    return app.send_static_file('/static/robots.txt')
+    return app.send_static_file('robots.txt')
+
+@app.route('/favicon.ico')
+def serve_favicon():
+    return app.send_static_file('favicon.ico')
 
 @app.route('/')
 def index():
@@ -90,7 +94,7 @@ def auth_GithubCallback(oauth_token):
         models.insert_user(
             'defaultUser', settings.NORMAL_USERTYPE, oauth_token)
     user = models.select_user(params=('*'), conditions=(
-        "{}=\"{}\"".format(settings.DB_COLUMNS.USER_OAUTH_TOKEN, oauth_token)))
+        '{}=\"{}\"'.format(settings.DB_COLUMNS.USER_OAUTH_TOKEN, oauth_token)))
     
     session['user_id'] = user[0]
     session.pop('oauth_token', None)
@@ -145,16 +149,23 @@ def api_tasks():
             tasks_in_database = models.select_task(params=('*'))
         else:
             tasks_in_database = models.select_task(params=('*'), conditions=(
-                '{} LIKE \'%{}%\''.format(settings.DB_COLUMNS.TASK_TASKTAGS, queryparam_tags(None))))
+                '{} LIKE "%{}%"'.format(settings.DB_COLUMNS.TASK_TASKTAGS, queryparam_tags(None))))
 
         if tasks_in_database is not None:
             returnJSON = tasks_in_database
         else:
             respond_rawdata = TasksEndpoint.get(tags=queryparam_tags(None))
-            returnJSON = respond_rawdata
+            if queryparam_tags(None) == None:
+                returnJSON = models.select_task(params=('*'))
+            else:
+                returnJSON = models.select_task(params=('*'), conditions=(
+                    '{} LIKE "%{}%"'.format(settings.DB_COLUMNS.TASK_TASKTAGS, queryparam_tags(None))))
 
-        # @FRONT-END tasktags have to be parsed -> JSON.parse
-        return json.dumps(returnJSON)
+        def tagsJsonLoad(taskJSON: dict):
+            taskJSON['tasktags'] = json.loads(taskJSON['tasktags'])
+            return taskJSON
+
+        return jsonify([tagsJsonLoad(task) for task in returnJSON])
     elif request.method == 'POST':
         return None
     else:
@@ -186,7 +197,7 @@ def api_contests():
                 queryparam_code()
             ))
         )
-        return json.dumps(returnJSON)
+        return jsonify(returnJSON)
     elif request.method == 'POST':
         postJSON = request.get_json()
         if not postJSON:
@@ -210,7 +221,7 @@ def sockjs(path):
 
     if app.debug:
         return requests.post('http://localhost:3000/sockjs-node/{}'.format(path))
-    return render_template("index.html")
+    return render_template('index.html')
 
 
 @app.route('/', defaults={'path': ''})
@@ -219,4 +230,4 @@ def catch_all(path):
 
     if app.debug:
         return requests.get('http://localhost:3000/{}'.format(path)).text
-    return render_template("index.html")
+    return render_template('index.html')

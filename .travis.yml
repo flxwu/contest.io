@@ -2,8 +2,6 @@ matrix:
   include:
     - language: python
       python: 
-        - "3.4"
-        - "3.5"
         - "3.6"
       env:
         - FLASK=1.0.2
@@ -26,10 +24,10 @@ matrix:
         - yarn install
         - cd client/ && yarn install
       before_script:
-        - yarn db-rewrite
+        - cd ../ && yarn db-rewrite
       script:
         - cd client/ && yarn lint --ext .js,.vue
-        - cd client/ && yarn build
+        - yarn build
       cache:
         directories:
           - "node_modules"

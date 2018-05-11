@@ -1,13 +1,12 @@
 import requests
-import json
-from server.api.EndpointInterface import EndpointInterface
+from server.api.endpoint_interface import EndpointInterface
 import server.database.models as models
 
 CODEFORCES_BASE_URL = 'http://codeforces.com/api'
 
 
 class Tasks(EndpointInterface):
-    endpointURL = '/api/tasks'
+    endpoint_url = '/api/tasks'
 
     def __init__(self):
         self.rawdata = {}
@@ -15,31 +14,31 @@ class Tasks(EndpointInterface):
 
     def get(self, tags=None):
         try:
-            if tags != None:
+            if tags is not None:
                 self.rawdata = (requests.get(
-                                            '{}/problemset.problems'.format(CODEFORCES_BASE_URL),
-                                            params=dict(tags=str(tags)),
-                                            allow_redirects=False,
-                                            stream=True)
-                                        .json())
+                    '{}/problemset.problems'.format(CODEFORCES_BASE_URL),
+                    params=dict(tags=str(tags)),
+                    allow_redirects=False,
+                    stream=True)
+                    .json())
             else:
                 self.rawdata = requests.get(
                     '{}/problemset.problems'.format(CODEFORCES_BASE_URL)).json()
-        except requests.exceptions.RequestException as e:
-            return e
+        except requests.exceptions.RequestException as exception:
+            return exception
         else:
-            self.extractProblems()
-            self.insertToDatabase()
+            self.extract_problems()
+            self.insert_to_database()
             return self.rawdata['result']['problems']
 
-    def extractProblems(self):
+    def extract_problems(self):
         try:
             if self.rawdata:
                 self.problems = self.rawdata['result']['problems']
-        except Exception as e:
-            print(e)
+        except Exception as exception:
+            print(exception)
 
-    def insertToDatabase(self):
+    def insert_to_database(self):
         if self.problems:
             for problem in self.problems:
                 contestId, index, name, tags = problem['contestId'], problem[

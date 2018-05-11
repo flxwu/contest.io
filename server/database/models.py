@@ -12,10 +12,16 @@ def dict_factory(cursor, row):
         d[col[0]] = row[idx]
     return d
 
-def insert_task(name: str, tags: list, url: str):
+def recreate_table(tableName: str):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
-        stringified_tags = json.dumps(tags)
+        cur.execute('DELETE FROM {}'.format(tableName))
+        cur.execute('DELETE FROM sqlite_sequence WHERE name = "{}"'.format(tableName))
+
+def insert_task(name: str, tags: list, url: str, cfID: int, cfIndex: str):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        tags = json.dumps(tags)
         cur.execute(
             "INSERT INTO Task (taskname, tasktags, codeforces_url) VALUES (?,?,?)",
             (name, stringified_tags, url)

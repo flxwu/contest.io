@@ -29,7 +29,9 @@ create table if not exists Task (
     taskname text not null,
     -- Json-stringified tags array
     tasktags text not null,
-    codeforces_url text not null
+    codeforces_url text not null,
+    codeforces_id integer not null,
+    codeforces_index text not null
 );
 
 create table if not exists contains_task (

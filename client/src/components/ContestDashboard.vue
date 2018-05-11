@@ -7,7 +7,7 @@
 
         <v-flex xs6>
             <!-- Task LIst -->
-            <v-subheader class="display-1" style="margin-top: 2% !important;">Contest 1</v-subheader>
+            <v-subheader class="display-1" style="margin-top: 2% !important;">Contest {{ $route.params.id }}</v-subheader>
 
             <router-link tag="v-avatar" to="/profile/1" class="grey lighten-4 avatar vlink" size="35px">
               <img src="https://vuetifyjs.com/static/doc-images/lists/1.jpg" alt="avatar">

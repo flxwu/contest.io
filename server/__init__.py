@@ -40,7 +40,7 @@ def before_request():
             "{}=\"{}\"".format(settings.DB_COLUMNS.USER_USERID, session['user_id'])))
 
 @app.route('/robots.txt')
- def serve_robots():
+def serve_robots():
     return app.send_static_file('/static/robots.txt')
 
 @app.route('/')
@@ -87,7 +87,7 @@ def auth_GithubCallback(oauth_token):
             'defaultUser', settings.NORMAL_USERTYPE, oauth_token)
     user = models.select_user(params=('*'), conditions=(
         "{}=\"{}\"".format(settings.DB_COLUMNS.USER_OAUTH_TOKEN, oauth_token)))
-    
+
     session['user_id'] = user[0]
     session.pop('oauth_token', None)
     session['oauth_token'] = oauth_token
@@ -99,7 +99,7 @@ def auth_user():
     # update inserted User
     userData = github.get('user')
     userLoginName = userData['login']
-    
+
     # check if user already exists
     user = models.select_user(params=('*'), conditions=(
         "{}=\"{}\"".format(settings.DB_COLUMNS.USER_USERNAME, userLoginName)))

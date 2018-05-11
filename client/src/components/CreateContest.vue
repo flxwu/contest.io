@@ -107,7 +107,7 @@
 
                 <br>
                 <v-text>Groups:</v-text><br><v-divider></v-divider>
-                <v-chip v-for="group in selectedgroups" close @input="unselectGroup(group.name)">   {{ group.name }}</v-chip>
+                <v-chip :key="group.name" v-for="group in selectedgroups" close @input="unselectGroup(group.name)">   {{ group.name }}</v-chip>
                 <v-menu v-if="groups.length">
                   <v-btn small="true" color="primary" dark slot="activator" fab><v-icon>add</v-icon></v-btn>
                   <!-- TODO: Get all groups this person is admin of -->

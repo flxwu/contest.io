@@ -34,7 +34,7 @@
                      </v-list-tile-action>
 
                     <v-list-tile-content>
-                       <v-list-tile-title v-html="item.title"></v-list-tile-title>
+                       <v-list-tile-title v-html="item.id"></v-list-tile-title>
                     </v-list-tile-content>
 
                     <v-chip :key="tag" small v-for="tag in item.tags.slice(0, 4)" >{{ tag }}</v-chip>
@@ -205,6 +205,12 @@ export default {
     removeSelectedTag(item) {
       this.selectedtags.splice(this.selectedtags.indexOf(item), 1)
       this.selectedtags = [...this.selectedtags]
+    }
+  },
+  computed: {
+    // Get current date
+    now: function () {
+      return new Date().toISOString().substring(0, 10)
     },
     // This filters tasks by title
     

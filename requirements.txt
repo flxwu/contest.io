@@ -22,7 +22,7 @@ pylint==1.8.4
 pylint-common==0.2.5
 pylint-flask==0.5
 pylint-plugin-utils==0.2.6
-python-dateutil==2.7.2
+python-dateutil==2.7.3
 python-dotenv==0.8.2
 python-editor==1.0.3
 requests==2.18.4

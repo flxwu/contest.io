@@ -17,11 +17,13 @@
 
              <v-expansion-panel-content v-for="item in items" :key="item.taskid">
 
-               <div slot="header">{{ item.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty: </small>
-                   <v-progress-linear v-if="item.codeforces_index === 'A'" style="float:left; width: 100px;" value="25" buffer-value="25" color="green"></v-progress-linear>
-                   <v-progress-linear v-if="item.codeforces_index === 'B'" style="float:left; width: 100px;" value="50" buffer-value="50" color="yellow"></v-progress-linear>
-                   <v-progress-linear v-if="item.codeforces_index === 'C'" style="float:left; width: 100px;" value="75" buffer-value="75" color="orange"></v-progress-linear>
-                   <v-progress-linear v-if="item.codeforces_index === 'D'" style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
+               <div slot="header">{{ item.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
+                   <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
+                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
+                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="float:left; width: 100px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
+                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="float:left; width: 100px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
+                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
+                   <v-progress-linear v-else style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
                </div>
 
               <v-card>

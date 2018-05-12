@@ -21,7 +21,7 @@
             <div style="height: 320px; overflow: scroll; margin-top: 40px; min-width: 100%;">
               <v-list>
 
-                <template v-for="item in filteredItems()">
+                <template v-for="item in filteredItems">
 
                    <v-subheader v-if="item.header" :key="item.id">{{ item.header }}</v-subheader>
 
@@ -34,7 +34,7 @@
                      </v-list-tile-action>
 
                     <v-list-tile-content>
-                       <v-list-tile-title v-html="item.title"></v-list-tile-title>
+                       <v-list-tile-title v-html="item.id"></v-list-tile-title>
                     </v-list-tile-content>
 
                     <v-chip :key="tag" small v-for="tag in item.tags.slice(0, 4)" >{{ tag }}</v-chip>
@@ -207,22 +207,28 @@ export default {
     removeSelectedTag(item) {
       this.selectedtags.splice(this.selectedtags.indexOf(item), 1)
       this.selectedtags = [...this.selectedtags]
-    },
-    // This filters tasks by title
-    filteredItems() {
-      return this.items.filter((i) => {
-          if(this.searchtitle) {
-            return i.title.includes(this.searchtitle) && i.tags.join('').includes(this.selectedtags.join(''))
-          } else {
-            return false
-          }
-      })
     }
   },
   computed: {
     // Get current date
     now: function () {
       return new Date().toISOString().substring(0, 10)
+    },
+    // This filters tasks by title
+    filteredItems() {
+      return this.items.filter((i) => {
+          if(this.searchtitle && this.selectedtags) {
+            for(var tag in this.selectedtags) {
+              if(!i.tags.includes(tag))
+                return false
+            }
+            return i.title.includes(this.searchtitle)
+          } else if(this.searchtitle) {
+            return i.title.includes(this.searchtitle)
+          } else {
+            return true
+          }
+      })
     }
   }
 }

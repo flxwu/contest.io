@@ -17,7 +17,12 @@
 
              <v-expansion-panel-content v-for="item in items" :key="item.taskid">
 
-               <div slot="header">{{ item.taskname }}</div>
+               <div slot="header">{{ item.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty: </small>
+                   <v-progress-linear v-if="item.codeforces_index === 'A'" style="float:left; width: 100px;" value="25" buffer-value="25" color="green"></v-progress-linear>
+                   <v-progress-linear v-if="item.codeforces_index === 'B'" style="float:left; width: 100px;" value="50" buffer-value="50" color="yellow"></v-progress-linear>
+                   <v-progress-linear v-if="item.codeforces_index === 'C'" style="float:left; width: 100px;" value="75" buffer-value="75" color="orange"></v-progress-linear>
+                   <v-progress-linear v-if="item.codeforces_index === 'D'" style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
+               </div>
 
               <v-card>
 
@@ -25,7 +30,7 @@
 
                 <!-- Tags -->
                 <div class="chiptag">
-                  <v-chip small :key="tag"  v-for="tag in JSON.parse(item.tags)">{{ tag }}</v-chip>
+                  <v-chip small :key="tag"  v-for="tag in item.tasktags">{{ tag }}</v-chip>
                 </div>
 
                 <!-- TODO: add link to codeforces -->
@@ -76,13 +81,13 @@ export default {
   data () {
     return {
       items: [
-        { taskid: 1, taskname: "TEst", tags: "[\"data structures\", \"dsu\", \"geometry\", \"trees\"]" }
+
       ]
     }
   },
   mounted() {
     axios.get("http://localhost:5000/api/tasks?tags=geometry")
-      .then(response => {this.items = response.data})
+      .then(response => {  this.items = response.data })
   }
 }
 </script>

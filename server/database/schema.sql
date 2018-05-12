@@ -6,11 +6,19 @@ create table if not exists User (
     oauth_token text not null
 );
 
-create table if not exists in_group (
+create table if not exists in_usergroup (
+    usergroup integer not null,
+    user integer not null,
+    foreign key(usergroup) references Usergroup(groupid),
+    foreign key(user) references User(userid),
+    primary key (usergroup, user)  
+);
+
+create table if not exists Usergroup (
     groupid integer primary key autoincrement,
     groupname text not null,
     groupadmin integer not null,
-    foreign key(groupadmin) references User(userid)
+    foreign key(groupadmin) references User(userid)    
 );
 
 create table if not exists Contest (

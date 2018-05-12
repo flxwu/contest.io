@@ -17,7 +17,14 @@
 
              <v-expansion-panel-content v-for="item in items" :key="item.taskid">
 
-               <div slot="header">{{ item.taskname }}</div>
+               <div slot="header">{{ item.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
+                   <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
+                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
+                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="float:left; width: 100px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
+                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="float:left; width: 100px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
+                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
+                   <v-progress-linear v-else style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
+               </div>
 
               <v-card>
 
@@ -25,7 +32,7 @@
 
                 <!-- Tags -->
                 <div class="chiptag">
-                  <v-chip small :key="tag"  v-for="tag in JSON.parse(item.tags)">{{ tag }}</v-chip>
+                  <v-chip small :key="tag"  v-for="tag in item.tasktags">{{ tag }}</v-chip>
                 </div>
 
                 <!-- TODO: add link to codeforces -->
@@ -76,13 +83,13 @@ export default {
   data () {
     return {
       items: [
-        { taskid: 1, taskname: "TEst", tags: "[\"data structures\", \"dsu\", \"geometry\", \"trees\"]" }
+
       ]
     }
   },
   mounted() {
     axios.get("http://localhost:5000/api/tasks?tags=geometry")
-      .then(response => {this.items = response.data})
+      .then(response => {  this.items = response.data })
   }
 }
 </script>

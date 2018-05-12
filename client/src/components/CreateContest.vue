@@ -23,8 +23,6 @@
 
                 <template v-for="item in filteredItems">
 
-                   <v-subheader v-if="item.header" :key="item.id + '-header'">{{ item.header }}</v-subheader>
-
                    <v-divider :key="item.id + '-divider'"></v-divider>
 
                    <v-list-tile avatar :key="item.id + '-avatar'" @click="alert()">
@@ -34,7 +32,7 @@
                      </v-list-tile-action>
 
                     <v-list-tile-content>
-                       <v-list-tile-title v-html="item.id"></v-list-tile-title>
+                       <v-list-tile-title v-html="item.title"></v-list-tile-title>
                     </v-list-tile-content>
 
                     <v-chip :key="tag" small v-for="tag in item.tags.slice(0, 4)" >{{ tag }}</v-chip>
@@ -206,14 +204,6 @@ export default {
       this.selectedtags.splice(this.selectedtags.indexOf(item), 1)
       this.selectedtags = [...this.selectedtags]
     }
-  },
-  computed: {
-    // Get current date
-    now: function () {
-      return new Date().toISOString().substring(0, 10)
-    },
-    // This filters tasks by title
-    
   },
   computed: {
     // Get current date

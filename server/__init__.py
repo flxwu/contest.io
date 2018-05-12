@@ -11,8 +11,8 @@ import server.settings as settings
 
 
 class RegexConverter(BaseConverter):
-    def __init__(self, url_map, *items):
-        super(RegexConverter, self).__init__(url_map)
+    def __init__(self, urlMap, *items):
+        super(RegexConverter, self).__init__(urlMap)
         self.regex = items[0]
 
 app = Flask(__name__, # pylint: disable=invalid-name

@@ -21,13 +21,13 @@
             <div style="height: 320px; overflow: scroll; margin-top: 40px; min-width: 100%;">
               <v-list>
 
-                <template v-for="item in filteredItems()">
+                <template v-for="item in filteredItems">
 
-                   <v-subheader v-if="item.header" :key="item.id">{{ item.header }}</v-subheader>
+                   <v-subheader v-if="item.header" :key="item.id + '-header'">{{ item.header }}</v-subheader>
 
-                   <v-divider :key="item.id"></v-divider>
+                   <v-divider :key="item.id + '-divider'"></v-divider>
 
-                   <v-list-tile avatar :key="item.id" @click="alert()">
+                   <v-list-tile avatar :key="item.id + '-avatar'" @click="alert()">
 
                      <v-list-tile-action>
                          <v-icon @click="addTask(item.id)">add</v-icon>
@@ -40,8 +40,6 @@
                     <v-chip :key="tag" small v-for="tag in item.tags.slice(0, 4)" >{{ tag }}</v-chip>
 
                    </v-list-tile>
-
-                   <v-divider :key="item.id"></v-divider>
 
                  </template>
 
@@ -209,20 +207,17 @@ export default {
       this.selectedtags = [...this.selectedtags]
     },
     // This filters tasks by title
-    filteredItems() {
-      return this.items.filter((i) => {
-          if(this.searchtitle) {
-            return i.title.includes(this.searchtitle) && i.tags.join('').includes(this.selectedtags.join(''))
-          } else {
-            return false
-          }
-      })
-    }
+    
   },
   computed: {
     // Get current date
     now: function () {
       return new Date().toISOString().substring(0, 10)
+    },
+    filteredItems() {
+      return this.items.filter(item => {
+        return item.title.toLowerCase().includes(this.searchtitle.toLowerCase()) && this.selectedtags.every(selectedtag => item.tags.includes(selectedtag))
+      })
     }
   }
 }

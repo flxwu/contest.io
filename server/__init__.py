@@ -122,13 +122,13 @@ def auth_user():
         models.update_user(
             updatedValues=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.USER_USERNAME, userLoginName)),
-            set_conditions=('{}=\"{}\"'.format(
+            setConditions=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.USER_USERID,
                 session.get('user_id', None)
             )))
     else:
         models.delete_user(
-            delete_conditions=(
+            deleteConditions=(
                 '{}=\"{}\"'.format(
                     settings.DB_COLUMNS.USER_USERNAME,
                     'defaultUser')))
@@ -136,7 +136,7 @@ def auth_user():
             updatedValues=(
                 '{}=\"{}\"'.format(
                     settings.DB_COLUMNS.USER_OAUTH_TOKEN, session.get(
-                        'oauth_token', None))), set_conditions=(
+                        'oauth_token', None))), setConditions=(
                 '{}=\"{}\"'.format(
                     settings.DB_COLUMNS.USER_USERNAME, userLoginName)))
         user = models.select_user(
@@ -184,8 +184,8 @@ def api_tasks():
                 combinedTags = []
                 for tag in tagsArray:
                     combinedTags.append('{} LIKE "%{}%"'.format(
-                            settings.DB_COLUMNS.TASK_TASKTAGS,
-                            tag))
+                        settings.DB_COLUMNS.TASK_TASKTAGS,
+                        tag))
                 returnJSON = models.select_task(
                     params=('*'),
                     conditions=(tuple(combinedTags)))
@@ -213,9 +213,9 @@ def api_contests():
             'code') if request.args.get('code') else None
 
         if queryparam_code() is None:
-            content={"Error": "\'code\' parameter missing"}
+            content = {"Error": "\'code\' parameter missing"}
             return content, HTTPStatus.BAD_REQUEST
-        returnJSON=models.select_contest(
+        returnJSON = models.select_contest(
             params=('*'),
             conditions=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.CONTEST_CONTESTCODE,
@@ -224,11 +224,11 @@ def api_contests():
         )
         return jsonify(returnJSON)
     elif request.method == 'POST':
-        postJSON=request.get_json()
+        postJSON = request.get_json()
         if not postJSON:
             return None
         else:
-            contestCode=models.insert_contest(
+            contestCode = models.insert_contest(
                 postJSON[settings.DB_COLUMNS.CONTEST_CONTESTNAME],
                 postJSON[settings.DB_COLUMNS.CONTEST_DATE_START],
                 postJSON[settings.DB_COLUMNS.CONTEST_DATE_END],

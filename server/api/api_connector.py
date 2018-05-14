@@ -35,7 +35,7 @@ class Tasks(EndpointInterface):
         try:
             if self.rawdata:
                 self.problems = self.rawdata['result']['problems']
-        except Exception as exception:
+        except Exception as exception: # pylint: disable=broad-except
             print(exception)
 
     def insert_to_database(self):

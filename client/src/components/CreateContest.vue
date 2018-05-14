@@ -242,7 +242,7 @@ export default {
         }
       }
 
-      axios.post('localhost:5000/api/contests', {
+      axios.post('http://localhost:5000/api/contests', {
         "contestname": this.contestname,
         "date_start": new Date().toISOString().substring(0, 10),
         "date_end": this.contestdate,

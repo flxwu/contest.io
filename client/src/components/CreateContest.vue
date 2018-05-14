@@ -21,6 +21,14 @@
             <div style="height: 320px; overflow: scroll; margin-top: 40px; min-width: 100%;">
               <v-list>
 
+                <template v-if="!filteredItems.length">
+
+                  <v-list-tile-content>
+                     <v-list-tile-title style="color: red; text-align: center;">No tasks match search parameters!</v-list-tile-title>
+                  </v-list-tile-content>
+
+                </template>
+
                 <template v-for="item in filteredItems">
 
                    <v-divider :key="item.id + '-divider'"></v-divider>
@@ -34,6 +42,14 @@
                     <v-list-tile-content>
                        <v-list-tile-title v-html="item.title"></v-list-tile-title>
                     </v-list-tile-content>
+
+                    <small style="margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
+                    <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="width: 50px; margin-right: 50px;" value="20" buffer-value="20" color="green"></v-progress-linear>
+                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="width: 50px; margin-right: 50px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
+                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="width: 50px; margin-right: 50px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
+                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="width: 50px; margin-right: 50px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
+                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="width: 50px; margin-right: 50px;" value="100" color="red"></v-progress-linear>
+                    <v-progress-linear v-else style="width: 50px; margin-right: 50px;" value="100" color="red"></v-progress-linear>
 
                     <v-chip :key="tag" small v-for="tag in item.tags.slice(0, 4)" >{{ tag }}</v-chip>
 
@@ -52,7 +68,14 @@
 
              <v-expansion-panel-content v-for="item in tasks" :key="item.id">
 
-               <div slot="header">{{ item.title }}</div>
+               <div slot="header">{{ item.title }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
+                   <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
+                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
+                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="float:left; width: 100px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
+                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="float:left; width: 100px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
+                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
+                   <v-progress-linear v-else style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
+               </div>
 
               <v-card>
 
@@ -144,31 +167,31 @@ export default {
       dialog2: false,
       first: 0,
       items: [
-        { id: 1, title: '808 Get your life together', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 2, title: '809 Procrastinate Task 1 until your life is over', tags: ['Bruteforce'] },
-        { id: 3, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 4, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 5, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 6, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 7, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 8, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 9, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 10, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 11, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 12, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 13, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 14, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 15, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 16, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 17, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 18, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 19, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'] },
-        { id: 20, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'] }
+        { id: 1, title: '808 Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "F" },
+        { id: 2, title: '809 Procrastinate Task 1 until your life is over', tags: ['Bruteforce'], codeforces_index: "A" },
+        { id: 3, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 4, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 5, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 6, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 7, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 8, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 9, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 10, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 11, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 12, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 13, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 14, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 15, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 16, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 17, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 18, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 19, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 20, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" }
       ],
       selectedtags: ['Bruteforce', 'Binary Trees'],
       tasks: [
-        { id: 21, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'] },
-        { id: 22, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'] }
+        { id: 21, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 22, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'], codeforces_index: "A" }
       ],
       groups: [ { name: "Group 1" }, { name: "Group 2" }, { name: "Group 3" }, { name: "Group 4" }, { name: "Group 5" } ],
       selectedgroups: [],

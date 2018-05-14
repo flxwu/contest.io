@@ -17,10 +17,11 @@ class RegexConverter(BaseConverter):
 
 
 app = Flask(__name__,  # pylint: disable=invalid-name
-            static_folder="../client/dist/static",
-            template_folder="../client/dist")
+            static_folder="../dist",
+            template_folder="../dist")
+
 # CORS
-CORS(app)
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 # Flask app config
 app.config['GITHUB_CLIENT_ID'] = settings.GITHUB_CLIENT_ID
 app.config['GITHUB_CLIENT_SECRET'] = settings.GITHUB_CLIENT_SECRET
@@ -48,24 +49,14 @@ def before_request():
                     session['user_id'])))
 
 
-@app.route('/robots.txt')
-def serve_robots():
-    return app.send_static_file('robots.txt')
-
-
-@app.route('/favicon.ico')
-def serve_favicon():
-    return app.send_static_file('favicon.ico')
-
-
 @app.route('/')
 def index():
-    if app.debug:
-        return requests.get('http://localhost:3000/index.html').text
+    # if app.debug:
+    #     return requests.get('http://localhost:3000/index.html').text
     return render_template("index.html")
 
 
-@app.route('/github-login')
+@app.route('/api/github-login')
 def auth_githublogin():
     if session.get('user_id', None) is None:
         return github.authorize()
@@ -73,7 +64,7 @@ def auth_githublogin():
         return 'Already logged in'
 
 
-@app.route('/github-logout')
+@app.route('/api/github-logout')
 def auth_githublogout():
     session.pop('user_id', None)
     session.pop('oauth_token', None)
@@ -84,10 +75,10 @@ def auth_githublogout():
 def token_getter():
     user = g.user
     if user is not None:
-        return user[-1]
+        return user['oauth_token']
 
 
-@app.route('/github-callback')
+@app.route('/api/github-callback')
 @github.authorized_handler
 def auth_githubcallback(oauthToken):
     nextUrl = request.args.get('next') or url_for('index')
@@ -103,17 +94,20 @@ def auth_githubcallback(oauthToken):
     user = models.select_user(params=('*'), conditions=(
         '{}=\"{}\"'.format(settings.DB_COLUMNS.USER_OAUTH_TOKEN, oauthToken)))
 
-    session['user_id'] = user[0]
+    session['user_id'] = user['userid']
     session.pop('oauth_token', None)
     session['oauth_token'] = oauthToken
     return redirect(nextUrl)
 
 
-@app.route('/github-user')
+@app.route('/api/github-user')
 def auth_user():
     # update inserted User
-    userData = github.get('user')
-    userLoginName = userData['login']
+    try:
+        userData = github.get('user')
+        userLoginName = userData['login']
+    except flask_github.GitHubError as GithubError:
+        return str(GithubError)
 
     # check if user already exists
     user = models.select_user(params=('*'), conditions=(
@@ -146,7 +140,7 @@ def auth_user():
                     settings.DB_COLUMNS.USER_USERNAME,
                     userLoginName)))
         session.pop('user_id', None)
-        session['user_id'] = user[0]
+        session['user_id'] = user['userid']
     return str(userData)
 
 
@@ -241,20 +235,10 @@ def api_contests():
     else:
         return None
 
-
-@app.route('/sockjs-node/<path>')
-def sockjs(path):
-
-    if app.debug:
-        return requests.post(
-            'http://localhost:3000/sockjs-node/{}'.format(path))
-    return render_template('index.html')
-
-
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
 
-    if app.debug:
-        return requests.get('http://localhost:3000/{}'.format(path)).text
-    return render_template('index.html')
+    # if app.debug:
+    #     return requests.get('http://localhost:3000/{}'.format(path)).text
+    return app.send_static_file(path)

@@ -108,7 +108,7 @@ def auth_githubcallback(oauthToken):
     return redirect(nextUrl)
 
 
-@app.route('/user')
+@app.route('/github-user')
 def auth_user():
     # update inserted User
     userData = github.get('user')

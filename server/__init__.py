@@ -15,9 +15,10 @@ class RegexConverter(BaseConverter):
         super(RegexConverter, self).__init__(urlMap)
         self.regex = items[0]
 
-app = Flask(__name__, # pylint: disable=invalid-name
+
+app = Flask(__name__,  # pylint: disable=invalid-name
             static_folder="../client/dist/static",
-            template_folder="../client/dist") 
+            template_folder="../client/dist")
 # CORS
 CORS(app)
 # Flask app config
@@ -29,10 +30,10 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.url_map.converters['regex'] = RegexConverter
 
 # Set Endpoints
-TasksEndpoint = api_connector.Tasks() # pylint: disable=invalid-name
+TasksEndpoint = api_connector.Tasks()  # pylint: disable=invalid-name
 
 # Github-Flask
-github = flask_github.GitHub(app) # pylint: disable=invalid-name
+github = flask_github.GitHub(app)  # pylint: disable=invalid-name
 
 
 @app.before_request
@@ -154,8 +155,12 @@ def api_tasks():
     if request.method == 'GET':
         returnJSON = None
 
-        def queryparam_tags(): return request.args.get(
-            'tags') if request.args.get('tags') else None
+        def queryparam_tags():
+            return request.args.get('tags') if request.args.get('tags') else None
+
+        def tasks_json_modify(taskJson: dict):
+            taskJson['tasktags'] = json.loads(taskJson['tasktags'])
+            return taskJson
 
         if queryparam_tags() is None:
             tasksInDatabase = models.select_task(params=('*'))
@@ -175,17 +180,15 @@ def api_tasks():
             if queryparam_tags() is None:
                 returnJSON = models.select_task(params=('*'))
             else:
+                tagsArray = str(queryparam_tags()).split(';')
+                combinedTags = []
+                for tag in tagsArray:
+                    combinedTags.append('{} LIKE "%{}%"'.format(
+                            settings.DB_COLUMNS.TASK_TASKTAGS,
+                            tag))
                 returnJSON = models.select_task(
                     params=('*'),
-                    conditions=(
-                        '{} LIKE "%{}%"'.format(
-                            settings.DB_COLUMNS.TASK_TASKTAGS,
-                            queryparam_tags())))
-
-        def tasks_json_modify(taskJson: dict):
-            taskJson['tasktags'] = json.loads(taskJson['tasktags'])
-            return taskJson
-
+                    conditions=(tuple(combinedTags)))
         return jsonify([tasks_json_modify(task) for task in returnJSON])
     elif request.method == 'POST':
         return None
@@ -210,9 +213,9 @@ def api_contests():
             'code') if request.args.get('code') else None
 
         if queryparam_code() is None:
-            content = {"Error": "\'code\' parameter missing"}
+            content={"Error": "\'code\' parameter missing"}
             return content, HTTPStatus.BAD_REQUEST
-        returnJSON = models.select_contest(
+        returnJSON=models.select_contest(
             params=('*'),
             conditions=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.CONTEST_CONTESTCODE,
@@ -221,11 +224,11 @@ def api_contests():
         )
         return jsonify(returnJSON)
     elif request.method == 'POST':
-        postJSON = request.get_json()
+        postJSON=request.get_json()
         if not postJSON:
             return None
         else:
-            contestCode = models.insert_contest(
+            contestCode=models.insert_contest(
                 postJSON[settings.DB_COLUMNS.CONTEST_CONTESTNAME],
                 postJSON[settings.DB_COLUMNS.CONTEST_DATE_START],
                 postJSON[settings.DB_COLUMNS.CONTEST_DATE_END],

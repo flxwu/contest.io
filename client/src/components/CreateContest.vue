@@ -140,7 +140,9 @@
               </v-card-text>
             </v-card>
 
-            <v-btn large class="light-green accent-3 green--text text--darken-4" style="margin-top: 10px; width: 100%; margin-left: 0px;" to="">Create Contest</v-btn>
+            <v-text-field required style="margin-top: 20px;" v-model="contestname" id="contestname" name="contestname" label="Contest Name"></v-text-field>
+            <v-checkbox label="Public" v-model="visible"></v-checkbox>
+            <v-btn type="button" large class="light-green accent-3 green--text text--darken-4" style="margin-top: 10px; width: 100%; margin-left: 0px;" to="" @click="postContest()">Create Contest</v-btn>
           </v-flex>
 
         </v-layout>
@@ -153,6 +155,7 @@
 <script>
 // eslint-disable-next-line
 import moment from 'vue-moment'
+import axios from 'axios'
 
 export default {
   name: 'createcontest',
@@ -165,6 +168,8 @@ export default {
       searchtags: "",
       contestdate: "",
       dialog2: false,
+      contestname: "",
+      visible: false,
       first: 0,
       items: [
         { id: 1, title: '808 Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "F" },
@@ -226,6 +231,31 @@ export default {
     removeSelectedTag(item) {
       this.selectedtags.splice(this.selectedtags.indexOf(item), 1)
       this.selectedtags = [...this.selectedtags]
+    },
+    // This posts data to api
+    postContest() {
+
+      let config = {
+        headers: {
+          'Content-Type': "application/json",
+          "Access-Control-Allow-Origin": "*"
+        }
+      }
+
+      axios.post('localhost:5000/api/contests', {
+        "contestname": this.contestname,
+        "date_start": new Date().toISOString().substring(0, 10),
+        "date_end": this.contestdate,
+        "visible": this.visible,
+        "contestgroups": this.selectedgroups
+      }, config)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
     }
   },
   computed: {

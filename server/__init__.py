@@ -21,7 +21,7 @@ app = Flask(__name__,  # pylint: disable=invalid-name
             template_folder="../dist")
 
 # CORS
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}}) # pylint:disable=invalid-name
 # Flask app config
 app.config['GITHUB_CLIENT_ID'] = settings.GITHUB_CLIENT_ID
 app.config['GITHUB_CLIENT_SECRET'] = settings.GITHUB_CLIENT_SECRET
@@ -106,8 +106,8 @@ def auth_user():
     try:
         userData = github.get('user')
         userLoginName = userData['login']
-    except flask_github.GitHubError as GithubError:
-        return str(GithubError)
+    except flask_github.GitHubError as githubError:
+        return str(githubError)
 
     # check if user already exists
     user = models.select_user(params=('*'), conditions=(

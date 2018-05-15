@@ -242,12 +242,14 @@ export default {
         }
       }
 
+      // Create AXIOS Post request
       axios.post('http://localhost:5000/api/contests', {
         "contestname": this.contestname,
         "date_start": new Date().toISOString().substring(0, 10),
         "date_end": this.contestdate,
         "visible": this.visible,
-        "contestgroups": this.selectedgroups
+        "contestgroups": this.selectedgroups,
+        "contains_tasks": this.tasks
       }, config)
       .then(function (response) {
         console.log(response);

@@ -11,28 +11,22 @@ matrix:
         - pip3 install Flask==$FLASK
         - pip3 install -r requirements.txt
         - pip3 install -e .
-      before_script:
-        - chmod +x .travis/writetoenv.sh && ./.travis/writetoenv.sh
-        - chmod +x .travis/deploy.sh
-      script:
-        - pylint server
-        # - nosetests
-      after_success:
-        - ./.travis/deploy.sh
-
-    - language: node_js
-      node_js:
-        - "node"
-        - "8"
-      install:
         - yarn add eslint
         - yarn install
         - cd client/ && yarn install
+        - cd ../
       before_script:
+        - chmod +x .travis/writetoenv.sh && ./.travis/writetoenv.sh
         - cd ../ && yarn db-rewrite
+        - chmod +x .travis/deploy.sh
       script:
+        - pylint server
         - cd client/ && yarn lint --ext .js,.vue
+        - cd ../
         - yarn build
+        # - nosetests
+      after_success:
+        - ./.travis/deploy.sh
       cache:
         directories:
           - "node_modules"

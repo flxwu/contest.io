@@ -15,12 +15,11 @@ deploy_to_heroku() {
       echo "Detected deploy to master branch..."
       git checkout master
       setup_git
-      cd client/ && yarn build
-      yarn db-rewrite
-      cd ../
       commit_files
       upload_files
+      echo "Setting up Heroku..."
       setup_heroku
+      echo "Ṕushing to Heroku..."
       heroku git:remote --app contestio-dev
       heroku config:set FLASK_CONFIG=Production
       heroku config:set SECRET=SECRET_KEY
@@ -40,8 +39,9 @@ commit_files() {
 }
 
 upload_files() {
+  echo "Pushing to master..."
   git remote add origin https://${GH_TOKEN}@github.com/flxwu/contest.io.git > /dev/null 2>&1
-  git push --set-upstream origin master 
+  git push --set-upstream origin master --force 
 }
 
 deploy_to_heroku

@@ -54,7 +54,7 @@ export default {
   created: function () {
     axios.get("http://localhost:5000/api/github-user")
     .then(resp => {
-      if(!(resp.data = "401: Bad credentials")) {
+      if(!(resp.data == "401: Bad credentials")) {
         this.loggedIn = true
         this.user = resp.data
         console.log(resp)

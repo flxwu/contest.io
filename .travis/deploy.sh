@@ -1,4 +1,4 @@
-#!/usr/bin/expect
+#!/bin/bash
 setup_heroku() {
   sudo curl https://cli-assets.heroku.com/install-standalone.sh | sh
   sudo echo "machine api.heroku.com
@@ -16,6 +16,7 @@ deploy_to_heroku() {
       git checkout master
       setup_git
       cd client/ && yarn build
+      yarn db-rewrite
       cd ../
       commit_files
       upload_files

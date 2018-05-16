@@ -17,7 +17,7 @@ matrix:
         - cd ../
       before_script:
         - chmod +x .travis/writetoenv.sh && ./.travis/writetoenv.sh
-        - cd ../ && yarn db-rewrite
+        - yarn db-rewrite
         - chmod +x .travis/deploy.sh
       script:
         - pylint server

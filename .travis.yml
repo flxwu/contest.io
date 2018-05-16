@@ -23,7 +23,7 @@ matrix:
         - pylint server
         - cd client/ && yarn lint --ext .js,.vue
         - cd ../
-        - yarn build
+        - cd client/ && yarn build
         # - nosetests
       after_success:
         - ./.travis/deploy.sh

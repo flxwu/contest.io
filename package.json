@@ -7,10 +7,13 @@
   "author": "Felix Wu <mail@flxwu.com>",
   "license": "MIT",
   "devDependencies": {
-    "concurrently": "^3.5.1" 
+    "concurrently": "^3.5.1"
   },
   "scripts": {
     "dev": "concurrently \"cd client/ && yarn serve\" \"FLASK_APP=server FLASK_DEBUG=1 flask run --with-threads\"",
     "db-rewrite": "rm -rf server/database/database.db && sqlite3 server/database/database.db < server/database/schema.sql"
+  },
+  "dependencies": {
+    "eslint": "^4.19.1"
   }
 }

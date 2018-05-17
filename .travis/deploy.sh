@@ -1,7 +1,7 @@
 #!/bin/bash
 setup_heroku() {
   sudo curl https://cli-assets.heroku.com/install-standalone.sh | sh
-  sudo echo "machine api.heroku.com
+  echo "machine api.heroku.com
   login ${HEROKU_LOGIN}
   password ${HEROKU_TOKEN}
 machine git.heroku.com
@@ -30,8 +30,8 @@ deploy_to_heroku() {
 }
 
 setup_git() {
-  git config --global user.email "mail@flxwu.com"
-  git config --global user.name "Felix Wu"
+  git config --global user.email "travis@travis-ci.org"
+  git config --global user.name "Travis CI"
 }
 
 commit_files() {

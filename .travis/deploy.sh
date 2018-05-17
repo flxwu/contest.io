@@ -26,7 +26,7 @@ deploy_to_heroku() {
       heroku config:set FLASK_CONFIG=Production
       heroku config:set SECRET=SECRET_KEY
       heroku config:set WEB_CONCURRENCY=3
-      git push heroku
+      git push heroku --force
     fi
   fi
 }

@@ -25,6 +25,7 @@ matrix:
         - cd ../
         - cd client/ && yarn build
         # - nosetests
+        - cd ../
         - ./.travis/deploy.sh
       cache:
         directories:

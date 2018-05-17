@@ -1,2 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([[2],{DHyd:function(e,n,t){"use strict";t.r(n);var r=function(){var e=this,n=e.$createElement;e._self._c;return e._m(0)},a=[function(){var e=this,n=e.$createElement,t=e._self._c||n;return t("div",[t("p",[e._v("Dashboard")])])}],c=t("KHd+"),l={},s=Object(c["a"])(l,r,a,!1,null,null,null);n["default"]=s.exports}}]);
-//# sourceMappingURL=2.6ad78336.js.map

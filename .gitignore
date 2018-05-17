@@ -4,7 +4,7 @@
 # node (logs, build files)
 node_modules/
 client/node_modules/
-client/dist
+dist/
 *yarn-error.log
 *package-lock.json
 

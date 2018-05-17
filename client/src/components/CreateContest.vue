@@ -74,8 +74,6 @@
                        <v-list-tile-title v-html="item.title"></v-list-tile-title>
                     </v-list-tile-content>
 
-
-
                     <small style="margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
                     <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="width: 50px; margin-right: 50px;" value="20" buffer-value="20" color="green"></v-progress-linear>
                     <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="width: 50px; margin-right: 50px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
@@ -287,10 +285,10 @@ export default {
         "contains_tasks": this.tasks
       }, config)
       .then(function (response) {
-        console.log(response);
+        //console.log(response);
       })
       .catch(function (error) {
-        console.log(error);
+        //console.log(error);
       });
 
     }

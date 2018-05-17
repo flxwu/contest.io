@@ -36,6 +36,7 @@ setup_git() {
 
 commit_files() {
   git add .
+  git add --force server/database/database.db
   git commit --message "Travis build: $TRAVIS_BUILD_NUMBER"
 }
 

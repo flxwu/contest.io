@@ -32,7 +32,7 @@
                 <template v-for="item in filteredItems">
 
                   <!-- Detail view popup -->
-                  <v-dialog v-model="detailPopup" max-width="500px">
+                  <v-dialog v-model="detailPopup" max-width="500px" :key="item.id + '-popup'">
                     <v-card>
                       <v-card-title>
                         Detail
@@ -283,13 +283,13 @@ export default {
         "visible": this.visible,
         "contestgroups": this.selectedgroups,
         "contains_tasks": this.tasks
-      }, config)
-      .then(function (response) {
-        //console.log(response);
-      })
-      .catch(function (error) {
-        //console.log(error);
-      });
+      }, config);
+      // .then(function (response) {
+      //   //console.log(response);
+      // })
+      // .catch(function (error) {
+      //   //console.log(error);
+      // });
 
     }
   },

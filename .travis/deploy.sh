@@ -19,6 +19,8 @@ deploy_to_heroku() {
       upload_files
       echo "Setting up Heroku..."
       setup_heroku
+      echo "Committing gitignored Heroku files..."
+      commit_heroku_files
       echo "Ṕushing to Heroku..."
       heroku git:remote --app contestio-dev
       heroku config:set FLASK_CONFIG=Production
@@ -36,8 +38,15 @@ setup_git() {
 
 commit_files() {
   git add .
-  git add --force server/database/database.db
   git commit --message "Travis build: $TRAVIS_BUILD_NUMBER"
+}
+
+commit_heroku_files() {
+  # force to add dist folder (needed for deployment, but not included in dev repo)
+  git add --force dist/
+  # s.a., database
+  git add --force server/database/database.db
+  git commit --message "Heroku build for Travis build $TRAVIS_BUILD_NUMBER"
 }
 
 upload_files() {

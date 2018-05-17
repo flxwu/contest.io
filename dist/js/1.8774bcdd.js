@@ -1,2 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([[1],{Zqpj:function(e,n,t){"use strict";t.r(n);var r=function(){var e=this,n=e.$createElement;e._self._c;return e._m(0)},l=[function(){var e=this,n=e.$createElement,t=e._self._c||n;return t("div",[t("p",[e._v("Profile")])])}],c=t("KHd+"),u={},i=Object(c["a"])(u,r,l,!1,null,null,null);n["default"]=i.exports}}]);
-//# sourceMappingURL=1.8774bcdd.js.map

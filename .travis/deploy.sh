@@ -41,6 +41,7 @@ commit_files() {
 
 upload_files() {
   echo "Pushing to master..."
+  echo $GH_TOKEN
   git remote add origin https://${GH_TOKEN}@github.com/flxwu/contest.io.git > /dev/null 2>&1
   git push --set-upstream origin master --force 
 }

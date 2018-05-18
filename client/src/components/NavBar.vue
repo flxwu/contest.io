@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from 'axios';
 
 export default {
   name: 'navbar',
@@ -45,23 +45,23 @@ export default {
   data() {
     return {
       loginDialog: false,
-      github: "",
+      github: '',
       loggedIn: false,
       user: {}
-    }
+    };
   },
   // See if a user is logged in
   created: function () {
-    axios.get("/api/github-user")
-    .then(resp => {
-      if(!(resp.data == "401: Bad credentials")) {
-        this.loggedIn = true
-        this.user = resp.data
-        console.log(resp)
-      }
-    })
+    axios.get('/api/github-user')
+      .then(resp => {
+        if(!(resp.data == '401: Bad credentials')) {
+          this.loggedIn = true;
+          this.user = resp.data;
+          console.log(resp);
+        }
+      });
   }
-}
+};
 </script>
 
 <style scoped>

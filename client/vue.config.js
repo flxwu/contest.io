@@ -1,3 +1,5 @@
+/*eslint-env node*/
+
 module.exports = {
   devServer: {
     proxy: {
@@ -8,5 +10,5 @@ module.exports = {
       }
     }
   }
-}
+};
 

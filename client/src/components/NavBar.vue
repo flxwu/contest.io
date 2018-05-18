@@ -12,7 +12,7 @@
 
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn to="/dashboard" flat>Dashboard</v-btn>
-        <v-btn flat href="http://localhost:5000/api/github-logout" v-if="loggedIn">Logout</v-btn>
+        <v-btn flat href="/api/github-logout" v-if="loggedIn">Logout</v-btn>
         <v-btn flat @click="loginDialog=true" v-if="!loggedIn">Login</v-btn>
         <v-dialog v-model="loginDialog" max-width="500px">
         <v-card>
@@ -20,7 +20,7 @@
             Login
           </v-card-title>
           <v-card-text>
-            <v-btn color="grey darken-4" style="color: white" href="http://localhost:5000/api/github-login"><span style="font-size: 2em; margin-right: 10px;"><i class="fab fa-github"></i></span> Login with Github</v-btn>
+            <v-btn color="grey darken-4" style="color: white" href="/api/github-login"><span style="font-size: 2em; margin-right: 10px;"><i class="fab fa-github"></i></span> Login with Github</v-btn>
           </v-card-text>
           <v-card-actions>
             <v-btn color="primary" flat @click.stop="loginDialog=false">Close</v-btn>
@@ -52,7 +52,7 @@ export default {
   },
   // See if a user is logged in
   created: function () {
-    axios.get("http://localhost:5000/api/github-user")
+    axios.get("/api/github-user")
     .then(resp => {
       if(!(resp.data == "401: Bad credentials")) {
         this.loggedIn = true

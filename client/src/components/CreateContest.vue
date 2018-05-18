@@ -276,7 +276,7 @@ export default {
       }
 
       // Create AXIOS Post request
-      axios.post('http://localhost:5000/api/contests', {
+      axios.post('/api/contests', {
         "contestname": this.contestname,
         "date_start": new Date().toISOString().substring(0, 10),
         "date_end": this.contestdate,

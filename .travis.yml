@@ -21,7 +21,7 @@ matrix:
         - chmod +x .travis/deploy.sh
       script:
         - pylint server
-        - cd client/ && yarn lint --ext .js,.vue
+        - cd client/ && yarn lint --fix
         - cd ../
         - cd client/ && yarn build
         # - nosetests

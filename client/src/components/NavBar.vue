@@ -43,7 +43,7 @@
         <span style="float: left; margin: 20px; margin-top: 15px;" class="title">Navigation</span>
         <v-btn small flat fab style="float: right; margin-top: 10px;" @click.stop="drawer = false"><v-icon>chevron_left</v-icon></v-btn>
         <v-divider light></v-divider>
-        <v-list-tile v-for="link in links" :key="link.title" :to="link.url" light>
+        <v-list-tile v-for="link in links" :key="link.title" :to="link.url">
           <v-list-tile-action>
             <v-icon>arrow_right</v-icon>
           </v-list-tile-action>

@@ -6,7 +6,7 @@
       <NavBar></NavBar>
 
       <router-view></router-view>
-    
+
     </v-app>
   </div>
 </template>
@@ -29,4 +29,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 }
+
 </style>

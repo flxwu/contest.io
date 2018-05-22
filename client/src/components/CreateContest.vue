@@ -268,6 +268,13 @@ export default {
     // This posts data to api
     postContest() {
 
+      // Ensure required fields are filled out
+      if(this.contestdate == "" || this.contestname == "" || this.tasks == []) {
+        // TODO: Replace alert with more user-friendly alert
+        alert('All required fileds must be filled out! (name, date and tasks)')
+        return false
+      }
+
       let config = {
         headers: {
           'Content-Type': "application/json",

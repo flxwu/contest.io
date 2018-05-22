@@ -73,7 +73,8 @@ export default {
       user: {},
       drawer: false,
       links: [
-        { title: "test", url: "contestcreate" }
+        { title: "Home", url: "/" },
+        { title: "Contests", url: "contests" }
       ]
     }
   },

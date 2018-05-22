@@ -30,6 +30,15 @@
         A name for the contest must be entered!
       </v-alert>
 
+      <v-alert
+        :value="alertAxios"
+        type="error"
+        transition="scale-transition"
+        style="margin-bottom: 10px; width: 90%;"
+      >
+        An error occured when attempting to create contest! ( {{ this.axiosError }} )
+      </v-alert>
+
       <v-form>
         <v-layout>
 
@@ -234,6 +243,8 @@ export default {
       alertTask: false,
       alertDate: false,
       alertName: false,
+      alertAxios: false,
+      axiosError: "",
       items: [
         { id: 1, title: '808 Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Binary Trees', 'Binary Trees', 'Binary Trees', 'Binary Trees', '1', '2'], codeforces_index: "F" },
         { id: 2, title: '809 Procrastinate Task 1 until your life is over', tags: ['Bruteforce'], codeforces_index: "A" },
@@ -333,18 +344,22 @@ export default {
       // Create AXIOS Post request
       axios.post('http://localhost:5000/api/contests', {
         "contestname": this.contestname,
-        "date_start": new Date().toISOString().substring(0, 10),
+        "date_start": new Date().toISOString().substring(0, 19),
         "date_end": this.contestdate,
         "visible": this.visible,
         "contestgroups": this.selectedgroups,
         "contains_tasks": this.tasks
-      }, config);
-      // .then(function (response) {
-      //   //console.log(response);
-      // })
-      // .catch(function (error) {
-      //   //console.log(error);
-      // });
+      }, config)
+      .then(function () {
+        window.location = "/";
+      })
+      .catch(function (error) {
+        this.axiosError = error;
+        this.alertAxios = true;
+        setTimeout(() => {
+          this.alertAxios = false;
+        }, 30000)
+      });
 
     }
   },

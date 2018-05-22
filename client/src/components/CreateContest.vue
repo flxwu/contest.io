@@ -2,6 +2,33 @@
   <div id="createcontest">
     <!-- Layout container -->
     <v-container>
+      <!-- Required field alerts -->
+      <v-alert
+        :value="alertTask"
+        type="error"
+        transition="scale-transition"
+        style="margin-bottom: 10px; width: 90%;"
+      >
+        At least one task must be selected!
+      </v-alert>
+
+      <v-alert
+        :value="alertDate"
+        type="error"
+        transition="scale-transition"
+        style="margin-bottom: 10px; width: 90%;"
+      >
+        An ending date for the contest must be selected!
+      </v-alert>
+
+      <v-alert
+        :value="alertName"
+        type="error"
+        transition="scale-transition"
+        style="margin-bottom: 10px; width: 90%;"
+      >
+        A name for the contest must be entered!
+      </v-alert>
 
       <v-form>
         <v-layout>
@@ -139,7 +166,7 @@
             <v-card>
               <v-card-text>
                 <v-text v-if="contestdate">Contest End: {{ contestdate | moment("dddd, MMMM Do YYYY") }} (23:59)</v-text>
-                <v-btn small color="primary" dark @click.stop="dialog2 = true">Chose a date...</v-btn>
+                <v-btn small color="primary" dark @click.stop="dialog2 = true">Choose a date...*</v-btn>
 
                 <v-dialog v-model="dialog2" max-width="500px">
                   <v-card>
@@ -204,6 +231,9 @@ export default {
       visible: false,
       detailPopup: false,
       first: 0,
+      alertTask: false,
+      alertDate: false,
+      alertName: false,
       items: [
         { id: 1, title: '808 Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Binary Trees', 'Binary Trees', 'Binary Trees', 'Binary Trees', '1', '2'], codeforces_index: "F" },
         { id: 2, title: '809 Procrastinate Task 1 until your life is over', tags: ['Bruteforce'], codeforces_index: "A" },
@@ -269,9 +299,27 @@ export default {
     postContest() {
 
       // Ensure required fields are filled out
-      if(this.contestdate == "" || this.contestname == "" || this.tasks == []) {
-        // TODO: Replace alert with more user-friendly alert
-        alert('All required fileds must be filled out! (name, date and tasks)')
+      if(this.tasks.length == 0) {
+        this.alertTask = true;
+        setTimeout(() => {
+          this.alertTask = false;
+        }, 10000)
+        return false
+      }
+
+      if(this.contestdate == "") {
+        this.alertDate = true;
+        setTimeout(() => {
+          this.alertDate = false;
+        }, 10000)
+        return false
+      }
+
+      if(this.contestname == "") {
+        this.alertName = true;
+        setTimeout(() => {
+          this.alertName = false;
+        }, 10000)
         return false
       }
 

@@ -68,13 +68,13 @@
                 <template v-for="item in filteredItems">
 
                   <!-- Detail view popup -->
-                  <v-dialog v-model="detailPopup" max-width="500px" :key="item.id + '-popup'">
+                  <v-dialog v-model="detailPopup" max-width="500px" :key="item.codeforces_id + '-popup'">
                     <v-card>
                       <v-card-title>
                         Detail
                       </v-card-title>
                       <v-card-text>
-                        {{ item.title }}<br>
+                        {{ item.taskname }}<br>
                         <small style="margin-right: 10px; float: left; margin-top: 8px; margin-left: 40%;">Difficulty ({{ item.codeforces_index }}): </small>
                         <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="width: 50px; margin-right: 50px; float: left;" value="20" buffer-value="20" color="green"></v-progress-linear>
                         <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="width: 50px; margin-right: 50px; float: left;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
@@ -87,38 +87,38 @@
 
                       <!-- Tags -->
                       <div class="text-xs-center chiptag">
-                        <v-chip :key="tag" small v-for="tag in item.tags" >{{ tag }}</v-chip>
+                        <v-chip :key="tag" small v-for="tag in item.tasktags" >{{ tag }}</v-chip>
                       </div>
 
                       <v-card-actions>
 
-                        <v-btn flat color="orange" to="https://www.codeforces.org">Solve</v-btn>
+                        <v-btn flat color="orange" :to="item.codeforces_url">Solve</v-btn>
                         <v-btn color="primary" flat @click.stop="detailPopup=false">Close</v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
 
-                   <v-divider :key="item.id + '-divider'"></v-divider>
+                   <v-divider :key="item.codeforces_id + '-divider'"></v-divider>
 
-                   <v-list-tile avatar :key="item.id + '-avatar'" @click="alert()">
+                   <v-list-tile avatar :key="item.codeforces_id + '-avatar2'" @click="alert()">
 
                      <v-list-tile-action>
-                         <v-icon @click="addTask(item.id)">add</v-icon>
+                         <v-icon @click="addTask(item.codeforces_id)">add</v-icon>
                      </v-list-tile-action>
 
                     <v-list-tile-content @click="detailPopup=true">
-                       <v-list-tile-title v-html="item.title"></v-list-tile-title>
+                       <v-list-tile-title v-html="item.taskname"></v-list-tile-title>
                     </v-list-tile-content>
 
-                    <small style="position: absolute; left: 440px;">Difficulty ({{ item.codeforces_index }}): </small>
-                    <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="position: absolute; left: 525px; top: 12px; width: 50px;" value="20" buffer-value="20" color="green"></v-progress-linear>
-                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="position: absolute; left: 525px; top: 12px; width: 50px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
-                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="position: absolute; left: 525px; top: 12px; width: 50px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
-                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="position: absolute; left: 525px; top: 12px; width: 50px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
-                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="position: absolute; left: 525px; top: 12px; width: 50px;" value="100" color="red"></v-progress-linear>
-                    <v-progress-linear v-else style="position: absolute; left: 525px; top: 12px; width: 50px;" value="100" color="red"></v-progress-linear>
+                    <small style="position: absolute; left: 380px;">Difficulty ({{ item.codeforces_index }}): </small>
+                    <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="position: absolute; left: 465px; top: 12px; width: 50px;" value="20" buffer-value="20" color="green"></v-progress-linear>
+                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="position: absolute; left: 465px; top: 12px; width: 50px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
+                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="position: absolute; left: 465px; top: 12px; width: 50px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
+                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="position: absolute; left: 465px; top: 12px; width: 50px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
+                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="position: absolute; left: 465px; top: 12px; width: 50px;" value="100" color="red"></v-progress-linear>
+                    <v-progress-linear v-else style="position: absolute; left: 465px; top: 12px; width: 50px;" value="100" color="red"></v-progress-linear>
 
-                    <v-chip :key="tag" small v-for="tag in item.tags.slice(0, 2)" >{{ tag }}</v-chip>
+                    <v-chip :key="tag" small v-for="tag in item.tasktags.slice(0, 2)" >{{ tag }}</v-chip>
 
                    </v-list-tile>
 
@@ -136,7 +136,7 @@
              <v-expansion-panel-content v-for="item in tasks" :key="item.id">
 
                <div slot="header">
-                  {{ item.title }}<br>
+                  {{ item.taskname }}<br>
                   <small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
                    <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="float:left; width: 50px;" value="20" buffer-value="20" color="green"></v-progress-linear>
                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="float:left; width: 50px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
@@ -152,11 +152,11 @@
 
                 <!-- Tags -->
                 <div class="text-xs-center chiptag">
-                  <v-chip :key="tag" small v-for="tag in item.tags" >{{ tag }}</v-chip>
+                  <v-chip :key="tag" small v-for="tag in item.tasktags" >{{ tag }}</v-chip>
                 </div>
 
                 <v-card-actions>
-                  <v-btn flat color="red" @click="removeTask(item.id)">Remove</v-btn>
+                  <v-btn flat color="red" @click="removeTask(item.codeforces_id)">Remove</v-btn>
                   <v-btn flat color="orange" to="https://www.codeforces.org">Solve</v-btn>
                 </v-card-actions>
 
@@ -245,33 +245,9 @@ export default {
       alertName: false,
       alertAxios: false,
       axiosError: "",
-      items: [
-        { id: 1, title: '808 Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Binary Trees', 'Binary Trees', 'Binary Trees', 'Binary Trees', '1', '2'], codeforces_index: "F" },
-        { id: 2, title: '809 Procrastinate Task 1 until your life is over', tags: ['Bruteforce'], codeforces_index: "A" },
-        { id: 3, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 4, title: 'Task 4: Live the good life!', tags: ['Bruteforce'], codeforces_index: "A" },
-        { id: 5, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 6, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 7, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 8, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 9, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 10, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 11, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 12, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 13, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 14, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 15, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 16, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 17, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 18, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 19, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 20, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" }
-      ],
+      items: [],
       selectedtags: ['Bruteforce', 'Binary Trees'],
-      tasks: [
-        { id: 21, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 22, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'], codeforces_index: "A" }
-      ],
+      tasks: [],
       groups: [ { name: "Group 1" }, { name: "Group 2" }, { name: "Group 3" }, { name: "Group 4" }, { name: "Group 5" } ],
       selectedgroups: [],
       empty: []
@@ -280,25 +256,25 @@ export default {
   methods: {
     // This method moves task object from items array to tasks array
     addTask(id) {
-      var temp = this.items.find(x => x.id === id)
+      var temp = this.items.find(x => x.codeforces_id === id)
       this.items.splice(this.items.indexOf(temp), 1);
       this.tasks.push(temp);
     },
     // This method moves task object from tasks array to items array
     removeTask(id) {
-      var temp = this.tasks.find(x => x.id === id)
+      var temp = this.tasks.find(x => x.codeforces_id === id)
       this.tasks.splice(this.tasks.indexOf(temp), 1);
       this.items.push(temp);
     },
     // Add groups to selection
     selectGroup(name) {
-      var temp = this.groups.find(x => x.name === name)
+      var temp = this.groups.find(x => x.taskname === name)
       this.groups.splice(this.groups.indexOf(temp), 1);
       this.selectedgroups.push(temp);
     },
     // Remove groups to selection
     unselectGroup(name) {
-      var temp = this.selectedgroups.find(x => x.name === name)
+      var temp = this.selectedgroups.find(x => x.taskname === name)
       this.selectedgroups.splice(this.selectedgroups.indexOf(temp), 1);
       this.groups.push(temp);
     },
@@ -370,9 +346,13 @@ export default {
     },
     filteredItems() {
       return this.items.filter(item => {
-        return item.title.toLowerCase().includes(this.searchtitle.toLowerCase()) && this.selectedtags.every(selectedtag => item.tags.includes(selectedtag))
+        return item.taskname.toLowerCase().includes(this.searchtitle.toLowerCase()) && this.selectedtags.every(selectedtag => item.tasktags.includes(selectedtag))
       })
     }
+  },
+  mounted() {
+    axios.get("http://localhost:5000/api/tasks?tags=geometry")
+      .then(response => {  this.items = response.data })
   }
 }
 </script>

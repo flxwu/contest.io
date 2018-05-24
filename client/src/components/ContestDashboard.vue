@@ -88,6 +88,7 @@ export default {
     }
   },
   mounted() {
+    // TODO: Replace with route to contains_tasks
     axios.get("http://localhost:5000/api/tasks?tags=geometry")
       .then(response => {  this.items = response.data })
   }

@@ -59,7 +59,9 @@
 
                 <template v-if="!filteredItems.length">
 
-                  <v-list-tile-content>
+                  <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
+
+                  <v-list-tile-content v-else>
                      <v-list-tile-title style="color: red; text-align: center;">No tasks match search parameters!</v-list-tile-title>
                   </v-list-tile-content>
 
@@ -246,11 +248,12 @@ export default {
       alertAxios: false,
       axiosError: "",
       items: [],
-      selectedtags: ['Bruteforce', 'Binary Trees'],
+      selectedtags: [],
       tasks: [],
       groups: [ { name: "Group 1" }, { name: "Group 2" }, { name: "Group 3" }, { name: "Group 4" }, { name: "Group 5" } ],
       selectedgroups: [],
-      empty: []
+      empty: [],
+      loading: true
     }
   },
   methods: {
@@ -352,7 +355,10 @@ export default {
   },
   mounted() {
     axios.get("http://localhost:5000/api/tasks?tags=geometry")
-      .then(response => {  this.items = response.data })
+      .then(response => {
+        this.items = response.data;
+        this.loading = false;
+      })
   }
 }
 </script>

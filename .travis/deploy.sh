@@ -44,6 +44,8 @@ commit_files() {
 commit_heroku_files() {
   # force to add dist folder (needed for deployment, but not included in dev repo)
   git add --force dist/
+  # .env variables
+  git add --force .env
   # s.a., database
   git add --force server/database/database.db
   git commit --message "Heroku build for Travis build $TRAVIS_BUILD_NUMBER"

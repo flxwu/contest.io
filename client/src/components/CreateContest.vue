@@ -70,7 +70,7 @@
                 <template v-for="item in filteredItems">
 
                   <!-- Detail view popup -->
-                  <v-dialog v-model="detailPopup" max-width="500px" :key="item.codeforces_id + '-popup'">
+                  <v-dialog v-model="detailPopup" max-width="500px" :key="item.taskid + '-popup'">
                     <v-card>
                       <v-card-title>
                         Detail
@@ -100,12 +100,12 @@
                     </v-card>
                   </v-dialog>
 
-                   <v-divider :key="item.codeforces_id + '-divider'"></v-divider>
+                   <v-divider :key="item.taskid + '-divider'"></v-divider>
 
-                   <v-list-tile avatar :key="item.codeforces_id + '-avatar2'" @click="alert()">
+                   <v-list-tile avatar :key="item.taskid + '-avatar2'" @click="alert()">
 
                      <v-list-tile-action>
-                         <v-icon @click="addTask(item.codeforces_id)">add</v-icon>
+                         <v-icon @click="addTask(item.taskid)">add</v-icon>
                      </v-list-tile-action>
 
                     <v-list-tile-content @click="detailPopup=true">
@@ -158,8 +158,8 @@
                 </div>
 
                 <v-card-actions>
-                  <v-btn flat color="red" @click="removeTask(item.codeforces_id)">Remove</v-btn>
-                  <v-btn flat color="orange" to="https://www.codeforces.org">Solve</v-btn>
+                  <v-btn flat color="red" @click="removeTask(item.taskid)">Remove</v-btn>
+                  <v-btn flat color="orange" :href="item.codeforces_url" target="blank">Solve</v-btn>
                 </v-card-actions>
 
               </v-card>
@@ -246,38 +246,38 @@ export default {
       alertDate: false,
       alertName: false,
       alertAxios: false,
-      axiosError: "",
+      axiosError: '',
       items: [],
       selectedtags: [],
       tasks: [],
-      groups: [ { name: "Group 1" }, { name: "Group 2" }, { name: "Group 3" }, { name: "Group 4" }, { name: "Group 5" } ],
+      groups: [ { name: 'Group 1' }, { name: 'Group 2' }, { name: 'Group 3' }, { name: 'Group 4' }, { name: 'Group 5' } ],
       selectedgroups: [],
       empty: [],
       loading: true
-    }
+    };
   },
   methods: {
     // This method moves task object from items array to tasks array
     addTask(id) {
-      var temp = this.items.find(x => x.codeforces_id === id)
+      var temp = this.items.find(x => x.taskid === id);
       this.items.splice(this.items.indexOf(temp), 1);
       this.tasks.push(temp);
     },
     // This method moves task object from tasks array to items array
     removeTask(id) {
-      var temp = this.tasks.find(x => x.codeforces_id === id)
+      var temp = this.tasks.find(x => x.taskid === id);
       this.tasks.splice(this.tasks.indexOf(temp), 1);
       this.items.push(temp);
     },
     // Add groups to selection
     selectGroup(name) {
-      var temp = this.groups.find(x => x.taskname === name)
+      var temp = this.groups.find(x => x.taskname === name);
       this.groups.splice(this.groups.indexOf(temp), 1);
       this.selectedgroups.push(temp);
     },
     // Remove groups to selection
     unselectGroup(name) {
-      var temp = this.selectedgroups.find(x => x.taskname === name)
+      var temp = this.selectedgroups.find(x => x.taskname === name);
       this.selectedgroups.splice(this.selectedgroups.indexOf(temp), 1);
       this.groups.push(temp);
     },
@@ -327,7 +327,7 @@ export default {
         'date_end': this.contestdate,
         'visible': this.visible,
         'contestgroups': this.selectedgroups,
-        'contains_tasks': this.tasks
+        'tasks': this.tasks.map(task => task.taskid)
       }, config)
         .then(function () {
           window.location = '/';
@@ -349,16 +349,16 @@ export default {
     },
     filteredItems() {
       return this.items.filter(item => {
-        return item.taskname.toLowerCase().includes(this.searchtitle.toLowerCase()) && this.selectedtags.every(selectedtag => item.tasktags.includes(selectedtag))
-      })
+        return item.taskname.toLowerCase().includes(this.searchtitle.toLowerCase()) && this.selectedtags.every(selectedtag => item.tasktags.includes(selectedtag));
+      });
     }
   },
   mounted() {
-    axios.get("/api/tasks?tags=geometry")
+    axios.get('/api/tasks?tags=geometry')
       .then(response => {
         this.items = response.data;
         this.loading = false;
-      })
+      });
   }
 };
 </script>

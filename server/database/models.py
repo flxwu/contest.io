@@ -40,7 +40,7 @@ def select_task(params=(), conditions=()):
         if cur.rowcount == 0:
             return None
         if params == () and conditions == ():
-            queryresult = cur.execute('SELECT * FROM Task')
+            queryResult = cur.execute('SELECT * FROM Task')
         else:
             # convert one-value tuples to real tuples
             if not isinstance(params, tuple):
@@ -60,9 +60,9 @@ def select_task(params=(), conditions=()):
                 for conditionString in conditions:
                     queryString += ' {} AND'.format(conditionString)
                 queryString = queryString[:-4]
-            queryresult = cur.execute(queryString)
+            queryResult = cur.execute(queryString)
 
-    response = queryresult.fetchall()
+    response = queryResult.fetchall()
     if len(response) == 0:
         return None
     else:
@@ -100,7 +100,7 @@ def select_contest(params=(), conditions=()):
         if cur.rowcount == 0:
             return None
         if params == () and conditions == ():
-            queryresult = cur.execute('SELECT * FROM Contest')
+            queryResult = cur.execute('SELECT * FROM Contest')
         else:
             # convert one-value tuples to real tuples
             if not isinstance(params, tuple):
@@ -120,13 +120,32 @@ def select_contest(params=(), conditions=()):
                 for conditionString in conditions:
                     queryString += ' {} AND'.format(conditionString)
                 queryString = queryString[:-4]
-            queryresult = cur.execute(queryString)
+            queryResult = cur.execute(queryString)
 
-    response = queryresult.fetchone()
+    response = queryResult.fetchone()
     if not response:
         return None
     else:
         return response
+
+
+def delete_contest(deleteConditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if deleteConditions == ():
+            return None
+        else:
+            if not isinstance(deleteConditions, tuple):
+                deleteConditions = (deleteConditions,)
+
+            queryString = 'DELETE FROM Contest WHERE'
+            for conditionString in deleteConditions:
+                queryString += ' {} AND'.format(conditionString)
+            queryString = queryString[:-4]
+            cur.execute(queryString)
+            dbcon.commit()
 
 
 def insert_user(name: str, usertype: str, oauthToken: str):
@@ -146,7 +165,7 @@ def select_user(params=(), conditions=()):
         if cur.rowcount == 0:
             return None
         if params == () and conditions == ():
-            queryresult = cur.execute('SELECT * FROM User')
+            queryResult = cur.execute('SELECT * FROM User')
         else:
             # convert one-value tuples to real tuples
             if not isinstance(params, tuple):
@@ -166,9 +185,9 @@ def select_user(params=(), conditions=()):
                 for conditionString in conditions:
                     queryString += ' {} AND'.format(conditionString)
                 queryString = queryString[:-4]
-            queryresult = cur.execute(queryString)
+            queryResult = cur.execute(queryString)
 
-    response = queryresult.fetchone()
+    response = queryResult.fetchone()
     if not response:
         return None
     else:
@@ -202,6 +221,7 @@ def update_user(updatedValues=(), setConditions=()):
                     queryString += ' {} AND'.format(conditionString)
                 queryString = queryString[:-4]
             cur.execute(queryString)
+            dbcon.commit()
 
 
 def delete_user(deleteConditions=()):
@@ -220,3 +240,69 @@ def delete_user(deleteConditions=()):
                 queryString += ' {} AND'.format(conditionString)
             queryString = queryString[:-4]
             cur.execute(queryString)
+            dbcon.commit()
+
+
+def insert_contains_task(
+        contest: int,
+        task: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute(
+            'INSERT INTO contains_task (contest, task) VALUES (?,?)',
+            (contest, task))
+        dbcon.commit()
+
+
+def select_contains_task(params=(), conditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if params == () and conditions == ():
+            return None
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(params, tuple):
+                params = (params,)
+            if not isinstance(conditions, tuple):
+                conditions = (conditions,)
+
+            if params != ():
+                queryString = 'SELECT'
+                # add a format-placeholder for every parameter
+                for paramString in params:
+                    queryString += ' {},'.format(paramString)
+                queryString = queryString[:-1]
+                queryString += ' FROM contains_task'
+            if conditions != ():
+                queryString += ' WHERE'
+                for conditionString in conditions:
+                    queryString += ' {} AND'.format(conditionString)
+                queryString = queryString[:-4]
+            queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchall()
+    if not response:
+        return None
+    else:
+        return response
+
+
+def get_tasks_in_contest(contestID: int):
+    queryString = 'SELECT Task.* \
+        FROM contains_task, Task \
+        WHERE contains_task.task = Task.taskid AND \
+            contains_task.contest = {}'.format(contestID)
+    with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchall()
+    if not response:
+        return None
+    else:
+        return response

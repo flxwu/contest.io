@@ -19,10 +19,12 @@ class DB_COLUMNS: #pylint: disable=invalid-name
     USER_USERTYPE = 'usertype'
     USER_DATE_JOINED = 'date_joined'
     USER_OAUTH_TOKEN = 'oauth_token'
+    
     TASK_TASKID = 'taskid'
     TASK_TASKNAME = 'taskname'
     TASK_TASKTAGS = 'tasktags'
     TASK_CODEFORCES_URL = 'codeforces_url'
+    
     CONTEST_CONTESTID = 'contestid'
     CONTEST_CONTESTCODE = 'contestcode'
     CONTEST_CONTESTNAME = 'contestname'
@@ -30,3 +32,7 @@ class DB_COLUMNS: #pylint: disable=invalid-name
     CONTEST_DATE_END = 'date_end'
     CONTEST_VISIBLE = 'visible'
     CONTEST_CONTESTGROUPS = 'contestgroups'
+    
+    CONTAINS_TASK_CONTEST = 'contest'
+    CONTAINS_TASK_TASK = 'task'
+    

@@ -2,9 +2,9 @@
   <div id="navbar">
 
     <!-- Toolbar -->
-    <v-toolbar>
+    <v-toolbar dark color="primary">
       <!-- Side Bar Icon -->
-      <v-toolbar-side-icon></v-toolbar-side-icon>
+      <v-toolbar-side-icon @click="drawer = true"></v-toolbar-side-icon>
 
       <router-link to="/" tag="v-toolbar-title" class="titlenavbar">Contest.io</router-link>
 
@@ -12,7 +12,7 @@
 
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn to="/dashboard" flat>Dashboard</v-btn>
-        <v-btn flat href="http://localhost:5000/api/github-logout" v-if="loggedIn">Logout</v-btn>
+        <v-btn flat href="/api/github-logout" v-if="loggedIn">Logout</v-btn>
         <v-btn flat @click="loginDialog=true" v-if="!loggedIn">Login</v-btn>
         <v-dialog v-model="loginDialog" max-width="500px">
         <v-card>
@@ -20,7 +20,7 @@
             Login
           </v-card-title>
           <v-card-text>
-            <v-btn color="grey darken-4" style="color: white" href="http://localhost:5000/api/github-login"><span style="font-size: 2em; margin-right: 10px;"><i class="fab fa-github"></i></span> Login with Github</v-btn>
+            <v-btn color="grey darken-4" style="color: white" href="/api/github-login"><span style="font-size: 2em; margin-right: 10px;"><i class="fab fa-github"></i></span> Login with Github</v-btn>
           </v-card-text>
           <v-card-actions>
             <v-btn color="primary" flat @click.stop="loginDialog=false">Close</v-btn>
@@ -30,6 +30,29 @@
       </v-toolbar-items>
 
     </v-toolbar>
+
+    <!-- Navigation sidebar -->
+
+    <v-navigation-drawer
+      v-model="drawer"
+      temporary
+      dark
+      absolute
+    >
+      <v-list class="pt-0" dense>
+        <span style="float: left; margin: 20px; margin-top: 15px;" class="title">Navigation</span>
+        <v-btn small flat fab style="float: right; margin-top: 10px;" @click.stop="drawer = false"><v-icon>chevron_left</v-icon></v-btn>
+        <v-divider light></v-divider>
+        <v-list-tile v-for="link in links" :key="link.title" :to="link.url">
+          <v-list-tile-action>
+            <v-icon>arrow_right</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>{{ link.title }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
 
   </div>
 </template>
@@ -47,12 +70,17 @@ export default {
       loginDialog: false,
       github: '',
       loggedIn: false,
-      user: {}
+      user: {},
+      drawer: false,
+      links: [
+        { title: 'Home', url: '/' },
+        { title: 'Contests', url: 'contests' }
+      ]
     };
   },
   // See if a user is logged in
   created: function () {
-    axios.get('http://localhost:5000/api/github-user')
+    axios.get('/api/github-user')
       .then(resp => {
         if(!(resp.data == '401: Bad credentials')) {
           this.loggedIn = true;
@@ -64,7 +92,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .titlenavbar:hover {
   cursor: pointer;
 }

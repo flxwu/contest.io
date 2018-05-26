@@ -1,7 +1,7 @@
 import sqlite3 as sql
 import json
 import secrets
-import dateutil
+from dateutil import parser
 
 DATABASE_PATH = 'server/database/database.db'
 
@@ -78,8 +78,8 @@ def insert_contest(
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         randomCode = secrets.token_hex(16)
-        dateStart = dateutil.parser.parse(dateStart)
-        dateEnd = dateutil.parser.parse(dateEnd)
+        dateStart = parser.parse(dateStart)
+        dateEnd = parser.parse(dateEnd)
         contestgroups = json.dumps(contestgroups)
         cur.execute(
             'INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible, contestgroups) VALUES (?,?,?,?,?,?)',

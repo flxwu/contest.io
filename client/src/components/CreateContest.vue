@@ -223,7 +223,7 @@
 <script>
 // eslint-disable-next-line
 import moment from 'vue-moment'
-import axios from 'axios'
+import axios from 'axios';
 
 export default {
   name: 'createcontest',
@@ -232,11 +232,11 @@ export default {
   },
   data () {
     return {
-      searchtitle: "",
-      searchtags: "",
-      contestdate: "",
+      searchtitle: '',
+      searchtags: '',
+      contestdate: '',
       dialog2: false,
-      contestname: "",
+      contestname: '',
       visible: false,
       detailPopup: false,
       first: 0,
@@ -244,67 +244,67 @@ export default {
       alertDate: false,
       alertName: false,
       alertAxios: false,
-      axiosError: "",
+      axiosError: '',
       items: [
-        { id: 1, title: '808 Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Binary Trees', 'Binary Trees', 'Binary Trees', 'Binary Trees', '1', '2'], codeforces_index: "F" },
-        { id: 2, title: '809 Procrastinate Task 1 until your life is over', tags: ['Bruteforce'], codeforces_index: "A" },
-        { id: 3, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 4, title: 'Task 4: Live the good life!', tags: ['Bruteforce'], codeforces_index: "A" },
-        { id: 5, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 6, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 7, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 8, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 9, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 10, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 11, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 12, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 13, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 14, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 15, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 16, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 17, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 18, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 19, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 20, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" }
+        { id: 1, title: '808 Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Binary Trees', 'Binary Trees', 'Binary Trees', 'Binary Trees', '1', '2'], codeforces_index: 'F' },
+        { id: 2, title: '809 Procrastinate Task 1 until your life is over', tags: ['Bruteforce'], codeforces_index: 'A' },
+        { id: 3, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 4, title: 'Task 4: Live the good life!', tags: ['Bruteforce'], codeforces_index: 'A' },
+        { id: 5, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 6, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 7, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 8, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 9, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 10, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 11, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 12, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 13, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 14, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 15, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 16, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 17, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 18, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 19, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 20, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: 'A' }
       ],
       selectedtags: ['Bruteforce', 'Binary Trees'],
       tasks: [
-        { id: 21, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 22, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'], codeforces_index: "A" }
+        { id: 21, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'], codeforces_index: 'A' },
+        { id: 22, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees', 'Bruteforce', 'Binary Trees'], codeforces_index: 'A' }
       ],
-      groups: [ { name: "Group 1" }, { name: "Group 2" }, { name: "Group 3" }, { name: "Group 4" }, { name: "Group 5" } ],
+      groups: [ { name: 'Group 1' }, { name: 'Group 2' }, { name: 'Group 3' }, { name: 'Group 4' }, { name: 'Group 5' } ],
       selectedgroups: [],
       empty: []
-    }
+    };
   },
   methods: {
     // This method moves task object from items array to tasks array
     addTask(id) {
-      var temp = this.items.find(x => x.id === id)
+      var temp = this.items.find(x => x.id === id);
       this.items.splice(this.items.indexOf(temp), 1);
       this.tasks.push(temp);
     },
     // This method moves task object from tasks array to items array
     removeTask(id) {
-      var temp = this.tasks.find(x => x.id === id)
+      var temp = this.tasks.find(x => x.id === id);
       this.tasks.splice(this.tasks.indexOf(temp), 1);
       this.items.push(temp);
     },
     // Add groups to selection
     selectGroup(name) {
-      var temp = this.groups.find(x => x.name === name)
+      var temp = this.groups.find(x => x.name === name);
       this.groups.splice(this.groups.indexOf(temp), 1);
       this.selectedgroups.push(temp);
     },
     // Remove groups to selection
     unselectGroup(name) {
-      var temp = this.selectedgroups.find(x => x.name === name)
+      var temp = this.selectedgroups.find(x => x.name === name);
       this.selectedgroups.splice(this.selectedgroups.indexOf(temp), 1);
       this.groups.push(temp);
     },
     removeSelectedTag(item) {
-      this.selectedtags.splice(this.selectedtags.indexOf(item), 1)
-      this.selectedtags = [...this.selectedtags]
+      this.selectedtags.splice(this.selectedtags.indexOf(item), 1);
+      this.selectedtags = [...this.selectedtags];
     },
     // This posts data to api
     postContest() {
@@ -314,67 +314,67 @@ export default {
         this.alertTask = true;
         setTimeout(() => {
           this.alertTask = false;
-        }, 10000)
-        return false
+        }, 10000);
+        return false;
       }
 
-      if(this.contestdate == "") {
+      if(this.contestdate == '') {
         this.alertDate = true;
         setTimeout(() => {
           this.alertDate = false;
-        }, 10000)
-        return false
+        }, 10000);
+        return false;
       }
 
-      if(this.contestname == "") {
+      if(this.contestname == '') {
         this.alertName = true;
         setTimeout(() => {
           this.alertName = false;
-        }, 10000)
-        return false
+        }, 10000);
+        return false;
       }
 
       let config = {
         headers: {
-          'Content-Type': "application/json",
-          "Access-Control-Allow-Origin": "*"
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
         }
-      }
+      };
 
       // Create AXIOS Post request
-      axios.post('http://localhost:5000/api/contests', {
-        "contestname": this.contestname,
-        "date_start": new Date().toISOString().substring(0, 19),
-        "date_end": this.contestdate,
-        "visible": this.visible,
-        "contestgroups": this.selectedgroups,
-        "contains_tasks": this.tasks
+      axios.post('/api/contests', {
+        'contestname': this.contestname,
+        'date_start': new Date().toISOString().substring(0, 19),
+        'date_end': this.contestdate,
+        'visible': this.visible,
+        'contestgroups': this.selectedgroups,
+        'contains_tasks': this.tasks
       }, config)
-      .then(function () {
-        window.location = "/";
-      })
-      .catch(function (error) {
-        this.axiosError = error;
-        this.alertAxios = true;
-        setTimeout(() => {
-          this.alertAxios = false;
-        }, 30000)
-      });
+        .then(function () {
+          window.location = '/';
+        })
+        .catch(function (error) {
+          this.axiosError = error;
+          this.alertAxios = true;
+          setTimeout(() => {
+            this.alertAxios = false;
+          }, 30000);
+        });
 
     }
   },
   computed: {
     // Get current date
     now: function () {
-      return new Date().toISOString().substring(0, 10)
+      return new Date().toISOString().substring(0, 10);
     },
     filteredItems() {
       return this.items.filter(item => {
-        return item.title.toLowerCase().includes(this.searchtitle.toLowerCase()) && this.selectedtags.every(selectedtag => item.tags.includes(selectedtag))
-      })
+        return item.title.toLowerCase().includes(this.searchtitle.toLowerCase()) && this.selectedtags.every(selectedtag => item.tags.includes(selectedtag));
+      });
     }
   }
-}
+};
 </script>
 
 <style scoped>

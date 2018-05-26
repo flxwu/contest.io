@@ -16,12 +16,17 @@ class RegexConverter(BaseConverter):
         self.regex = items[0]
 
 
+def get_queryparam(p: str): return request.args.get(  # pylint: disable=invalid-name
+    p) if request.args.get(p) else None
+
+
 app = Flask(__name__,  # pylint: disable=invalid-name
             static_folder="../dist",
             template_folder="../dist")
 
 # CORS
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}}) # pylint:disable=invalid-name
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}}  # pylint:disable=invalid-name
+            )
 # Flask app config
 app.config['GITHUB_CLIENT_ID'] = settings.GITHUB_CLIENT_ID
 app.config['GITHUB_CLIENT_SECRET'] = settings.GITHUB_CLIENT_SECRET
@@ -149,14 +154,11 @@ def api_tasks():
     if request.method == 'GET':
         returnJSON = None
 
-        def queryparam_tags():
-            return request.args.get('tags') if request.args.get('tags') else None
-
         def tasks_json_modify(taskJson: dict):
             taskJson['tasktags'] = json.loads(taskJson['tasktags'])
             return taskJson
 
-        if queryparam_tags() is None:
+        if get_queryparam('tags') is None:
             tasksInDatabase = models.select_task(params=('*'))
         else:
             tasksInDatabase = models.select_task(
@@ -164,17 +166,17 @@ def api_tasks():
                 conditions=(
                     '{} LIKE "%{}%"'.format(
                         settings.DB_COLUMNS.TASK_TASKTAGS,
-                        queryparam_tags())))
+                        get_queryparam('tags'))))
 
         if tasksInDatabase is not None:
             returnJSON = tasksInDatabase
         else:
             # response = TasksEndpoint.get(tags=queryparam_tags())
-            TasksEndpoint.get(tags=queryparam_tags())
-            if queryparam_tags() is None:
+            apiResponse = TasksEndpoint.get(tags=get_queryparam('tags'))
+            if get_queryparam('tags') is None:
                 returnJSON = models.select_task(params=('*'))
             else:
-                tagsArray = str(queryparam_tags()).split(';')
+                tagsArray = str(get_queryparam('tags')).split(';')
                 combinedTags = []
                 for tag in tagsArray:
                     combinedTags.append('{} LIKE "%{}%"'.format(
@@ -183,7 +185,10 @@ def api_tasks():
                 returnJSON = models.select_task(
                     params=('*'),
                     conditions=(tuple(combinedTags)))
-        return jsonify([tasks_json_modify(task) for task in returnJSON])
+        if (isinstance(apiResponse, requests.exceptions.RequestException)):
+            return str(apiResponse)
+        else:
+            return jsonify([tasks_json_modify(task) for task in returnJSON])
     elif request.method == 'POST':
         return None
     else:
@@ -199,29 +204,37 @@ def api_contests():
             "date_start": "2017-05-12",
             "date_end": "2017-06-12",
             "visible": 1,
-            "contestgroups": [1, 2, 3]
+            "contestgroups": [1, 2, 3] (groupids),
+            "tasks": [1,2,3] (taskids)
     }
     """
     if request.method == 'GET':
-        def queryparam_code(): return request.args.get(
-            'code') if request.args.get('code') else None
-
-        if queryparam_code() is None:
+        if get_queryparam('code') is None:
             content = {"Error": "\'code\' parameter missing"}
             return content, HTTPStatus.BAD_REQUEST
-        returnJSON = models.select_contest(
+
+        contestJSON = models.select_contest(
             params=('*'),
             conditions=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.CONTEST_CONTESTCODE,
-                queryparam_code()
+                get_queryparam('code')
             ))
         )
+
+        tasksInContestJSON = models.get_tasks_in_contest(
+            get_queryparam('code'))
+
+        returnJSON = contestJSON
+        returnJSON["tasks"] = tasksInContestJSON
+
         return jsonify(returnJSON)
     elif request.method == 'POST':
+
         postJSON = request.get_json()
         if not postJSON:
             return None
         else:
+            # insert contest to db contest table
             contestCode = models.insert_contest(
                 postJSON[settings.DB_COLUMNS.CONTEST_CONTESTNAME],
                 postJSON[settings.DB_COLUMNS.CONTEST_DATE_START],
@@ -229,11 +242,28 @@ def api_contests():
                 postJSON[settings.DB_COLUMNS.CONTEST_VISIBLE],
                 postJSON[settings.DB_COLUMNS.CONTEST_CONTESTGROUPS]
             )
+
+            # insert taskids with contestid in db contains_task table
+            for taskID in postJSON["tasks"]:
+                models.insert_contains_task(
+                    contestCode,
+                    taskID
+                )
             return contestCode
+
     elif request.method == 'DELETE':
-        return None
+        if get_queryparam('code') is None:
+            content = {"Error": "\'code\' parameter missing"}
+            return content, HTTPStatus.BAD_REQUEST
+        models.delete_contest(
+            deleteConditions=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.CONTEST_CONTESTCODE,
+                get_queryparam('code')
+            ))
+        )
     else:
         return None
+
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

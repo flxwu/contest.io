@@ -3,31 +3,30 @@ matrix:
     - language: python
       python: 
         - "3.6"
+      node_js:
+        - "node"
       env:
         - FLASK=1.0.2
       install:
         - pip3 install Flask==$FLASK
         - pip3 install -r requirements.txt
         - pip3 install -e .
-      before_script:
-        - chmod +x .travis/writetoenv.sh && .travis/writetoenv.sh
-      script:
-        - pylint server
-        # - nosetests
-
-    - language: node_js
-      node_js:
-        - "node"
-        - "8"
-      install:
         - yarn add eslint
         - yarn install
         - cd client/ && yarn install
+        - cd ../
       before_script:
-        - cd ../ && yarn db-rewrite
+        - chmod +x .travis/writetoenv.sh && ./.travis/writetoenv.sh
+        - yarn db-rewrite
+        - chmod +x .travis/deploy.sh
       script:
-        - cd client/ && yarn lint --ext .js,.vue
-        - yarn build
+        - pylint server
+        - cd client/ && yarn lint --fix
+        - cd ../
+        - cd client/ && yarn build
+        # - nosetests
+        - cd ../
+        - ./.travis/deploy.sh
       cache:
         directories:
           - "node_modules"

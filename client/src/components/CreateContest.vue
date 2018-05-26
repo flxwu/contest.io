@@ -225,7 +225,7 @@
 <script>
 // eslint-disable-next-line
 import moment from 'vue-moment'
-import axios from 'axios'
+import axios from 'axios';
 
 export default {
   name: 'createcontest',
@@ -234,11 +234,11 @@ export default {
   },
   data () {
     return {
-      searchtitle: "",
-      searchtags: "",
-      contestdate: "",
+      searchtitle: '',
+      searchtags: '',
+      contestdate: '',
       dialog2: false,
-      contestname: "",
+      contestname: '',
       visible: false,
       detailPopup: false,
       first: 0,
@@ -282,8 +282,8 @@ export default {
       this.groups.push(temp);
     },
     removeSelectedTag(item) {
-      this.selectedtags.splice(this.selectedtags.indexOf(item), 1)
-      this.selectedtags = [...this.selectedtags]
+      this.selectedtags.splice(this.selectedtags.indexOf(item), 1);
+      this.selectedtags = [...this.selectedtags];
     },
     // This posts data to api
     postContest() {
@@ -315,37 +315,33 @@ export default {
 
       let config = {
         headers: {
-          'Content-Type': "application/json",
-          "Access-Control-Allow-Origin": "*"
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
         }
-      }
+      };
 
       // Create AXIOS Post request
-      axios.post('http://localhost:5000/api/contests', {
-        "contestname": this.contestname,
-        "date_start": new Date().toISOString().substring(0, 19),
-        "date_end": this.contestdate,
-        "visible": this.visible,
-        "contestgroups": this.selectedgroups,
-        "contains_tasks": this.tasks
-      }, config)
-      .then(function () {
-        window.location = "/";
-      })
-      .catch(function (error) {
-        this.axiosError = error;
-        this.alertAxios = true;
-        setTimeout(() => {
-          this.alertAxios = false;
-        }, 30000)
-      });
+      axios.post('/api/contests', {
+        'contestname': this.contestname,
+        'date_start': new Date().toISOString().substring(0, 10),
+        'date_end': this.contestdate,
+        'visible': this.visible,
+        'contestgroups': this.selectedgroups,
+        'contains_tasks': this.tasks
+      }, config);
+      // .then(function (response) {
+      //   //console.log(response);
+      // })
+      // .catch(function (error) {
+      //   //console.log(error);
+      // });
 
     }
   },
   computed: {
     // Get current date
     now: function () {
-      return new Date().toISOString().substring(0, 10)
+      return new Date().toISOString().substring(0, 10);
     },
     filteredItems() {
       return this.items.filter(item => {
@@ -360,7 +356,7 @@ export default {
         this.loading = false;
       })
   }
-}
+};
 </script>
 
 <style scoped>

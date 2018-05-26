@@ -6,20 +6,20 @@
       <NavBar></NavBar>
 
       <router-view></router-view>
-    
+
     </v-app>
   </div>
 </template>
 
 <script>
-import NavBar from './components/NavBar.vue'
+import NavBar from './components/NavBar.vue';
 
 export default {
   name: 'app',
   components: {
     NavBar
   }
-}
+};
 </script>
 
 <style>
@@ -29,4 +29,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 }
+
 </style>

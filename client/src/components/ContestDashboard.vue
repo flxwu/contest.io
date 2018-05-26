@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from 'axios';
 
 export default {
   name: 'contestdashboard',
@@ -85,13 +85,13 @@ export default {
       items: [
 
       ]
-    }
+    };
   },
   mounted() {
-    axios.get("http://localhost:5000/api/tasks?tags=geometry")
-      .then(response => {  this.items = response.data })
+    axios.get('/api/tasks?tags=geometry')
+      .then(response => {  this.items = response.data; });
   }
-}
+};
 </script>
 
 <style scoped>

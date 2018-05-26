@@ -29,7 +29,7 @@ class Tasks(EndpointInterface):
         else:
             self.extract_problems()
             self.insert_to_database()
-            return self.rawdata['result']['problems']
+            return True
 
     def extract_problems(self):
         try:

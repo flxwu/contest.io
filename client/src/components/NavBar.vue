@@ -2,9 +2,9 @@
   <div id="navbar">
 
     <!-- Toolbar -->
-    <v-toolbar>
+    <v-toolbar dark color="primary">
       <!-- Side Bar Icon -->
-      <v-toolbar-side-icon></v-toolbar-side-icon>
+      <v-toolbar-side-icon @click="drawer = true"></v-toolbar-side-icon>
 
       <router-link to="/" tag="v-toolbar-title" class="titlenavbar">Contest.io</router-link>
 
@@ -31,6 +31,29 @@
 
     </v-toolbar>
 
+    <!-- Navigation sidebar -->
+
+    <v-navigation-drawer
+      v-model="drawer"
+      temporary
+      dark
+      absolute
+    >
+      <v-list class="pt-0" dense>
+        <span style="float: left; margin: 20px; margin-top: 15px;" class="title">Navigation</span>
+        <v-btn small flat fab style="float: right; margin-top: 10px;" @click.stop="drawer = false"><v-icon>chevron_left</v-icon></v-btn>
+        <v-divider light></v-divider>
+        <v-list-tile v-for="link in links" :key="link.title" :to="link.url">
+          <v-list-tile-action>
+            <v-icon>arrow_right</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>{{ link.title }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
+
   </div>
 </template>
 
@@ -47,7 +70,12 @@ export default {
       loginDialog: false,
       github: "",
       loggedIn: false,
-      user: {}
+      user: {},
+      drawer: false,
+      links: [
+        { title: "Home", url: "/" },
+        { title: "Contests", url: "contests" }
+      ]
     }
   },
   // See if a user is logged in
@@ -64,7 +92,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .titlenavbar:hover {
   cursor: pointer;
 }

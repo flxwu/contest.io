@@ -2,6 +2,42 @@
   <div id="createcontest">
     <!-- Layout container -->
     <v-container>
+      <!-- Required field alerts -->
+      <v-alert
+        :value="alertTask"
+        type="error"
+        transition="scale-transition"
+        style="margin-bottom: 10px; width: 90%;"
+      >
+        At least one task must be selected!
+      </v-alert>
+
+      <v-alert
+        :value="alertDate"
+        type="error"
+        transition="scale-transition"
+        style="margin-bottom: 10px; width: 90%;"
+      >
+        An ending date for the contest must be selected!
+      </v-alert>
+
+      <v-alert
+        :value="alertName"
+        type="error"
+        transition="scale-transition"
+        style="margin-bottom: 10px; width: 90%;"
+      >
+        A name for the contest must be entered!
+      </v-alert>
+
+      <v-alert
+        :value="alertAxios"
+        type="error"
+        transition="scale-transition"
+        style="margin-bottom: 10px; width: 90%;"
+      >
+        An error occured when attempting to create contest! ( {{ this.axiosError }} )
+      </v-alert>
 
       <v-form>
         <v-layout>
@@ -74,15 +110,15 @@
                        <v-list-tile-title v-html="item.title"></v-list-tile-title>
                     </v-list-tile-content>
 
-                    <small style="margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
-                    <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="width: 50px; margin-right: 50px;" value="20" buffer-value="20" color="green"></v-progress-linear>
-                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="width: 50px; margin-right: 50px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
-                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="width: 50px; margin-right: 50px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
-                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="width: 50px; margin-right: 50px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
-                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="width: 50px; margin-right: 50px;" value="100" color="red"></v-progress-linear>
-                    <v-progress-linear v-else style="width: 50px; margin-right: 50px;" value="100" color="red"></v-progress-linear>
+                    <small style="position: absolute; left: 440px;">Difficulty ({{ item.codeforces_index }}): </small>
+                    <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="position: absolute; left: 525px; top: 12px; width: 50px;" value="20" buffer-value="20" color="green"></v-progress-linear>
+                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="position: absolute; left: 525px; top: 12px; width: 50px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
+                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="position: absolute; left: 525px; top: 12px; width: 50px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
+                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="position: absolute; left: 525px; top: 12px; width: 50px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
+                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="position: absolute; left: 525px; top: 12px; width: 50px;" value="100" color="red"></v-progress-linear>
+                    <v-progress-linear v-else style="position: absolute; left: 525px; top: 12px; width: 50px;" value="100" color="red"></v-progress-linear>
 
-                    <v-chip :key="tag" small v-for="tag in item.tags.slice(0, 3)" >{{ tag }}</v-chip>
+                    <v-chip :key="tag" small v-for="tag in item.tags.slice(0, 2)" >{{ tag }}</v-chip>
 
                    </v-list-tile>
 
@@ -139,7 +175,7 @@
             <v-card>
               <v-card-text>
                 <v-text v-if="contestdate">Contest End: {{ contestdate | moment("dddd, MMMM Do YYYY") }} (23:59)</v-text>
-                <v-btn small color="primary" dark @click.stop="dialog2 = true">Chose a date...</v-btn>
+                <v-btn small color="primary" dark @click.stop="dialog2 = true">Choose a date...*</v-btn>
 
                 <v-dialog v-model="dialog2" max-width="500px">
                   <v-card>
@@ -204,11 +240,16 @@ export default {
       visible: false,
       detailPopup: false,
       first: 0,
+      alertTask: false,
+      alertDate: false,
+      alertName: false,
+      alertAxios: false,
+      axiosError: "",
       items: [
         { id: 1, title: '808 Get your life together', tags: ['Bruteforce', 'Binary Trees', 'Binary Trees', 'Binary Trees', 'Binary Trees', 'Binary Trees', '1', '2'], codeforces_index: "F" },
         { id: 2, title: '809 Procrastinate Task 1 until your life is over', tags: ['Bruteforce'], codeforces_index: "A" },
         { id: 3, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
-        { id: 4, title: 'Task 4: Live the good life!', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
+        { id: 4, title: 'Task 4: Live the good life!', tags: ['Bruteforce'], codeforces_index: "A" },
         { id: 5, title: 'Task 1: Get your life together', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
         { id: 6, title: 'Task 2: Procrastinate Task 1 until your life is over', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
         { id: 7, title: 'Task 3: Drink bleech to get over your depression', tags: ['Bruteforce', 'Binary Trees'], codeforces_index: "A" },
@@ -268,6 +309,31 @@ export default {
     // This posts data to api
     postContest() {
 
+      // Ensure required fields are filled out
+      if(this.tasks.length == 0) {
+        this.alertTask = true;
+        setTimeout(() => {
+          this.alertTask = false;
+        }, 10000)
+        return false
+      }
+
+      if(this.contestdate == "") {
+        this.alertDate = true;
+        setTimeout(() => {
+          this.alertDate = false;
+        }, 10000)
+        return false
+      }
+
+      if(this.contestname == "") {
+        this.alertName = true;
+        setTimeout(() => {
+          this.alertName = false;
+        }, 10000)
+        return false
+      }
+
       let config = {
         headers: {
           'Content-Type': "application/json",
@@ -278,18 +344,22 @@ export default {
       // Create AXIOS Post request
       axios.post('http://localhost:5000/api/contests', {
         "contestname": this.contestname,
-        "date_start": new Date().toISOString().substring(0, 10),
+        "date_start": new Date().toISOString().substring(0, 19),
         "date_end": this.contestdate,
         "visible": this.visible,
         "contestgroups": this.selectedgroups,
         "contains_tasks": this.tasks
-      }, config);
-      // .then(function (response) {
-      //   //console.log(response);
-      // })
-      // .catch(function (error) {
-      //   //console.log(error);
-      // });
+      }, config)
+      .then(function () {
+        window.location = "/";
+      })
+      .catch(function (error) {
+        this.axiosError = error;
+        this.alertAxios = true;
+        setTimeout(() => {
+          this.alertAxios = false;
+        }, 30000)
+      });
 
     }
   },

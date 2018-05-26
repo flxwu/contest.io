@@ -153,6 +153,7 @@ def auth_user():
 def api_tasks():
     if request.method == 'GET':
         returnJSON = None
+        apiResponse = None
 
         def tasks_json_modify(taskJson: dict):
             taskJson['tasktags'] = json.loads(taskJson['tasktags'])

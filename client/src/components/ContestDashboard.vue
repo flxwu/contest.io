@@ -77,39 +77,36 @@ import axios from 'axios';
 
 export default {
   name: 'contestdashboard',
-  components: {
-
-  },
-  data () {
+  components: {},
+  data() {
     return {
-      items: [
-
-      ]
+      items: []
     };
   },
   mounted() {
-    axios.get('/api/tasks?tags=geometry')
-      .then(response => {  this.items = response.data; });
+    axios.get('/api/tasks?tags=geometry').then(response => {
+      this.items = response.data;
+    });
   }
 };
 </script>
 
 <style scoped>
 .cardprogress {
-  margin-top: 30% !important;
+	margin-top: 30% !important;
 }
 
 .avatar {
-  margin-left: -52% !important;
-  margin-bottom: 2%;
-  margin-top: 1%;
+	margin-left: -52% !important;
+	margin-bottom: 2%;
+	margin-top: 1%;
 }
 
 .chiptag {
-  margin-left: 10px;
+	margin-left: 10px;
 }
 
 .vlink {
-  cursor: pointer;
+	cursor: pointer;
 }
 </style>

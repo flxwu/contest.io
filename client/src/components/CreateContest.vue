@@ -94,7 +94,7 @@
 
                       <v-card-actions>
 
-                        <v-btn flat color="orange" :to="item.codeforces_url">Solve</v-btn>
+                        <v-btn flat color="orange" :href="item.codeforces_url" target="blank">Solve</v-btn>
                         <v-btn color="primary" flat @click.stop="detailPopup=false">Close</v-btn>
                       </v-card-actions>
                     </v-card>
@@ -102,7 +102,7 @@
 
                    <v-divider :key="item.taskid + '-divider'"></v-divider>
 
-                   <v-list-tile avatar :key="item.taskid + '-avatar2'" @click="alert()">
+                   <v-list-tile avatar :key="item.taskid + '-avatar2'" @click="() => {}">
 
                      <v-list-tile-action>
                          <v-icon @click="addTask(item.taskid)">add</v-icon>
@@ -150,7 +150,7 @@
 
               <v-card>
 
-                <v-card-text>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</v-card-text>
+
 
                 <!-- Tags -->
                 <div class="text-xs-center chiptag">
@@ -354,7 +354,7 @@ export default {
     }
   },
   mounted() {
-    axios.get('/api/tasks?tags=geometry')
+    axios.get('/api/tasks')
       .then(response => {
         this.items = response.data;
         this.loading = false;

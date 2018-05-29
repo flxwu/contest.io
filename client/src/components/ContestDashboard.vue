@@ -6,7 +6,8 @@
       <v-layout>
 
         <v-flex xs6>
-            <!-- Task LIst -->
+
+            <!-- Task List -->
             <v-subheader class="display-1" style="margin-top: 2% !important;">Contest {{ $route.params.id }}</v-subheader>
 
             <router-link tag="v-avatar" to="/profile/1" class="grey lighten-4 avatar vlink" size="35px">
@@ -28,14 +29,11 @@
 
               <v-card>
 
-                <!-- <v-card-text>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</v-card-text> -->
-
                 <!-- Tags -->
                 <div class="chiptag">
                   <v-chip small :key="tag"  v-for="tag in item.tasktags">{{ tag }}</v-chip>
                 </div>
 
-                <!-- TODO: add link to codeforces -->
                 <v-card-actions>
                   <v-btn flat color="orange" :href="item.codeforces_url">Solve</v-btn>
                 </v-card-actions>

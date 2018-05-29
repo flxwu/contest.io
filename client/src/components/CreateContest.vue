@@ -223,7 +223,6 @@
 </template>
 
 <script>
-// eslint-disable-next-line
 import moment from 'vue-moment'
 import axios from 'axios';
 

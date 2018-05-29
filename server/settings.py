@@ -25,7 +25,6 @@ class DB_COLUMNS: #pylint: disable=invalid-name
     TASK_TASKTAGS = 'tasktags'
     TASK_CODEFORCES_URL = 'codeforces_url'
     
-    CONTEST_CONTESTID = 'contestid'
     CONTEST_CONTESTCODE = 'contestcode'
     CONTEST_CONTESTNAME = 'contestname'
     CONTEST_DATE_START = 'date_start'

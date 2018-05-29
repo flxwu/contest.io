@@ -77,7 +77,7 @@ def insert_contest(
         contestgroups: list):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
-        randomCode = secrets.token_hex(16)
+        randomCode = secrets.token_hex(8)
         dateStart = parser.parse(dateStart)
         dateEnd = parser.parse(dateEnd)
         contestgroups = json.dumps(contestgroups)
@@ -289,11 +289,11 @@ def select_contains_task(params=(), conditions=()):
         return response
 
 
-def get_tasks_in_contest(contestID: int):
+def get_tasks_in_contest(contestCode: int):
     queryString = 'SELECT Task.* \
         FROM contains_task, Task \
         WHERE contains_task.task = Task.taskid AND \
-            contains_task.contest = {}'.format(contestID)
+            contains_task.contest = \"{}\"'.format(contestCode)
     with sql.connect(DATABASE_PATH) as dbcon:
         dbcon.row_factory = dict_factory
         cur = dbcon.cursor()

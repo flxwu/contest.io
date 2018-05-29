@@ -78,12 +78,14 @@ export default {
   components: {},
   data() {
     return {
-      items: []
+      items: [],
+      name: ''
     };
   },
   mounted() {
-    axios.get('/api/tasks?tags=geometry').then(response => {
-      this.items = response.data;
+    axios.get('/api/contests?code=' + this.$route.params.id).then(response => {
+      this.items = response.data.tasks;
+      this.name = response.data.contestname;
     });
   }
 };

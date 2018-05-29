@@ -223,7 +223,8 @@
 </template>
 
 <script>
-import moment from 'vue-moment' // eslint-line-disable no-unused-vars
+// eslint-disable-next-line
+import moment from 'vue-moment'
 import axios from 'axios';
 
 export default {

@@ -244,7 +244,7 @@ def api_contests():
                 postJSON[settings.DB_COLUMNS.CONTEST_CONTESTGROUPS]
             )
 
-            # insert taskids with contestid in db contains_task table
+            # insert taskids with contestcode in db contains_task table
             for taskID in postJSON["tasks"]:
                 models.insert_contains_task(
                     contestCode,

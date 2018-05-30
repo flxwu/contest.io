@@ -8,7 +8,7 @@
         <v-flex xs6>
 
             <!-- Task List -->
-            <v-subheader class="display-1" style="margin-top: 2% !important;">Contest {{ $route.params.id }}</v-subheader>
+            <v-subheader class="display-1" style="margin-top: 2% !important;">Contest {{ name }}</v-subheader>
 
             <router-link tag="v-avatar" to="/profile/1" class="grey lighten-4 avatar vlink" size="35px">
               <img src="https://vuetifyjs.com/static/doc-images/lists/1.jpg" alt="avatar">
@@ -31,7 +31,7 @@
 
                 <!-- Tags -->
                 <div class="chiptag">
-                  <v-chip small :key="tag"  v-for="tag in item.tasktags">{{ tag }}</v-chip>
+                  <v-chip small :key="tag"  v-for="tag in JSON.parse(item.tasktags)">{{ tag }}</v-chip>
                 </div>
 
                 <v-card-actions>
@@ -78,12 +78,14 @@ export default {
   components: {},
   data() {
     return {
-      items: []
+      items: [],
+      name: ''
     };
   },
   mounted() {
-    axios.get('/api/tasks?tags=geometry').then(response => {
-      this.items = response.data;
+    axios.get('/api/contests?code=' + this.$route.params.id).then(response => {
+      this.items = response.data.tasks;
+      this.name = response.data.contestname;
     });
   }
 };

@@ -223,6 +223,7 @@
 </template>
 
 <script>
+// eslint-disable-next-line
 import moment from 'vue-moment'
 import axios from 'axios';
 
@@ -328,8 +329,8 @@ export default {
         'contestgroups': this.selectedgroups,
         'tasks': this.tasks.map(task => task.taskid)
       }, config)
-        .then(function () {
-          window.location = '/';
+        .then(function (resp) {
+          window.location = '/contest/' + resp.data;
         })
         .catch(function (error) {
           this.axiosError = error;
@@ -353,7 +354,7 @@ export default {
     }
   },
   mounted() {
-    axios.get('/api/tasks')
+    axios.get('/api/tasks?tags=geometry')
       .then(response => {
         this.items = response.data;
         this.loading = false;

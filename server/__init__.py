@@ -196,7 +196,9 @@ def api_tasks():
         return None
 
 
-@app.route('/api/contests', methods=['GET', 'POST', 'DELETE'])
+
+
+@app.route('/api/contest', methods=['GET', 'POST', 'DELETE'])
 def api_contests():
     """
     Contest Endpoint: POST with Content-Type = application/json

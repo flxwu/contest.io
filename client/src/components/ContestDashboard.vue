@@ -83,7 +83,7 @@ export default {
     };
   },
   mounted() {
-    axios.get('/api/contests?code=' + this.$route.params.id).then(response => {
+    axios.get('/api/contest?code=' + this.$route.params.id).then(response => {
       this.items = response.data.tasks;
       this.name = response.data.contestname;
     });

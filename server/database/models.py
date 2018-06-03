@@ -313,6 +313,7 @@ def insert_group_in_contest(
             (usergroup, contest))
         dbcon.commit()
 
+
 def select_group_in_contest(params=(), conditions=()):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
@@ -395,7 +396,7 @@ def select_in_usergroup(params=(), conditions=()):
     else:
         return response
 
-# TODO: 
+# TODO:
 # def get_users_in_contest(contestCode: int):
 #     queryString = 'SELECT Task.* \
 #         FROM in_usergroup, Contest \

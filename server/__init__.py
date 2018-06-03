@@ -323,7 +323,7 @@ def api_usergroup():
             ))
         return returnJSON
     elif request.method == 'POST':
-        if get_queryparam('users'):   
+        if get_queryparam('users'):
             # add user to group
             postJSON = request.get_json()
             if not postJSON:

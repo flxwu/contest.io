@@ -63,7 +63,8 @@ def select_task(params=(), conditions=()):
             queryResult = cur.execute(queryString)
 
     response = queryResult.fetchall()
-    if len(response) == 0:
+    response = response[0] if len(response) == 1 else response
+    if not response:
         return None
     else:
         return response
@@ -73,22 +74,19 @@ def insert_contest(
         name: str,
         dateStart: str,
         dateEnd: str,
-        visible: int,
-        contestgroups: list):
+        visible: int):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         randomCode = secrets.token_hex(8)
         dateStart = parser.parse(dateStart)
         dateEnd = parser.parse(dateEnd)
-        contestgroups = json.dumps(contestgroups)
         cur.execute(
-            'INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible, contestgroups) VALUES (?,?,?,?,?,?)',
+            'INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible) VALUES (?,?,?,?,?)',
             (randomCode,
                 name,
                 dateStart,
                 dateEnd,
-                visible,
-                contestgroups))
+                visible))
         dbcon.commit()
         return randomCode
 
@@ -122,7 +120,8 @@ def select_contest(params=(), conditions=()):
                 queryString = queryString[:-4]
             queryResult = cur.execute(queryString)
 
-    response = queryResult.fetchone()
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
     if not response:
         return None
     else:
@@ -187,7 +186,8 @@ def select_user(params=(), conditions=()):
                 queryString = queryString[:-4]
             queryResult = cur.execute(queryString)
 
-    response = queryResult.fetchone()
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
     if not response:
         return None
     else:
@@ -283,6 +283,7 @@ def select_contains_task(params=(), conditions=()):
             queryResult = cur.execute(queryString)
 
     response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
     if not response:
         return None
     else:
@@ -415,6 +416,7 @@ def get_tasks_in_contest(contestCode: int):
         queryResult = cur.execute(queryString)
 
     response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
     if not response:
         return None
     else:

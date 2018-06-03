@@ -321,12 +321,12 @@ export default {
       };
 
       // Create AXIOS Post request
-      axios.post('/api/contests', {
+      axios.post('/api/contest', {
         'contestname': this.contestname,
         'date_start': new Date().toISOString().substring(0, 19),
         'date_end': this.contestdate,
         'visible': this.visible,
-        'contestgroups': this.selectedgroups,
+        'usergroups': this.selectedgroups,
         'tasks': this.tasks.map(task => task.taskid)
       }, config)
         .then(function (resp) {

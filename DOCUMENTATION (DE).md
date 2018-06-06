@@ -89,7 +89,7 @@ Dafür wird im Back-End die Software `pylint` benutzt.
 Coding Style bezeichnet das Aussehen des Codes - und dafür gibt es Konventionen. Die in Python am weitesten verbreiteste is `autopep8`. Dieses Programm formatiert automatisch den Code und meldet Verstöße gegen die Konvention.
 
 ## 4.4 Datenbank
-
+![ER Diagramm](er-diagram.png)
 
 
 # 5. Continious Integration und Maintanability

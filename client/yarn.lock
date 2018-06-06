@@ -768,7 +768,7 @@
   version "3.0.0-beta.15"
   resolved "https://registry.yarnpkg.com/@vue/cli-overlay/-/cli-overlay-3.0.0-beta.15.tgz#e4b477bcbeaede138ce191e27d2222fac09078ed"
 
-"@vue/cli-plugin-babel@^3.0.0-beta.15":
+"@vue/cli-plugin-babel@^3.0.0-beta.11":
   version "3.0.0-beta.15"
   resolved "https://registry.yarnpkg.com/@vue/cli-plugin-babel/-/cli-plugin-babel-3.0.0-beta.15.tgz#95becf4a1b4ff6e1f1ac865bcf6e354d0f48924e"
   dependencies:
@@ -6589,9 +6589,9 @@ vue@^2.5.13:
   version "2.5.16"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.16.tgz#07edb75e8412aaeed871ebafa99f4672584a0085"
 
-vuetify@^1.0.18:
-  version "1.0.18"
-  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-1.0.18.tgz#56289ba7c6e5eee3d4ee4dacd5e7dded4aee4c08"
+vuetify@^1.0.19:
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-1.0.19.tgz#fb6d123dd1c217795fc2333e912c0ecbed2ed69e"
 
 watchpack@^1.5.0:
   version "1.6.0"

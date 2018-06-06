@@ -1,3 +1,24 @@
+# Table Of Contents
+
+- [1. Abstract](#1-abstract)
+- [2. Ausblick](#2-ausblick)
+- [3. Dokumentation – Front-End (Vue.js)](#3-dokumentation-%E2%80%93-front-end)
+  * [3.1. Das Framework - Vue.js](#31-das-framework---vuejs)
+    + [3.1.1. Wozu ein Framework?](#311--wozu-ein-framework)
+    + [3.1.2. Warum Vue?](#312--warum-vue)
+    + [3.1.3. Weitere verwendete Bibliotheken](#313--weitere-verwendete-bibliotheken)
+- [4. Dokumentation – Back-End (Flask)](#4-dokumentation--back-end-flask)
+  * [4.0. Wofür ein Back-End-Framework?](#40-wofur-ein-back-end-framework)
+  * [4.1. Warum Flask?](#41-warum-flask)
+    + [4.1.1 Weitere verwendete externe Bibliotheken](#411-weitere-verwendete-externe-bibliotheken)
+  * [4.2. Security](#42-security)
+  * [4.3. Coding Style und Linting](#43-coding-style-und-linting)
+  * [4.4 Datenbank](#44-datenbank)
+- [5. Continious Integration und Maintanability](#5-continious-integration-und-maintanability)
+  * [5.1. Continious Integration](#51-continious-integration)
+    + [5.1.1. Travis CI](#511-travis-ci)
+    + [5.1.2. CodeFactor und CodeClimate](#512-codefactor-und-codeclimate)
+
 # 1. Abstract   
 
 Contest.io soll eine einfache Plattform zur Erstellung von Programmierwettbewerben sein. Mit einstellbarem Zeitraum und individuelle Zusammenstellung von Aufgaben kann die Plattform auch als Ergänzung zum Unterricht dienen, da passend zum Lernmaterial Aufgaben bereitgestellt werden kann, wo der Lehrer individuellen Vorschritt genau Nachverfolgen kann.   
@@ -45,9 +66,9 @@ Dennoch ist es letztendlich Flask geworden, da ich recht gut Python beherrsche u
 
 - [requests](http://docs.python-requests.org/) - Netzwerkoperationen
 - [gunicorn](http://gunicorn.org/) - HTTP Server für Flask
-- [autopep8](https://github.com/hhatto/autopep8) - Coding-Style-Convention (s. [hier](#))
-- [pylint](https://github.com/PyCQA/pylint) - "Linting" (s. [hier](#))
-- [python-dotenv](https://github.com/theskumar/python-dotenv) - .env support (s. [hier](#))
+- [autopep8](https://github.com/hhatto/autopep8) - Coding-Style-Convention (s. [hier](#43-coding-style-und-linting))
+- [pylint](https://github.com/PyCQA/pylint) - "Linting" (s. [hier](#43-coding-style-und-linting))
+- [python-dotenv](https://github.com/theskumar/python-dotenv) - .env support (s. [hier](#42-security))
 
 ## 4.2. Security
 Da auch wir einige _Secrets_, also "geheime" Schlüssel wie die Api Keys von Github, in unserem Back-End verwenden, entschied ich mich, die [12-factor](http://12factor.net/)-Prinzipien anzuwenden, um diese Schlüssel nicht der Öffentlichkeit zu offenbaren, zumal wir unseren Code öffentlich auf Github hosten.
@@ -68,6 +89,8 @@ Dafür wird im Back-End die Software `pylint` benutzt.
 Coding Style bezeichnet das Aussehen des Codes - und dafür gibt es Konventionen. Die in Python am weitesten verbreiteste is `autopep8`. Dieses Programm formatiert automatisch den Code und meldet Verstöße gegen die Konvention.
 
 ## 4.4 Datenbank
+
+
 
 # 5. Continious Integration und Maintanability
 Wir haben von Anfang an versucht, unser Projekt möglichst "maintainable" zu halten: Dies bedeutet, dass wir potenziellen Nachfolgern oder Mitprogrammieren den Einstieg durch weitesgehende Automatisierungen vereinfachen.

@@ -89,6 +89,7 @@ Dafür wird im Back-End die Software `pylint` benutzt.
 Coding Style bezeichnet das Aussehen des Codes - und dafür gibt es Konventionen. Die in Python am weitesten verbreiteste is `autopep8`. Dieses Programm formatiert automatisch den Code und meldet Verstöße gegen die Konvention.
 
 ## 4.4 Datenbank
+Folglich ist das ER-Diagramm abgebildet. Als Query-Language dient [Sqlite3](https://www.sqlite.org/)
 ![ER Diagramm](er-diagram.png)
 
 

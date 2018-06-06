@@ -93,7 +93,7 @@ Folglich ist das ER-Diagramm abgebildet. Als Query-Language dient [Sqlite3](http
 ![ER Diagramm](er-diagram.png)
 
 
-# 5. Continious Integration und Maintanability
+# 5. Continious Integration und Maintainability
 Wir haben von Anfang an versucht, unser Projekt möglichst "maintainable" zu halten: Dies bedeutet, dass wir potenziellen Nachfolgern oder Mitprogrammieren den Einstieg durch weitesgehende Automatisierungen vereinfachen.
 
 ## 5.1. Continious Integration

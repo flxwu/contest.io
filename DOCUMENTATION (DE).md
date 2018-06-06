@@ -19,12 +19,12 @@
     + [5.1.1. Travis CI](#511-travis-ci)
     + [5.1.2. CodeFactor und CodeClimate](#512-codefactor-und-codeclimate)
 
-# 1. Abstract   
+## 1. Abstract   
 
 Contest.io soll eine einfache Plattform zur Erstellung von Programmierwettbewerben sein. Mit einstellbarem Zeitraum und individuelle Zusammenstellung von Aufgaben kann die Plattform auch als Ergänzung zum Unterricht dienen, da passend zum Lernmaterial Aufgaben bereitgestellt werden kann, wo der Lehrer individuellen Vorschritt genau Nachverfolgen kann.   
 
 
-# 2. Ausblick  
+## 2. Ausblick  
 
 In Zukunft können zusätzliche Funktionen wie zum Beispiel ein Punkte-System und somit ein Rang-System eingeführt werden. Neben Codeforces könne weitere Fragenkataloge angeschlossen werden, um das Aufgabensortiment zu erweitern. Das Aufräumen von Optimieren von code ist ebenfalls möglich, jedoch ist dazu wenig Bedarf, da unser code bereits durch einige Prüfungs-Tools als gut bewertet wurde. Mehrere Möglichkeiten des Einloggens können ebenfalls implementiert werden, sowie erweiterte Profil- und Gruppenfunktionen.
 
@@ -70,7 +70,13 @@ Dennoch ist es letztendlich Flask geworden, da ich recht gut Python beherrsche u
 - [pylint](https://github.com/PyCQA/pylint) - "Linting" (s. [hier](#43-coding-style-und-linting))
 - [python-dotenv](https://github.com/theskumar/python-dotenv) - .env support (s. [hier](#42-security))
 
-## 4.2. Security
+## 4.2 Datenbank
+Folglich ist das ER-Diagramm abgebildet. Als Query-Language dient [Sqlite3](https://www.sqlite.org/)
+![ER Diagramm](er-diagram.png)
+
+## 4.3. Dateienstruktur
+
+## 4.4. Security
 Da auch wir einige _Secrets_, also "geheime" Schlüssel wie die Api Keys von Github, in unserem Back-End verwenden, entschied ich mich, die [12-factor](http://12factor.net/)-Prinzipien anzuwenden, um diese Schlüssel nicht der Öffentlichkeit zu offenbaren, zumal wir unseren Code öffentlich auf Github hosten.
 
 Aus diesem Grund verwenden wir die Python-Version von `dotenv`, eine ursprünglich für Node.js(JavaScript) entwickelte Software zum Laden von globalen Umgebungsvariablen aus einer `.env` Datei.
@@ -82,15 +88,11 @@ SECRET_KEY=...
 ```
 Diese werden dann vom Back-End geladen und benutzt, dabei wird die Datei von Git ignoriert, das heißt jeder inklusive uns, der das Projekt lokal ausprobieren/entwickeln möchte, muss eine solche Datei erstellen, einen eigenen Github Api-Key generieren und diesen einfügen.
 
-## 4.3. Coding Style und Linting 
+## 4.5. Coding Style und Linting 
 Linting bezeichnet das Analysieren von Code auf potenzielle Fehler, wie vergessene Klammern, falsche Einrückungen oder fehlerhafte Variablendeklerationen.
 Dafür wird im Back-End die Software `pylint` benutzt.
 
 Coding Style bezeichnet das Aussehen des Codes - und dafür gibt es Konventionen. Die in Python am weitesten verbreiteste is `autopep8`. Dieses Programm formatiert automatisch den Code und meldet Verstöße gegen die Konvention.
-
-## 4.4 Datenbank
-Folglich ist das ER-Diagramm abgebildet. Als Query-Language dient [Sqlite3](https://www.sqlite.org/)
-![ER Diagramm](er-diagram.png)
 
 
 # 5. Continious Integration und Maintainability

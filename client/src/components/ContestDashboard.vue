@@ -83,7 +83,7 @@ export default {
     };
   },
   mounted() {
-    axios.get('/api/contests?code=' + this.$route.params.id)
+    axios.get('/api/contest?code=' + this.$route.params.id)
       .then(response => {
         this.items = response.data.tasks;
         this.name = response.data.contestname;
@@ -93,7 +93,7 @@ export default {
       .catch(error => {
         console.log(error);
         this.exists = 0;
-        window.location = '/404';
+        //window.location = '/404';
       });
   }
 };

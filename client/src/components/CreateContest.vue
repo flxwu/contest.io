@@ -271,13 +271,13 @@ export default {
     },
     // Add groups to selection
     selectGroup(name) {
-      var temp = this.groups.find(x => x.taskname === name);
+      var temp = this.groups.find(x => x.name === name);
       this.groups.splice(this.groups.indexOf(temp), 1);
       this.selectedgroups.push(temp);
     },
     // Remove groups to selection
     unselectGroup(name) {
-      var temp = this.selectedgroups.find(x => x.taskname === name);
+      var temp = this.selectedgroups.find(x => x.name === name);
       this.selectedgroups.splice(this.selectedgroups.indexOf(temp), 1);
       this.groups.push(temp);
     },

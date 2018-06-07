@@ -63,7 +63,8 @@ def select_task(params=(), conditions=()):
             queryResult = cur.execute(queryString)
 
     response = queryResult.fetchall()
-    if len(response) == 0:
+    response = response[0] if len(response) == 1 else response
+    if not response:
         return None
     else:
         return response
@@ -73,22 +74,19 @@ def insert_contest(
         name: str,
         dateStart: str,
         dateEnd: str,
-        visible: int,
-        contestgroups: list):
+        visible: int):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         randomCode = secrets.token_hex(8)
         dateStart = parser.parse(dateStart)
         dateEnd = parser.parse(dateEnd)
-        contestgroups = json.dumps(contestgroups)
         cur.execute(
-            'INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible, contestgroups) VALUES (?,?,?,?,?,?)',
+            'INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible) VALUES (?,?,?,?,?)',
             (randomCode,
                 name,
                 dateStart,
                 dateEnd,
-                visible,
-                contestgroups))
+                visible))
         dbcon.commit()
         return randomCode
 
@@ -122,7 +120,8 @@ def select_contest(params=(), conditions=()):
                 queryString = queryString[:-4]
             queryResult = cur.execute(queryString)
 
-    response = queryResult.fetchone()
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
     if not response:
         return None
     else:
@@ -187,7 +186,8 @@ def select_user(params=(), conditions=()):
                 queryString = queryString[:-4]
             queryResult = cur.execute(queryString)
 
-    response = queryResult.fetchone()
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
     if not response:
         return None
     else:
@@ -283,10 +283,125 @@ def select_contains_task(params=(), conditions=()):
             queryResult = cur.execute(queryString)
 
     response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
     if not response:
         return None
     else:
         return response
+
+
+def insert_usergroup(
+        groupname: str,
+        groupadmin: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute(
+            'INSERT INTO Usergroup (groupname, groupadmin) VALUES (?,?)',
+            (groupname, groupadmin))
+        groupID = cur.lastrowid
+        dbcon.commit()
+        return groupID
+
+
+def insert_group_in_contest(
+        usergroup: int,
+        contest: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute(
+            'INSERT INTO group_in_contest (usergroup, contest) VALUES (?,?)',
+            (usergroup, contest))
+        dbcon.commit()
+
+
+def select_group_in_contest(params=(), conditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if params == () and conditions == ():
+            return None
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(params, tuple):
+                params = (params,)
+            if not isinstance(conditions, tuple):
+                conditions = (conditions,)
+
+            if params != ():
+                queryString = 'SELECT'
+                # add a format-placeholder for every parameter
+                for paramString in params:
+                    queryString += ' {},'.format(paramString)
+                queryString = queryString[:-1]
+                queryString += ' FROM group_in_contest'
+            if conditions != ():
+                queryString += ' WHERE'
+                for conditionString in conditions:
+                    queryString += ' {} AND'.format(conditionString)
+                queryString = queryString[:-4]
+            queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
+    if not response:
+        return None
+    else:
+        return response
+
+
+def insert_in_usergroup(
+        usergroup: int,
+        user: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute(
+            'INSERT INTO in_usergroup (usergroup, user) VALUES (?,?)',
+            (usergroup, user))
+        dbcon.commit()
+
+
+def select_in_usergroup(params=(), conditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if params == () and conditions == ():
+            return None
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(params, tuple):
+                params = (params,)
+            if not isinstance(conditions, tuple):
+                conditions = (conditions,)
+
+            if params != ():
+                queryString = 'SELECT'
+                # add a format-placeholder for every parameter
+                for paramString in params:
+                    queryString += ' {},'.format(paramString)
+                queryString = queryString[:-1]
+                queryString += ' FROM in_usergroup'
+            if conditions != ():
+                queryString += ' WHERE'
+                for conditionString in conditions:
+                    queryString += ' {} AND'.format(conditionString)
+                queryString = queryString[:-4]
+            queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
+    if not response:
+        return None
+    else:
+        return response
+
+# TODO:
+# def get_users_in_contest(contestCode: int):
+#     queryString = 'SELECT Task.* \
+#         FROM in_usergroup, Contest \
+#         WHERE in_usergroup.usergroup = Contest AND \
+#             contains_task.contest = \"{}\"'.format(contestCode)
 
 
 def get_tasks_in_contest(contestCode: int):
@@ -302,6 +417,7 @@ def get_tasks_in_contest(contestCode: int):
         queryResult = cur.execute(queryString)
 
     response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
     if not response:
         return None
     else:

@@ -72,10 +72,10 @@ The `SECRET_KEY` variable can be set to whatever you want.
 |---|---|---|---|---|---|
 | GET | tags | - | Comma-seperated list of tags <br> to be matched by <br> the returned tasks <br> _Returns the task_ | No | `/api/tasks?tags=graphs,implementation` |
 
-### `/api/contests`
+### `/api/contest`
 
 | Method | Parameter | HTTP Header <br> and Body | Description | Required | Example |
 |---|---|---|---|---|---|
-| GET | code | - | The contest's hexadecimal code <br> _Returns the contest_ | Yes | `/api/contests?code=f9bf78b9a18ce6d46a0cd2b0b86df9da` |
+| GET | code | - | The contest's hexadecimal code <br> _Returns the contest_ | Yes | `/api/contest?code=f9bf78b9a18ce6d46a0cd2b0b86df9da` |
 | POST | - | `Content-Type = application/json` <br> <br> { <br> `"contestname": "testContest-1"`, <br> `"date_start": "2017-05-12"`, <br> `"date_end": "2017-06-12"`, <br> `"visible": 1`, <br> `"contestgroups": [1, 2, 3]` <br> } | Add a new contest <br> _Return the new contest's code_ | - | - |
-| DELETE | code | - | The contest's hexadecimal code <br> _Deletes the contest_ | Yes | `/api/contests?code=f9bf78b9a18ce6d46a0cd2b0b86df9da` |
+| DELETE | code | - | The contest's hexadecimal code <br> _Deletes the contest_ | Yes | `/api/contest?code=f9bf78b9a18ce6d46a0cd2b0b86df9da` |

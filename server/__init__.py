@@ -196,8 +196,8 @@ def api_tasks():
         return None
 
 
-@app.route('/api/contests', methods=['GET', 'POST', 'DELETE'])
-def api_contests():
+@app.route('/api/contest', methods=['GET', 'POST', 'DELETE'])
+def api_contest():
     """
     Contest Endpoint: POST with Content-Type = application/json
     {
@@ -205,7 +205,7 @@ def api_contests():
             "date_start": "2017-05-12",
             "date_end": "2017-06-12",
             "visible": 1,
-            "contestgroups": [1, 2, 3] (groupids),
+            "usergroups": [1, 2, 3] (groupids),
             "tasks": [1,2,3] (taskids)
     }
     """
@@ -214,6 +214,7 @@ def api_contests():
             content = {"Error": "\'code\' parameter missing"}
             return content, HTTPStatus.BAD_REQUEST
 
+        # get contest JSON
         contestJSON = models.select_contest(
             params=('*'),
             conditions=('{}=\"{}\"'.format(
@@ -222,15 +223,25 @@ def api_contests():
             ))
         )
 
+        # get array of all contest's tasks
         tasksInContestJSON = models.get_tasks_in_contest(
             get_queryparam('code'))
 
+        # get array of all contest's groups
+        groupsInContestJSON = models.select_group_in_contest(
+            params=('*'),
+            conditions=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.GROUP_IN_CONTEST_CONTEST,
+                get_queryparam('code')
+            ))
+        )
+
         returnJSON = contestJSON
         returnJSON["tasks"] = tasksInContestJSON
+        returnJSON["usergroups"] = groupsInContestJSON
 
         return jsonify(returnJSON)
     elif request.method == 'POST':
-
         postJSON = request.get_json()
         if not postJSON:
             return None
@@ -240,8 +251,7 @@ def api_contests():
                 postJSON[settings.DB_COLUMNS.CONTEST_CONTESTNAME],
                 postJSON[settings.DB_COLUMNS.CONTEST_DATE_START],
                 postJSON[settings.DB_COLUMNS.CONTEST_DATE_END],
-                postJSON[settings.DB_COLUMNS.CONTEST_VISIBLE],
-                postJSON[settings.DB_COLUMNS.CONTEST_CONTESTGROUPS]
+                postJSON[settings.DB_COLUMNS.CONTEST_VISIBLE]
             )
 
             # insert taskids with contestcode in db contains_task table
@@ -250,6 +260,15 @@ def api_contests():
                     contestCode,
                     taskID
                 )
+
+            # insert groupIds with contestcode in db group_in_contest table
+            for groupID in postJSON["usergroups"]:
+                models.insert_group_in_contest(
+                    groupID,
+                    contestCode
+                )
+
+            # return the contestcode
             return contestCode
 
     elif request.method == 'DELETE':
@@ -265,6 +284,68 @@ def api_contests():
     else:
         return None
 
+
+@app.route('/api/contests', methods=['GET'])
+def api_contests():
+    if request.method == 'GET':
+        contests = models.select_contest(
+            params=('*'),
+            conditions=('{}=\"{}\"').format(
+                settings.DB_COLUMNS.CONTEST_VISIBLE,
+                1)
+        )
+        return contests
+    else:
+        return None
+
+
+@app.route('/api/usergroup', methods=['GET', 'POST'])
+def api_usergroup():
+    """
+    Contest Endpoint: POST with Content-Type = application/json
+    -> ?group - insert new group
+    {
+        "groupname": groupname (String)
+        "groupadmin": userID of group admin
+    }
+    -> ?users - add user to group
+    {
+        "usergroup": usergroupID
+        "user": userID
+    }
+    """
+    if request.method == 'GET':
+        returnJSON = models.select_in_usergroup(
+            params=('*'),
+            conditions=('{}=\"{}\"').format(
+                settings.DB_COLUMNS.USERGROUP_GROUPID,
+                get_queryparam('groupID')
+            ))
+        return returnJSON
+    elif request.method == 'POST':
+        if get_queryparam('users'):
+            # add user to group
+            postJSON = request.get_json()
+            if not postJSON:
+                return None
+            else:
+                models.insert_in_usergroup(
+                    postJSON[settings.DB_COLUMNS.IN_USERGROUP_USERGROUP],
+                    postJSON[settings.DB_COLUMNS.IN_USERGROUP_USER])
+        elif get_queryparam('group'):
+            # add a new Usergroup
+            postJSON = request.get_json()
+            if not postJSON:
+                return None
+            else:
+                usergroupID = models.insert_usergroup(
+                    postJSON[settings.DB_COLUMNS.USERGROUP_GROUPNAME],
+                    postJSON[settings.DB_COLUMNS.USERGROUP_GROUPADMIN])
+                return usergroupID
+        else:
+            return None
+    else:
+        return None
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

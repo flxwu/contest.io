@@ -30,8 +30,16 @@ class DB_COLUMNS: #pylint: disable=invalid-name
     CONTEST_DATE_START = 'date_start'
     CONTEST_DATE_END = 'date_end'
     CONTEST_VISIBLE = 'visible'
-    CONTEST_CONTESTGROUPS = 'contestgroups'
+
+    USERGROUP_GROUPID = 'groupid'
+    USERGROUP_GROUPNAME = 'groupname'
+    USERGROUP_GROUPADMIN = 'groupadmin'
     
     CONTAINS_TASK_CONTEST = 'contest'
     CONTAINS_TASK_TASK = 'task'
-    
+
+    GROUP_IN_CONTEST_USERGROUP = 'usergroup'
+    GROUP_IN_CONTEST_CONTEST = 'contest'
+
+    IN_USERGROUP_USERGROUP = 'usergroup'
+    IN_USERGROUP_USER = 'user'

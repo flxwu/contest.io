@@ -11,7 +11,7 @@
     + [4.1.2. Warum Vue?](#412--warum-vue)
   * [4.2 Weitere verwendete Bibliotheken](#42--weitere-verwendete-bibliotheken)
   * [4.3 Dateienstruktur](#43--dateienstruktur)
-- [5. Dokumentation – Back-End ([Flask](flask.pocoo.org))](#5-dokumentation-%E2%80%93-back-end-flaskflaskpocooorg)
+- [5. Dokumentation – Back-End (Flask)](#5-dokumentation-%E2%80%93-back-end-flaskflaskpocooorg)
   * [5.0. Wofür ein Back-End-Framework?](#50-wofur-ein-back-end-framework)
   * [5.1. Warum Flask?](#51-warum-flask)
     + [5.1.1 Weitere verwendete externe Bibliotheken](#511-weitere-verwendete-externe-bibliotheken)

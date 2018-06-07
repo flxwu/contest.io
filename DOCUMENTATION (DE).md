@@ -47,6 +47,8 @@ In Zukunft können zusätzliche Erweiterungen wie zum Beispiel Folgende implemen
 - Detailliertere und funktionsreichere Profile und Gruppen
 
 # 3. Version Control
+Wir verwenden für die Versionskontrolle Git und hosten unser Projekt auf Github unter https://github.com/flxwu/contest.io. Dort befindet sich also sämtlicher zum Setup benötigter Code sowie sämtliche CI-Integrationen und zusätzliche Konfigurationen.
+Des Weiteren versuchen wir uns and die [Angular Commit Conventions](https://gist.github.com/stephenparish/9941e89d80e2bc58a153) zu halten, um so eine Struktur in unseren Commits zu haben und leichter Änderungen nachvollziehen und analysieren können. Außerdem lässt sich so leicht ein Changelog aus der Git-Historie automatisiert erstellen.
 
 # 4. Dokumentation – Front-End
 
@@ -98,6 +100,66 @@ Dennoch ist es letztendlich Flask geworden, da ich recht gut Python beherrsche u
 ## 5.2 Datenbank
 Folglich ist das ER-Diagramm abgebildet. Als Query-Language dient [Sqlite3](https://www.sqlite.org/)
 ![ER Diagramm](er-diagram.png)
+
+Dementsprechend sieht das SQLite-Schema folgendermaßen aus:
+```sql
+create table if not exists User (
+    userid integer primary key autoincrement,
+    username text not null,
+    usertype text not null,
+    date_joined timestamp default current_timestamp not null,
+    oauth_token text not null
+);
+
+create table if not exists in_usergroup (
+    usergroup integer not null,
+    user integer not null,
+    foreign key(usergroup) references Usergroup(groupid),
+    foreign key(user) references User(userid),
+    primary key (usergroup, user)  
+);
+
+create table if not exists group_in_contest (
+    usergroup integer not null,
+    contest integer not null,
+    foreign key(usergroup) references Usergroup(groupid),
+    foreign key(contest) references Contest(contestcode),
+    primary key (usergroup, contest)
+);
+
+create table if not exists Usergroup (
+    groupid integer primary key autoincrement,
+    groupname text not null,
+    groupadmin integer not null,
+    foreign key(groupadmin) references User(userid)    
+);
+
+create table if not exists Contest (
+    contestcode text primary key not null,
+    contestname text not null,
+    date_start timestamp not null,
+    date_end timestamp not null,
+    visible integer default 0
+);
+
+create table if not exists Task (
+    taskid integer primary key autoincrement,
+    taskname text not null,
+    -- Json-stringified tags array
+    tasktags text not null,
+    codeforces_url text not null,
+    codeforces_id integer not null,
+    codeforces_index text not null
+);
+
+create table if not exists contains_task (
+    contest integer not null,
+    task integer not null,
+    foreign key(contest) references Contest(contestcode),
+    foreign key(task) references Task(taskid),
+    primary key (contest, task)
+);
+```
 
 ## 5.4. Dateienstruktur
 ```
@@ -214,6 +276,10 @@ Dies sind beides weitere Tools zur Bewertung und Überprüfung unseres Codes auf
 
 ![CodeClimate](codeclimate.png)
 *CodeFactor und CodeClimate Dashboards*
+
+### 6.1.3. Dependabot
+Dependabot ist ein von uns verwendetes Tool zum automatischen Aktualisieren unserer FrontEnd- und BackEnd-Abhängigkeiten. Sobald es also eine neuere Version einer unserer Abhängigkeiten gibt, erstellt Dependabot eine Pull-Request mit dieser Änderung.  
+![Dependabot](dependabot.png)
 
 # 6. Code
 
@@ -1030,4 +1096,895 @@ export default {
 
 
 
-## 6.2 Code – Back-End
+## 6.2 Code – Back-End (Wichtigste Dateien)
+
+#### `settings.py` (Ausschnitt)
+
+```python
+from dotenv import load_dotenv
+from pathlib import Path
+import os
+
+ENV_PATH = Path(os.path.dirname(os.path.realpath(__file__))) / '../.env'
+load_dotenv(verbose=True, dotenv_path=ENV_PATH)
+
+GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
+GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET')
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
+
+ADMIN_USERTYPE = 'admin'
+NORMAL_USERTYPE = 'normal'
+
+class DB_COLUMNS: #pylint: disable=invalid-name
+    USER_USERID = 'userid'
+    USER_USERNAME = 'username'
+    USER_USERTYPE = 'usertype'
+    USER_DATE_JOINED = 'date_joined'
+    USER_OAUTH_TOKEN = 'oauth_token'
+
+    ...
+```
+
+#### `__init__.py`
+
+```python
+from flask import Flask, jsonify, render_template, request, g, session, redirect, url_for, flash
+from flask_cors import CORS
+from werkzeug.routing import BaseConverter
+from http import HTTPStatus
+import json
+import requests
+import flask_github
+import server.api.api_connector as api_connector
+import server.database.models as models
+import server.settings as settings
+
+
+class RegexConverter(BaseConverter):
+    def __init__(self, urlMap, *items):
+        super(RegexConverter, self).__init__(urlMap)
+        self.regex = items[0]
+
+
+def get_queryparam(p: str): return request.args.get(  # pylint: disable=invalid-name
+    p) if request.args.get(p) else None
+
+
+app = Flask(__name__,  # pylint: disable=invalid-name
+            static_folder="../dist",
+            template_folder="../dist")
+
+# CORS
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}}  # pylint:disable=invalid-name
+            )
+# Flask app config
+app.config['GITHUB_CLIENT_ID'] = settings.GITHUB_CLIENT_ID
+app.config['GITHUB_CLIENT_SECRET'] = settings.GITHUB_CLIENT_SECRET
+app.secret_key = settings.SECRET_KEY
+app.config['SESSION_TYPE'] = 'filesystem'
+
+app.url_map.converters['regex'] = RegexConverter
+
+# Set Endpoints
+TasksEndpoint = api_connector.Tasks()  # pylint: disable=invalid-name
+
+# Github-Flask
+github = flask_github.GitHub(app)  # pylint: disable=invalid-name
+
+
+@app.before_request
+def before_request():
+    g.user = None
+    if 'user_id' in session:
+        g.user = models.select_user(
+            params=('*'),
+            conditions=(
+                '{}=\"{}\"'.format(
+                    settings.DB_COLUMNS.USER_USERID,
+                    session['user_id'])))
+
+
+@app.route('/')
+def index():
+    # if app.debug:
+    #     return requests.get('http://localhost:3000/index.html').text
+    return render_template("index.html")
+
+
+@app.route('/api/github-login')
+def auth_githublogin():
+    if session.get('user_id', None) is None:
+        return github.authorize()
+    else:
+        return 'Already logged in'
+
+
+@app.route('/api/github-logout')
+def auth_githublogout():
+    session.pop('user_id', None)
+    session.pop('oauth_token', None)
+    return redirect(url_for('index'))
+
+
+@github.access_token_getter
+def token_getter():
+    user = g.user
+    if user is not None:
+        return user['oauth_token']
+
+
+@app.route('/api/github-callback')
+@github.authorized_handler
+def auth_githubcallback(oauthToken):
+    nextUrl = request.args.get('next') or url_for('index')
+    if oauthToken is None:
+        flash("Authorization failed.")
+        return redirect(nextUrl)
+
+    user = models.select_user(params=('*'), conditions=(
+        '{}=\"{}\"'.format(settings.DB_COLUMNS.USER_OAUTH_TOKEN, oauthToken)))
+    if user is None:
+        models.insert_user(
+            'defaultUser', settings.NORMAL_USERTYPE, oauthToken)
+    user = models.select_user(params=('*'), conditions=(
+        '{}=\"{}\"'.format(settings.DB_COLUMNS.USER_OAUTH_TOKEN, oauthToken)))
+
+    session['user_id'] = user['userid']
+    session.pop('oauth_token', None)
+    session['oauth_token'] = oauthToken
+    return redirect(nextUrl)
+
+
+@app.route('/api/github-user')
+def auth_user():
+    # update inserted User
+    try:
+        userData = github.get('user')
+        userLoginName = userData['login']
+    except flask_github.GitHubError as githubError:
+        return str(githubError)
+
+    # check if user already exists
+    user = models.select_user(params=('*'), conditions=(
+        '{}=\"{}\"'.format(settings.DB_COLUMNS.USER_USERNAME, userLoginName)))
+    if user is None:
+        models.update_user(
+            updatedValues=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.USER_USERNAME, userLoginName)),
+            setConditions=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.USER_USERID,
+                session.get('user_id', None)
+            )))
+    else:
+        models.delete_user(
+            deleteConditions=(
+                '{}=\"{}\"'.format(
+                    settings.DB_COLUMNS.USER_USERNAME,
+                    'defaultUser')))
+        models.update_user(
+            updatedValues=(
+                '{}=\"{}\"'.format(
+                    settings.DB_COLUMNS.USER_OAUTH_TOKEN, session.get(
+                        'oauth_token', None))), setConditions=(
+                '{}=\"{}\"'.format(
+                    settings.DB_COLUMNS.USER_USERNAME, userLoginName)))
+        user = models.select_user(
+            params=('*'),
+            conditions=(
+                '{}=\"{}\"'.format(
+                    settings.DB_COLUMNS.USER_USERNAME,
+                    userLoginName)))
+        session.pop('user_id', None)
+        session['user_id'] = user['userid']
+    return str(userData)
+
+
+@app.route('/api/tasks', methods=['GET', 'POST'])
+def api_tasks():
+    if request.method == 'GET':
+        returnJSON = None
+        apiResponse = None
+
+        def tasks_json_modify(taskJson: dict):
+            taskJson['tasktags'] = json.loads(taskJson['tasktags'])
+            return taskJson
+
+        if get_queryparam('tags') is None:
+            tasksInDatabase = models.select_task(params=('*'))
+        else:
+            tasksInDatabase = models.select_task(
+                params=('*'),
+                conditions=(
+                    '{} LIKE "%{}%"'.format(
+                        settings.DB_COLUMNS.TASK_TASKTAGS,
+                        get_queryparam('tags'))))
+
+        if tasksInDatabase is not None:
+            returnJSON = tasksInDatabase
+        else:
+            # response = TasksEndpoint.get(tags=queryparam_tags())
+            apiResponse = TasksEndpoint.get(tags=get_queryparam('tags'))
+            if get_queryparam('tags') is None:
+                returnJSON = models.select_task(params=('*'))
+            else:
+                tagsArray = str(get_queryparam('tags')).split(';')
+                combinedTags = []
+                for tag in tagsArray:
+                    combinedTags.append('{} LIKE "%{}%"'.format(
+                        settings.DB_COLUMNS.TASK_TASKTAGS,
+                        tag))
+                returnJSON = models.select_task(
+                    params=('*'),
+                    conditions=(tuple(combinedTags)))
+        if (isinstance(apiResponse, requests.exceptions.RequestException)):
+            return str(apiResponse)
+        else:
+            return jsonify([tasks_json_modify(task) for task in returnJSON])
+    elif request.method == 'POST':
+        return None
+    else:
+        return None
+
+
+@app.route('/api/contest', methods=['GET', 'POST', 'DELETE'])
+def api_contest():
+    """
+    Contest Endpoint: POST with Content-Type = application/json
+    {
+            "contestname": "testContest-1",
+            "date_start": "2017-05-12",
+            "date_end": "2017-06-12",
+            "visible": 1,
+            "usergroups": [1, 2, 3] (groupids),
+            "tasks": [1,2,3] (taskids)
+    }
+    """
+    if request.method == 'GET':
+        if get_queryparam('code') is None:
+            content = {"Error": "\'code\' parameter missing"}
+            return content, HTTPStatus.BAD_REQUEST
+
+        # get contest JSON
+        contestJSON = models.select_contest(
+            params=('*'),
+            conditions=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.CONTEST_CONTESTCODE,
+                get_queryparam('code')
+            ))
+        )
+
+        # get array of all contest's tasks
+        tasksInContestJSON = models.get_tasks_in_contest(
+            get_queryparam('code'))
+
+        # get array of all contest's groups
+        groupsInContestJSON = models.select_group_in_contest(
+            params=('*'),
+            conditions=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.GROUP_IN_CONTEST_CONTEST,
+                get_queryparam('code')
+            ))
+        )
+
+        returnJSON = contestJSON
+        returnJSON["tasks"] = tasksInContestJSON
+        returnJSON["usergroups"] = groupsInContestJSON
+
+        return jsonify(returnJSON)
+    elif request.method == 'POST':
+        postJSON = request.get_json()
+        if not postJSON:
+            return None
+        else:
+            # insert contest to db contest table
+            contestCode = models.insert_contest(
+                postJSON[settings.DB_COLUMNS.CONTEST_CONTESTNAME],
+                postJSON[settings.DB_COLUMNS.CONTEST_DATE_START],
+                postJSON[settings.DB_COLUMNS.CONTEST_DATE_END],
+                postJSON[settings.DB_COLUMNS.CONTEST_VISIBLE]
+            )
+
+            # insert taskids with contestcode in db contains_task table
+            for taskID in postJSON["tasks"]:
+                models.insert_contains_task(
+                    contestCode,
+                    taskID
+                )
+
+            # insert groupIds with contestcode in db group_in_contest table
+            for groupID in postJSON["usergroups"]:
+                models.insert_group_in_contest(
+                    groupID,
+                    contestCode
+                )
+
+            # return the contestcode
+            return contestCode
+
+    elif request.method == 'DELETE':
+        if get_queryparam('code') is None:
+            content = {"Error": "\'code\' parameter missing"}
+            return content, HTTPStatus.BAD_REQUEST
+        models.delete_contest(
+            deleteConditions=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.CONTEST_CONTESTCODE,
+                get_queryparam('code')
+            ))
+        )
+    else:
+        return None
+
+
+@app.route('/api/contests', methods=['GET'])
+def api_contests():
+    if request.method == 'GET':
+        contests = models.select_contest(
+            params=('*'),
+            conditions=('{}=\"{}\"').format(
+                settings.DB_COLUMNS.CONTEST_VISIBLE,
+                1)
+        )
+        return contests
+    else:
+        return None
+
+
+@app.route('/api/usergroup', methods=['GET', 'POST'])
+def api_usergroup():
+    """
+    Contest Endpoint: POST with Content-Type = application/json
+    -> ?group - insert new group
+    {
+        "groupname": groupname (String)
+        "groupadmin": userID of group admin
+    }
+    -> ?users - add user to group
+    {
+        "usergroup": usergroupID
+        "user": userID
+    }
+    """
+    if request.method == 'GET':
+        returnJSON = models.select_in_usergroup(
+            params=('*'),
+            conditions=('{}=\"{}\"').format(
+                settings.DB_COLUMNS.USERGROUP_GROUPID,
+                get_queryparam('groupID')
+            ))
+        return returnJSON
+    elif request.method == 'POST':
+        if get_queryparam('users'):
+            # add user to group
+            postJSON = request.get_json()
+            if not postJSON:
+                return None
+            else:
+                models.insert_in_usergroup(
+                    postJSON[settings.DB_COLUMNS.IN_USERGROUP_USERGROUP],
+                    postJSON[settings.DB_COLUMNS.IN_USERGROUP_USER])
+        elif get_queryparam('group'):
+            # add a new Usergroup
+            postJSON = request.get_json()
+            if not postJSON:
+                return None
+            else:
+                usergroupID = models.insert_usergroup(
+                    postJSON[settings.DB_COLUMNS.USERGROUP_GROUPNAME],
+                    postJSON[settings.DB_COLUMNS.USERGROUP_GROUPADMIN])
+                return usergroupID
+        else:
+            return None
+    else:
+        return None
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+
+    # if app.debug:
+    #     return requests.get('http://localhost:3000/{}'.format(path)).text
+    return app.send_static_file(path)
+```
+
+#### `models.py`
+
+```python
+import sqlite3 as sql
+import json
+import secrets
+from dateutil import parser
+
+DATABASE_PATH = 'server/database/database.db'
+
+
+def dict_factory(cursor, row):
+    rowsDict = {}
+    for idx, col in enumerate(cursor.description):
+        rowsDict[col[0]] = row[idx]
+    return rowsDict
+
+
+def recreate_table(tableName: str):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute('DELETE FROM {}'.format(tableName))
+        cur.execute(
+            'DELETE FROM sqlite_sequence WHERE name = "{}"'.format(tableName))
+
+
+def insert_task(name: str, tags: list, url: str, cfID: int, cfIndex: str):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        tags = json.dumps(tags)
+        cur.execute(
+            'INSERT INTO Task (taskname, tasktags, codeforces_url, codeforces_id, codeforces_index) VALUES (?,?,?,?,?)',
+            (name, tags, url, cfID, cfIndex)
+        )
+        cur.close()
+        dbcon.commit()
+
+
+def select_task(params=(), conditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if params == () and conditions == ():
+            queryResult = cur.execute('SELECT * FROM Task')
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(params, tuple):
+                params = (params,)
+            if not isinstance(conditions, tuple):
+                conditions = (conditions,)
+
+            if params != ():
+                queryString = 'SELECT'
+                # add a format-placeholder for every parameter
+                for paramString in params:
+                    queryString += ' {},'.format(paramString)
+                queryString = queryString[:-1]
+                queryString += ' FROM Task'
+            if conditions != ():
+                queryString += ' WHERE'
+                for conditionString in conditions:
+                    queryString += ' {} AND'.format(conditionString)
+                queryString = queryString[:-4]
+            queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
+    if not response:
+        return None
+    else:
+        return response
+
+
+def insert_contest(
+        name: str,
+        dateStart: str,
+        dateEnd: str,
+        visible: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        randomCode = secrets.token_hex(8)
+        dateStart = parser.parse(dateStart)
+        dateEnd = parser.parse(dateEnd)
+        cur.execute(
+            'INSERT INTO Contest (contestcode, contestname, date_start, date_end, visible) VALUES (?,?,?,?,?)',
+            (randomCode,
+                name,
+                dateStart,
+                dateEnd,
+                visible))
+        dbcon.commit()
+        return randomCode
+
+
+def select_contest(params=(), conditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if params == () and conditions == ():
+            queryResult = cur.execute('SELECT * FROM Contest')
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(params, tuple):
+                params = (params,)
+            if not isinstance(conditions, tuple):
+                conditions = (conditions,)
+
+            if params != ():
+                queryString = 'SELECT'
+                # add a format-placeholder for every parameter
+                for paramString in params:
+                    queryString += ' {},'.format(paramString)
+                queryString = queryString[:-1]
+                queryString += ' FROM Contest'
+            if conditions != ():
+                queryString += ' WHERE'
+                for conditionString in conditions:
+                    queryString += ' {} AND'.format(conditionString)
+                queryString = queryString[:-4]
+            queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
+    if not response:
+        return None
+    else:
+        return response
+
+
+def delete_contest(deleteConditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if deleteConditions == ():
+            return None
+        else:
+            if not isinstance(deleteConditions, tuple):
+                deleteConditions = (deleteConditions,)
+
+            queryString = 'DELETE FROM Contest WHERE'
+            for conditionString in deleteConditions:
+                queryString += ' {} AND'.format(conditionString)
+            queryString = queryString[:-4]
+            cur.execute(queryString)
+            dbcon.commit()
+
+
+def insert_user(name: str, usertype: str, oauthToken: str):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute(
+            'INSERT INTO User (username, usertype, oauth_token) VALUES (?,?,?)',
+            (name, usertype, oauthToken)
+        )
+        dbcon.commit()
+
+
+def select_user(params=(), conditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if params == () and conditions == ():
+            queryResult = cur.execute('SELECT * FROM User')
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(params, tuple):
+                params = (params,)
+            if not isinstance(conditions, tuple):
+                conditions = (conditions,)
+
+            if params != ():
+                queryString = 'SELECT'
+                # add a format-placeholder for every parameter
+                for paramString in params:
+                    queryString += ' {},'.format(paramString)
+                queryString = queryString[:-1]
+                queryString += ' FROM User'
+            if conditions != ():
+                queryString += ' WHERE'
+                for conditionString in conditions:
+                    queryString += ' {} AND'.format(conditionString)
+                queryString = queryString[:-4]
+            queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
+    if not response:
+        return None
+    else:
+        return response
+
+
+def update_user(updatedValues=(), setConditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+
+        if updatedValues == () and setConditions == ():
+            return None
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(updatedValues, tuple):
+                updatedValues = (updatedValues,)
+            if not isinstance(setConditions, tuple):
+                setConditions = (setConditions,)
+
+            if updatedValues != ():
+                queryString = 'UPDATE User SET'
+                # add a format-placeholder for every parameter
+                for updateString in updatedValues:
+                    queryString += ' {},'.format(updateString)
+                queryString = queryString[:-1]
+            if setConditions != ():
+                queryString += ' WHERE'
+                for conditionString in setConditions:
+                    queryString += ' {} AND'.format(conditionString)
+                queryString = queryString[:-4]
+            cur.execute(queryString)
+            dbcon.commit()
+
+
+def delete_user(deleteConditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if deleteConditions == ():
+            return None
+        else:
+            if not isinstance(deleteConditions, tuple):
+                deleteConditions = (deleteConditions,)
+
+            queryString = 'DELETE FROM User WHERE'
+            for conditionString in deleteConditions:
+                queryString += ' {} AND'.format(conditionString)
+            queryString = queryString[:-4]
+            cur.execute(queryString)
+            dbcon.commit()
+
+
+def insert_contains_task(
+        contest: int,
+        task: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute(
+            'INSERT INTO contains_task (contest, task) VALUES (?,?)',
+            (contest, task))
+        dbcon.commit()
+
+
+def select_contains_task(params=(), conditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if params == () and conditions == ():
+            return None
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(params, tuple):
+                params = (params,)
+            if not isinstance(conditions, tuple):
+                conditions = (conditions,)
+
+            if params != ():
+                queryString = 'SELECT'
+                # add a format-placeholder for every parameter
+                for paramString in params:
+                    queryString += ' {},'.format(paramString)
+                queryString = queryString[:-1]
+                queryString += ' FROM contains_task'
+            if conditions != ():
+                queryString += ' WHERE'
+                for conditionString in conditions:
+                    queryString += ' {} AND'.format(conditionString)
+                queryString = queryString[:-4]
+            queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
+    if not response:
+        return None
+    else:
+        return response
+
+
+def insert_usergroup(
+        groupname: str,
+        groupadmin: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute(
+            'INSERT INTO Usergroup (groupname, groupadmin) VALUES (?,?)',
+            (groupname, groupadmin))
+        groupID = cur.lastrowid
+        dbcon.commit()
+        return groupID
+
+
+def insert_group_in_contest(
+        usergroup: int,
+        contest: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute(
+            'INSERT INTO group_in_contest (usergroup, contest) VALUES (?,?)',
+            (usergroup, contest))
+        dbcon.commit()
+
+
+def select_group_in_contest(params=(), conditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if params == () and conditions == ():
+            return None
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(params, tuple):
+                params = (params,)
+            if not isinstance(conditions, tuple):
+                conditions = (conditions,)
+
+            if params != ():
+                queryString = 'SELECT'
+                # add a format-placeholder for every parameter
+                for paramString in params:
+                    queryString += ' {},'.format(paramString)
+                queryString = queryString[:-1]
+                queryString += ' FROM group_in_contest'
+            if conditions != ():
+                queryString += ' WHERE'
+                for conditionString in conditions:
+                    queryString += ' {} AND'.format(conditionString)
+                queryString = queryString[:-4]
+            queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
+    if not response:
+        return None
+    else:
+        return response
+
+
+def insert_in_usergroup(
+        usergroup: int,
+        user: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute(
+            'INSERT INTO in_usergroup (usergroup, user) VALUES (?,?)',
+            (usergroup, user))
+        dbcon.commit()
+
+
+def select_in_usergroup(params=(), conditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if params == () and conditions == ():
+            return None
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(params, tuple):
+                params = (params,)
+            if not isinstance(conditions, tuple):
+                conditions = (conditions,)
+
+            if params != ():
+                queryString = 'SELECT'
+                # add a format-placeholder for every parameter
+                for paramString in params:
+                    queryString += ' {},'.format(paramString)
+                queryString = queryString[:-1]
+                queryString += ' FROM in_usergroup'
+            if conditions != ():
+                queryString += ' WHERE'
+                for conditionString in conditions:
+                    queryString += ' {} AND'.format(conditionString)
+                queryString = queryString[:-4]
+            queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
+    if not response:
+        return None
+    else:
+        return response
+
+def get_tasks_in_contest(contestCode: int):
+    queryString = 'SELECT Task.* \
+        FROM contains_task, Task \
+        WHERE contains_task.task = Task.taskid AND \
+            contains_task.contest = \"{}\"'.format(contestCode)
+    with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
+    if not response:
+        return None
+    else:
+        return response
+
+```
+
+#### `api_connector.py`
+
+```python
+import requests
+from server.api.endpoint_interface import EndpointInterface
+import server.database.models as models
+
+CODEFORCES_BASE_URL = 'http://codeforces.com/api'
+
+
+class Tasks(EndpointInterface):
+    endpoint_url = '/api/tasks'
+
+    def __init__(self):
+        self.rawdata = {}
+        self.problems = []
+
+    def get(self, tags=None):
+        try:
+            if tags is not None:
+                self.rawdata = (requests.get(
+                    '{}/problemset.problems'.format(CODEFORCES_BASE_URL),
+                    params=dict(tags=str(tags)),
+                    allow_redirects=False,
+                    stream=True)
+                    .json())
+            else:
+                self.rawdata = requests.get(
+                    '{}/problemset.problems'.format(CODEFORCES_BASE_URL)).json()
+        except requests.exceptions.RequestException as exception:
+            return exception
+        else:
+            self.extract_problems()
+            self.insert_to_database()
+            return True
+
+    def extract_problems(self):
+        try:
+            if self.rawdata:
+                self.problems = self.rawdata['result']['problems']
+        except Exception as exception: # pylint: disable=broad-except
+            print(exception)
+
+    def insert_to_database(self):
+        if self.problems:
+            for problem in self.problems:
+                contestId, index, name, tags = problem['contestId'], problem[
+                    'index'], problem['name'], problem['tags']
+                url = "http://codeforces.com/problemset/problem/{}/{}".format(
+                    contestId, index)
+                models.insert_task(
+                    name,
+                    tags,
+                    url,
+                    contestId,
+                    index
+                )
+```
+
+#### `endpoint_interface.py`
+
+```python
+from abc import ABCMeta, abstractmethod
+
+
+class EndpointInterface(metaclass=ABCMeta):
+    @property
+    @abstractmethod
+    def endpoint_url(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get(self, tags=None):
+        raise NotImplementedError
+
+    @abstractmethod
+    def insert_to_database(self):
+        raise NotImplementedError
+```

@@ -17,7 +17,6 @@
     + [5.1.1 Weitere verwendete externe Bibliotheken](#511-weitere-verwendete-externe-bibliotheken)
   * [5.2 Datenbank](#52-datenbank)
   * [5.4. Dateienstruktur](#54-dateienstruktur)
-        * [`__init__.py`](#__init__py)
   * [5.4. Security](#54-security)
   * [5.5. Coding Style und Linting](#55-coding-style-und-linting)
 - [6. Continious Integration und Maintainability](#6-continious-integration-und-maintainability)

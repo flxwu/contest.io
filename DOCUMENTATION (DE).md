@@ -2,26 +2,28 @@
 
 - [1. Abstract](#1-abstract)
     + [1.1. Motivation](#11-motivation)
-    + [1.2. Contest.io - Programmierwettbewerbe für den Informatikunterricht und die Privatnutzung](#12-contestio---programmierwettbewerbe-fur-den-informatikunterricht-und-die-privatnutzung)
+    + [1.2. Contest.io - Programmierwettbewerbe für den Informatikunterricht und die Privatnutzung](#12-contestio---programmierwettbewerbe-f%C3%BCr-den-informatikunterricht-und-die-privatnutzung)
 - [2. Ausblick](#2-ausblick)
 - [3. Version Control](#3-version-control)
 - [4. Dokumentation – Front-End](#4-dokumentation--front-end)
   * [4.1. Das Framework - Vue.js](#41das-framework---vuejs)
     + [4.1.1. Was ist das Front-End? Und Wozu ein Framework?](#411-was-ist-das-front-endund-wozu-ein-framework)
-    + [4.1.2. Warum Vue?](#412--warum-vue)
-  * [4.2 Weitere verwendete Bibliotheken](#42--weitere-verwendete-bibliotheken)
-  * [4.3 Dateienstruktur](#43--dateienstruktur)
-- [5. Dokumentation – Back-End (Flask)](#5-dokumentation-%E2%80%93-back-end-flaskflaskpocooorg)
-  * [5.0. Wofür ein Back-End-Framework?](#50-wofur-ein-back-end-framework)
+    + [4.1.2. Warum Vue?](#412warum-vue)
+  * [4.2 Weitere verwendete Bibliotheken](#42weitere-verwendete-bibliotheken)
+  * [4.3 Dateienstruktur](#43-dateienstruktur)
+- [5. Dokumentation – Back-End (Flask)](#5-dokumentation--back-end-flask)
+  * [5.0. Wofür ein Back-End-Framework?](#50-wof%C3%BCr-ein-back-end-framework)
   * [5.1. Warum Flask?](#51-warum-flask)
     + [5.1.1 Weitere verwendete externe Bibliotheken](#511-weitere-verwendete-externe-bibliotheken)
-  * [5.2 Datenbank](#52-datenbank)
-  * [5.4. Dateienstruktur](#54-dateienstruktur)
+  * [5.2. Datenbank](#52-datenbank)
+  * [5.3. Dateienstruktur](#53-dateienstruktur)
   * [5.4. Security](#54-security)
   * [5.5. Coding Style und Linting](#55-coding-style-und-linting)
 - [6. Continious Integration und Maintainability](#6-continious-integration-und-maintainability)
   * [6.1. Continious Integration](#61-continious-integration)
     + [6.1.1. Travis CI](#611-travis-ci)
+    + [6.1.1. Codefactor und Dependabot](#612-codefactor-und-codeclimate)
+- [7. Code](#6-code)
 
 ## 1. Abstract   
 
@@ -68,11 +70,11 @@ Für contest.io haben wir uns für das relative neue Framework Vue.js 2.0 entsch
 
 Vue sorgt dafür, dass nur veränderte Komponenten neu vom server geladen werden, und minimiert somit unnötige downloads und Berechnungen. Der Vue-Router erlaubt einfache Navigation von Seiten und verhindert auch unnötigen Web-Traffic.
 
-## 4.2	Weitere verwendete Bibliotheken  
+## 4.2.	Weitere verwendete Bibliotheken  
 
 Jedes größere Projekt mit Frameworks benötigt außerdem einige zusätzlichen Tools. Allgemein haben wir ([Vuetify](https://vuetifyjs.com)) als Design-Plugin genommen, welches das standardisierte Google-Material-Design auf die Webseite überträgt. ([Axios](https://github.com/axios/axios)) erlaubt die Verbindung von Front- und Back-End. ([Webpack](https://webpack.js.org)) kompiliert den Vue code, um ihn für den Browser lesbar zu machen. Außerdem wurden einige kleine Plugins wie `vue-moment` auch benutzt.
 
-## 4.3 Dateienstruktur
+## 4.3. Dateienstruktur
 
 Die vue.config.js Datei enthält, wie der Name andeutet, Konfigurationsdaten von Vue. Die index.html Datei, in dem der fertig kompilierte Vue-Code injected wird, befindet sich im Ordner `public`. Der `src`-Ordner enthält rohe Vue-Datein sowie den router. Die main.js Datei, welche den setup für Vue sowie von dependencies regelt, befindet sich ebenfalls in diesem Ordner. Der Ordner `router` und die darin befindliche Datei erlaubt und konfiguriert die Navigation zwischen Seiten. Alle .vue Datein sind sogennante Komponenten: Bauteile oder ganze Seiten, die HTML, CSS und Javascript/Vue Code enthalten. Die App.vue ist die Hauptkomponente, in die alle anderen Komponenten intigriert werden. Im `components`-Ordner befinden sich die restlichen (und somit der Großteil an) Komponenten. Einige davon sin eigenständige Seiten (wie ContestDashboard.vue), andere sind bloß Bauteile (wie NavBar.vue). 
 
@@ -165,7 +167,7 @@ create table if not exists contains_task (
 );
 ```
 
-## 5.4. Dateienstruktur
+## 5.3. Dateienstruktur
 ```
 server/
 ├── api
@@ -180,7 +182,7 @@ server/
 └── settings.py
 ```
 
-### 5.4.1. Wichtigste Dateien
+### 5.3.1. Wichtigste Dateien
 ##### `__init__.py`
 Diese Datei wird zu Beginn aufgerufen und enthält alle [API-Endpunkte](https://github.com/flxwu/contest.io/blob/master/README.md), die vom Front-End aufgerufen werden. Diese stellen die Schnittstelle vom Server/Datenbank zur Außenwelt und dem Front-End dar, des Weiteren gibt es API-Endpunkte für die Authentication mit Github.
 
@@ -285,13 +287,13 @@ Dies sind beides weitere Tools zur Bewertung und Überprüfung unseres Codes auf
 Dependabot ist ein von uns verwendetes Tool zum automatischen Aktualisieren unserer FrontEnd- und BackEnd-Abhängigkeiten. Sobald es also eine neuere Version einer unserer Abhängigkeiten gibt, erstellt Dependabot eine Pull-Request mit dieser Änderung.  
 ![Dependabot](dependabot.png)
 
-# 6. Code
+# 7. Code
 
-## 6.1 Code – Front-End
+## 7.1 Code – Front-End
 
 client/vue.config.js
 
-```
+```javascript
 /*eslint-env node*/
 
 module.exports = {
@@ -312,7 +314,7 @@ module.exports = {
 
 client/.eslintrc.js
 
-```
+```javascript
 module.exports = {
     "env": {
         "browser": true,
@@ -358,7 +360,7 @@ module.exports = {
 
 client/public/index.html
 
-```
+```html
 <!DOCTYPE html>
 <html>
   <head>
@@ -388,7 +390,7 @@ client/public/index.html
 
 client/src/main.js
 
-```
+```javascript
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
@@ -427,7 +429,7 @@ new Vue({
 
 client/src/App.vue
 
-```
+```javascript
 <template>
   <div id="app">
     <!-- all elements need to be enclosed in v-app tags -->
@@ -464,7 +466,7 @@ export default {
 
 client/router/index.js
 
-```
+```javascript
 import Vue from 'vue';
 import Router from 'vue-router';
 
@@ -495,7 +497,7 @@ export default new Router({
 
 client/src/components/404Error.vue
 
-```
+```javascript
 <template>
   <div>
     <div class="display-4 mt-5">404</div>
@@ -509,7 +511,7 @@ client/src/components/404Error.vue
 
 client/src/components/ContestDashboard.vue
 
-```
+```javascript
 <template>
   <div id="contestdashboard">
     <!-- Layout container -->
@@ -623,7 +625,7 @@ export default {
 
 client/src/components/CreateContest.vue
 
-```
+```javascript
 <template>
   <div id="createcontest">
     <!-- Layout container -->
@@ -998,7 +1000,7 @@ export default {
 
 client/src/components/NavBar.vue
 
-```
+```javascript
 <template>
   <div id="navbar">
 
@@ -1100,7 +1102,7 @@ export default {
 
 
 
-## 6.2 Code – Back-End (Wichtigste Dateien)
+## 7.2. Code – Back-End (Wichtigste Dateien)
 
 #### `settings.py` (Ausschnitt)
 

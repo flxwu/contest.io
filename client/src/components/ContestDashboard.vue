@@ -84,16 +84,17 @@ export default {
   },
   mounted() {
     axios.get('/api/contests?code=' + this.$route.params.id)
-    .then(response => {
-      this.items = response.data.tasks;
-      this.name = response.data.contestname;
-      this.code = response.data.contestcode;
-      this.date_end = response.data.date_end;
-    })
-    .catch(error => {
-      this.exists = 0;
-      window.location = "/404"
-    })
+      .then(response => {
+        this.items = response.data.tasks;
+        this.name = response.data.contestname;
+        this.code = response.data.contestcode;
+        this.date_end = response.data.date_end;
+      })
+      .catch(error => {
+        console.log(error);
+        this.exists = 0;
+        window.location = '/404';
+      });
   }
 };
 </script>

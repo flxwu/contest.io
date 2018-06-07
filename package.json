@@ -10,6 +10,7 @@
     "concurrently": "^3.5.1"
   },
   "scripts": {
+    "setup": "concurrently \"virtualenv -p python3.6 venv && pip3 install -r requirements.txt && pip3 install -e .\" \"yarn install\" \"cd client/ && yarn install\"",
     "dev": "concurrently \"cd client/ && yarn serve\" \"FLASK_APP=server FLASK_DEBUG=1 flask run --with-threads\"",
     "db-rewrite": "rm -rf server/database/database.db && sqlite3 server/database/database.db < server/database/schema.sql",
     "lint": "pylint server"

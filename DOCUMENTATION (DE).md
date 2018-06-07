@@ -2,19 +2,11 @@
 
 - [1. Abstract](#1-abstract)
 - [2. Ausblick](#2-ausblick)
-<<<<<<< HEAD
 - [3. Dokumentation – Front-End (Vue.js)](#3-dokumentation--front-end)
   * [3.1. Das Framework - Vue.js](#31das-framework---vuejs)
     + [3.1.1. Wozu ein Framework?](311-was-ist-das-front-endund-wozu-ein-framework)
     + [3.1.2. Warum Vue?](#312warum-vue)
     + [3.2. Weitere verwendete Bibliotheken](#32weitere-verwendete-bibliotheken)
-=======
-- [3. Dokumentation – Front-End (Vue.js)](#3-dokumentation-%E2%80%93-front-end)
-  * [3.1. Das Framework - Vue.js](#31-das-framework---vuejs)
-    + [3.1.1. Wozu ein Framework?](#311--wozu-ein-framework)
-    + [3.1.2. Warum Vue?](#312--warum-vue)
-  * [3.2 Weitere verwendete Bibliotheken](#32--weitere-verwendete-bibliotheken)
->>>>>>> 603af75325278d2a7498a9fe116798f70cd2d18c
 - [4. Dokumentation – Back-End (Flask)](#4-dokumentation--back-end-flask)
   * [4.0. Wofür ein Back-End-Framework?](#40-wofur-ein-back-end-framework)
   * [4.1. Warum Flask?](#41-warum-flask)

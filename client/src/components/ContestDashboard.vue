@@ -10,10 +10,7 @@
             <!-- Task List -->
             <v-subheader class="display-1" style="margin-top: 2% !important;">Contest {{ name }}</v-subheader>
 
-            <router-link tag="v-avatar" to="/profile/1" class="grey lighten-4 avatar vlink" size="35px">
-              <img src="https://vuetifyjs.com/static/doc-images/lists/1.jpg" alt="avatar">
-              <div><v-subheader style="width: 200px;">Herr Hörner</v-subheader></div>
-            </router-link>
+            <div><v-subheader style="width: 270px;">Contest code: <v-text-field :value="code" disabled style="width: 100px; margin-left: 10px; margin-top: 10px;"></v-text-field></v-subheader> </div>
             <v-expansion-panel popout>
 
              <v-expansion-panel-content v-for="item in items" :key="item.taskid">
@@ -57,7 +54,7 @@
                 <h3 class="headline mb-0">Progress</h3>
                 <v-divider></v-divider>
                 <div>0 / {{ items.length }} Tasks completed (<span>{{ (0 / items.length) * 100 }}%</span>)</div>
-                <div>Time remaining: 5 days, 11 hours</div>
+                <div>Time remaining: {{ date_end | moment("from", true) }}</div>
               </div>
             </v-card-title>
 
@@ -79,14 +76,24 @@ export default {
   data() {
     return {
       items: [],
-      name: ''
+      name: '',
+      code: '',
+      date_end: null,
+      exists: 1
     };
   },
   mounted() {
-    axios.get('/api/contests?code=' + this.$route.params.id).then(response => {
+    axios.get('/api/contests?code=' + this.$route.params.id)
+    .then(response => {
       this.items = response.data.tasks;
       this.name = response.data.contestname;
-    });
+      this.code = response.data.contestcode;
+      this.date_end = response.data.date_end;
+    })
+    .catch(error => {
+      this.exists = 0;
+      window.location = "/404"
+    })
   }
 };
 </script>

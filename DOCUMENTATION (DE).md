@@ -2,11 +2,19 @@
 
 - [1. Abstract](#1-abstract)
 - [2. Ausblick](#2-ausblick)
+<<<<<<< HEAD
 - [3. Dokumentation – Front-End (Vue.js)](#3-dokumentation--front-end)
   * [3.1. Das Framework - Vue.js](#31das-framework---vuejs)
     + [3.1.1. Wozu ein Framework?](311-was-ist-das-front-endund-wozu-ein-framework)
     + [3.1.2. Warum Vue?](#312warum-vue)
     + [3.2. Weitere verwendete Bibliotheken](#32weitere-verwendete-bibliotheken)
+=======
+- [3. Dokumentation – Front-End (Vue.js)](#3-dokumentation-%E2%80%93-front-end)
+  * [3.1. Das Framework - Vue.js](#31-das-framework---vuejs)
+    + [3.1.1. Wozu ein Framework?](#311--wozu-ein-framework)
+    + [3.1.2. Warum Vue?](#312--warum-vue)
+  * [3.2 Weitere verwendete Bibliotheken](#32--weitere-verwendete-bibliotheken)
+>>>>>>> 603af75325278d2a7498a9fe116798f70cd2d18c
 - [4. Dokumentation – Back-End (Flask)](#4-dokumentation--back-end-flask)
   * [4.0. Wofür ein Back-End-Framework?](#40-wofur-ein-back-end-framework)
   * [4.1. Warum Flask?](#41-warum-flask)
@@ -31,19 +39,25 @@ In Zukunft können zusätzliche Funktionen wie zum Beispiel ein Punkte-System un
 
 # 3. Dokumentation – Front-End
 
-## 3.1.	Das Framework - Vue.js
+## 3.1.	Das Framework - ([Vue.js](https://vuejs.org))
 
-### 3.1.1.	Wozu ein Framework?   
+### 3.1.1. Was ist das Front-End?	Und Wozu ein Framework?   
+
+Das Front-End beschreibt der Teil einer Webseite, mit dem der User direkt interagiert. Was der User sieht, worin er tippt, worauf er klickt: das alles gehört zum Fronr-End.
 
 Ein Front-End Framework erlaubt das Schaffen dynamische Webseiten und Single-Page-Applications, die für komplexe Web-Apps wie dieses Projekt, wenn nicht unbedingt notwendig, jedenfalls ungemein nützlich sind.  
+
+Das Framework erlaubt auch sogenanntes 'lokal testing', das heißt, dass das Framework problemlos auf dem Computer des Developers einen test-server aufbaut und darauf läuft. Zum testen kann der Devloper nun diesen server per Browser ansteuern und sieht die fertige Webseite, wie sie nach dem finalen 'deploy' (das aufsetzen auf den echten server) aussehen und funktionieren wird. So können bugs erkannt und eliminiert werden.
 
 ### 3.1.2.	Warum Vue?  
 
 Für contest.io haben wir uns für das relative neue Framework Vue.js 2.0 entschieden, da es schnell und komprimierter ist und trotzdem große Leistung besitzt. Vue besitzt ebenfalls eine große Community mit vielen hilfreichen Plugins, die einem das Programmieren erleichtern.  
 
-### 3.1.3.	Weitere verwendete Bibliotheken  
+Vue sorgt dafür, dass nur veränderte Komponenten neu vom server geladen werden, und minimiert somit unnötige downloads und Berechnungen. Der Vue-Router erlaubt einfache Navigation von Seiten und verhindert auch unnötigen Web-Traffic.
 
-Jedes größere Projekt mit Frameworks benötigt außerdem einige zusätzlichen Tools. Allgemein haben wir Vuetify als Design-Plugin genommen, welches das standardisierte Google-Material-Design auf die Webseite überträgt. Axios erlaubt die Verbindung von Front- und Back-End. Webpack kompiliert den Vue code, um ihn für den Browser lesbar zu machen. Außerdem wurden einige kleine Plugins wie vue-moment auch benutzt. 
+## 3.2	Weitere verwendete Bibliotheken  
+
+Jedes größere Projekt mit Frameworks benötigt außerdem einige zusätzlichen Tools. Allgemein haben wir ([Vuetify](https://vuetifyjs.com)) als Design-Plugin genommen, welches das standardisierte Google-Material-Design auf die Webseite überträgt. ([Axios](https://github.com/axios/axios)) erlaubt die Verbindung von Front- und Back-End. ([Webpack](https://webpack.js.org)) kompiliert den Vue code, um ihn für den Browser lesbar zu machen. Außerdem wurden einige kleine Plugins wie `vue-moment` auch benutzt.
 
 # 4. Dokumentation – Back-End ([Flask](flask.pocoo.org))
 
@@ -54,7 +68,7 @@ Das Back-End ist bei einer "Full-Stack"-Webapplikation, also einer Applikation b
 Dass wir uns dennoch für ein Back-End entschieden haben, liegt letztendlich an zwei wesentlichen Gründen:
 
 1. Wir benötigen eine Datenbank für alle unsere Operationen rund um die Aufgaben, Wettbewerbe, Nutzer und Gruppen. Diese aus dieser Datenbank verfügbaren Daten müssen überall gleich und verfügbar sein, egal wo der Nutzer gerade über seinen Client - bzw. das Front-End - auf unseren Dienst zugreift.
-2. Echtzeit-Analyse ist nur mit einem Server möglich. In unserem Fall bedeutet dies, dass alle Nutzer zur selben Zeit angezeigt bekommen, wie weit ein Wettbewerb fortgeschritten ist oder wie weit die Mitstreiter sind. 
+2. Echtzeit-Analyse ist nur mit einem Server möglich. In unserem Fall bedeutet dies, dass alle Nutzer zur selben Zeit angezeigt bekommen, wie weit ein Wettbewerb fortgeschritten ist oder wie weit die Mitstreiter sind.
 
 ## 4.1. Warum Flask?
 
@@ -88,7 +102,7 @@ SECRET_KEY=...
 ```
 Diese werden dann vom Back-End geladen und benutzt, dabei wird die Datei von Git ignoriert, das heißt jeder inklusive uns, der das Projekt lokal ausprobieren/entwickeln möchte, muss eine solche Datei erstellen, einen eigenen Github Api-Key generieren und diesen einfügen.
 
-## 4.5. Coding Style und Linting 
+## 4.5. Coding Style und Linting
 Linting bezeichnet das Analysieren von Code auf potenzielle Fehler, wie vergessene Klammern, falsche Einrückungen oder fehlerhafte Variablendeklerationen.
 Dafür wird im Back-End die Software `pylint` benutzt.
 
@@ -113,7 +127,7 @@ Unsere Konfiguration sieht dabei wie folgt aus:
 matrix:
   include:
     - language: python
-      python: 
+      python:
         - "3.6"
       node_js:
         - "node"
@@ -147,7 +161,7 @@ matrix:
 
 Die Kommandos sind dabei in der POSIX-Sprache `bash`, ebenfalls wie die beiden Skripte `deploy.sh` und `writetoenv.sh`. Im Wesentlichen werden bei jedem `build` folgende Schritte ausgeführt:
 
-1. Alle Front-End und Back-End Abhängigkeiten installiert 
+1. Alle Front-End und Back-End Abhängigkeiten installiert
 2. Die von uns im Travis-CI User-Interface festgesetzten Umgebungsvariablen werden in die `.env` Datei geschrieben um vom Back-End geladen werden zu können
 3. Die Datenbank wird kompiliert
 4. Sowohl Front-End als auch Back-End werden einem `Linter` unterzogen, das heißt der `build` scheitert wenn Fehler erkannt werden oder wir von unseren Coding-Style Konventionen abgewichen sind.

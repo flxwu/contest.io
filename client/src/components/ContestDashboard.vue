@@ -14,7 +14,6 @@
             <v-expansion-panel popout>
 
              <v-expansion-panel-content v-for="item in items" :key="item.taskid">
-
                <div slot="header">{{ item.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
                    <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
@@ -85,13 +84,12 @@ export default {
   mounted() {
     axios.get('/api/contest?code=' + this.$route.params.id)
       .then(response => {
-        this.items = response.data.tasks;
+        this.items = typeof response.data.tasks === 'object' ? [response.data.tasks] : response.data.tasks;
         this.name = response.data.contestname;
         this.code = response.data.contestcode;
         this.date_end = response.data.date_end;
       })
       .catch(error => {
-        console.log(error);
         this.exists = 0;
         //window.location = '/404';
       });

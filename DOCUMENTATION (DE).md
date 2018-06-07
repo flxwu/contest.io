@@ -10,6 +10,7 @@
     + [4.1.1. Was ist das Front-End? Und Wozu ein Framework?](#411-was-ist-das-front-endund-wozu-ein-framework)
     + [4.1.2. Warum Vue?](#412--warum-vue)
   * [4.2 Weitere verwendete Bibliotheken](#42--weitere-verwendete-bibliotheken)
+  * [4.3 Dateienstruktur](#43--dateienstruktur)
 - [5. Dokumentation – Back-End ([Flask](flask.pocoo.org))](#5-dokumentation-%E2%80%93-back-end-flaskflaskpocooorg)
   * [5.0. Wofür ein Back-End-Framework?](#50-wofur-ein-back-end-framework)
   * [5.1. Warum Flask?](#51-warum-flask)
@@ -71,6 +72,10 @@ Vue sorgt dafür, dass nur veränderte Komponenten neu vom server geladen werden
 ## 4.2	Weitere verwendete Bibliotheken  
 
 Jedes größere Projekt mit Frameworks benötigt außerdem einige zusätzlichen Tools. Allgemein haben wir ([Vuetify](https://vuetifyjs.com)) als Design-Plugin genommen, welches das standardisierte Google-Material-Design auf die Webseite überträgt. ([Axios](https://github.com/axios/axios)) erlaubt die Verbindung von Front- und Back-End. ([Webpack](https://webpack.js.org)) kompiliert den Vue code, um ihn für den Browser lesbar zu machen. Außerdem wurden einige kleine Plugins wie `vue-moment` auch benutzt.
+
+## 4.3 Dateienstruktur
+
+Die vue.config.js Datei enthält, wie der Name andeutet, Konfigurationsdaten von Vue. Die index.html Datei, in dem der fertig kompilierte Vue-Code injected wird, befindet sich im Ordner `public`. Der `src`-Ordner enthält rohe Vue-Datein sowie den router. Die main.js Datei, welche den setup für Vue sowie von dependencies regelt, befindet sich ebenfalls in diesem Ordner. Der Ordner `router` und die darin befindliche Datei erlaubt und konfiguriert die Navigation zwischen Seiten. Alle .vue Datein sind sogennante Komponenten: Bauteile oder ganze Seiten, die HTML, CSS und Javascript/Vue Code enthalten. Die App.vue ist die Hauptkomponente, in die alle anderen Komponenten intigriert werden. Im `components`-Ordner befinden sich die restlichen (und somit der Großteil an) Komponenten. Einige davon sin eigenständige Seiten (wie ContestDashboard.vue), andere sind bloß Bauteile (wie NavBar.vue). 
 
 # 5. Dokumentation – Back-End ([Flask](flask.pocoo.org))
 

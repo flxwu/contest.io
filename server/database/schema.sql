@@ -14,6 +14,14 @@ create table if not exists in_usergroup (
     primary key (usergroup, user)  
 );
 
+create table if not exists group_in_contest (
+    usergroup integer not null,
+    contest integer not null,
+    foreign key(usergroup) references Usergroup(groupid),
+    foreign key(contest) references Contest(contestcode),
+    primary key (usergroup, contest)
+);
+
 create table if not exists Usergroup (
     groupid integer primary key autoincrement,
     groupname text not null,
@@ -26,9 +34,7 @@ create table if not exists Contest (
     contestname text not null,
     date_start timestamp not null,
     date_end timestamp not null,
-    visible integer default 0,
-    -- Json-stringified contestgroups array of groupid s 
-    contestgroups text not null
+    visible integer default 0
 );
 
 create table if not exists Task (

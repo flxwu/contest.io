@@ -11,7 +11,8 @@
   },
   "scripts": {
     "dev": "concurrently \"cd client/ && yarn serve\" \"FLASK_APP=server FLASK_DEBUG=1 flask run --with-threads\"",
-    "db-rewrite": "rm -rf server/database/database.db && sqlite3 server/database/database.db < server/database/schema.sql"
+    "db-rewrite": "rm -rf server/database/database.db && sqlite3 server/database/database.db < server/database/schema.sql",
+    "lint": "pylint server"
   },
   "dependencies": {
     "eslint": "^4.19.1"

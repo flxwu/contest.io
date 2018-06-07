@@ -4,6 +4,8 @@ import server.database.models as models
 
 CODEFORCES_BASE_URL = 'http://codeforces.com/api'
 
+class SubmissionResults(EndpointInterface):
+    endpoint_url = '/'
 
 class Tasks(EndpointInterface):
     endpoint_url = '/api/tasks'

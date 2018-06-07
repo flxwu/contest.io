@@ -23,7 +23,7 @@
   * [6.1. Continious Integration](#61-continious-integration)
     + [6.1.1. Travis CI](#611-travis-ci)
     + [6.1.1. Codefactor und Dependabot](#612-codefactor-und-codeclimate)
-- [7. Code](#6-code)
+- [7. Code](#7-code)
 
 ## 1. Abstract   
 

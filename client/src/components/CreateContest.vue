@@ -176,7 +176,7 @@
           <v-flex xs4>
             <v-card>
               <v-card-text>
-                <v-text v-if="contestdate">Contest End: {{ contestdate | moment("dddd, MMMM Do YYYY") }} (23:59)</v-text>
+                <p v-if="contestdate">Contest End: {{ contestdate | moment("dddd, MMMM Do YYYY") }} (23:59)</p>
                 <v-btn small color="primary" dark @click.stop="dialog2 = true">Choose a date...*</v-btn>
 
                 <v-dialog v-model="dialog2" max-width="500px">

@@ -148,7 +148,7 @@ def delete_contest(deleteConditions=()):
             dbcon.commit()
 
 
-def insert_user(name: str, usertype: str, email=None: str, avatar_url=None: str, oauthToken: str):
+def insert_user(name: str, usertype: str, oauthToken: str, email=None, avatar_url=None):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         cur.execute(
@@ -430,7 +430,7 @@ def select_in_usergroup(params=(), conditions=()):
     if not response:
         return None
     else:
-        return response
+        return [user[0] for user in response]
 
 
 def insert_submits_task(user: int, task:int, verdict: str, submission_timestamp: int):

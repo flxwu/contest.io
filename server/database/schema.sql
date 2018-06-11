@@ -3,6 +3,8 @@ create table if not exists User (
     username text not null,
     codeforces_handle text not null,
     usertype text not null,
+    useremail text,
+    avatar_url text,
     date_joined timestamp default current_timestamp not null,
     oauth_token text not null
 );

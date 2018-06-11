@@ -37,7 +37,8 @@ app.url_map.converters['regex'] = RegexConverter
 
 # Set Endpoints
 TasksEndpoint = api_connector.Tasks()  # pylint: disable=invalid-name
-UserContestResultsEndpoint = api_connector.UserContestResults() # pylint: disable=invalid-name
+UserContestResultsEndpoint = api_connector.UserContestResults(
+)  # pylint: disable=invalid-name
 
 # Github-Flask
 github = flask_github.GitHub(app)  # pylint: disable=invalid-name
@@ -136,7 +137,13 @@ def auth_user():
             updatedValues=(
                 '{}=\"{}\"'.format(
                     settings.DB_COLUMNS.USER_OAUTH_TOKEN, session.get(
-                        'oauth_token', None))), setConditions=(
+                        'oauth_token', None)),
+                '{}=\"{}\"'.format(
+                    settings.DB_COLUMNS.USER_AVATAR_URL, userData['avatar_url']),
+                '{}=\"{}\"'.format(
+                    settings.DB_COLUMNS.USER_USEREMAIL, userData['email'])
+            ),
+            setConditions=(
                 '{}=\"{}\"'.format(
                     settings.DB_COLUMNS.USER_USERNAME, userLoginName)))
         user = models.select_user(
@@ -147,8 +154,8 @@ def auth_user():
                     userLoginName)))
         session.pop('user_id', None)
         session['user_id'] = user['userid']
-    return dict(id=user['userid'],ghdata=jsonify(userData))
-    
+    return dict(id=user['userid'], ghdata=jsonify(userData))
+
 
 @app.route('/api/tasks', methods=['GET', 'POST'])
 def api_tasks():
@@ -285,6 +292,7 @@ def api_contest():
     else:
         return None
 
+
 @app.route('/api/contest.results', methods=['GET'])
 def api_contestResults():
     user = get_queryparam('user')
@@ -347,46 +355,66 @@ def api_user_cfHandle():
 def api_usergroup():
     """
     Contest Endpoint: POST with Content-Type = application/json
-    -> ?group - insert new group
     {
         "groupname": groupname (String)
         "groupadmin": userID of group admin
     }
-    -> ?users - add user to group
+    }
+    """
+    if request.method == 'GET':
+        returnJSON = models.select_usergroup(
+            params=('*'),
+            conditions=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.USERGROUP_GROUPID,
+                get_queryparam('group')
+            ))
+        )
+        return jsonify(returnJSON)
+    elif request.method == 'POST':
+        # add a new Usergroup
+        postJSON = request.get_json()
+        if not postJSON:
+            return None
+        else:
+            usergroupID = models.insert_usergroup(
+                postJSON[settings.DB_COLUMNS.USERGROUP_GROUPNAME],
+                postJSON[settings.DB_COLUMNS.USERGROUP_GROUPADMIN])
+            return usergroupID
+        else:
+            return None
+    else:
+        return None
+
+
+@app.route('/api/usergroup.members', methods=['GET', 'POST'])
+def api_usergroup():
+    """
+    Contest Endpoint: POST with Content-Type = application/json
     {
         "usergroup": usergroupID
         "user": userID
     }
     """
     if request.method == 'GET':
-        returnJSON = models.select_in_usergroup(
-            params=('*'),
+        userIDsInGroup = models.select_in_usergroup(
+            params=(settings.DB_COLUMNS.IN_USERGROUP_USER),
             conditions=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.IN_USERGROUP_USERGROUP,
                 get_queryparam('group')
             ))
         )
-        return returnJSON
+        for user in userIDsInGroup:
+
+        return str(returnJSON)
     elif request.method == 'POST':
-        if get_queryparam('users'):
-            # add user to group
-            postJSON = request.get_json()
-            if not postJSON:
-                return None
-            else:
-                models.insert_in_usergroup(
-                    postJSON[settings.DB_COLUMNS.IN_USERGROUP_USERGROUP],
-                    postJSON[settings.DB_COLUMNS.IN_USERGROUP_USER])
-        elif get_queryparam('group'):
-            # add a new Usergroup
-            postJSON = request.get_json()
-            if not postJSON:
-                return None
-            else:
-                usergroupID = models.insert_usergroup(
-                    postJSON[settings.DB_COLUMNS.USERGROUP_GROUPNAME],
-                    postJSON[settings.DB_COLUMNS.USERGROUP_GROUPADMIN])
-                return usergroupID
+        # add user to group
+        postJSON = request.get_json()
+        if not postJSON:
+            return None
+        else:
+            models.insert_in_usergroup(
+                postJSON[settings.DB_COLUMNS.IN_USERGROUP_USERGROUP],
+                postJSON[settings.DB_COLUMNS.IN_USERGROUP_USER])
         else:
             return None
     else:

@@ -18,9 +18,12 @@ class DB_COLUMNS: #pylint: disable=invalid-name
     USER_USERNAME = 'username'
     USER_CODEFORCES_HANDLE = 'codeforces_handle'
     USER_USERTYPE = 'usertype'
+    USER_USEREMAIL = 'useremail'
+    USER_AVATAR_URL = 'avatar_url'
     USER_DATE_JOINED = 'date_joined'
     USER_OAUTH_TOKEN = 'oauth_token'
     
+
     TASK_TASKID = 'taskid'
     TASK_TASKNAME = 'taskname'
     TASK_TASKTAGS = 'tasktags'

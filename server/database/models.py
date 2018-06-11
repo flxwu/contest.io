@@ -452,7 +452,7 @@ def insert_submits_task(user: int, task:int, verdict: str, submission_timestamp:
 #             contains_task.contest = \"{}\"'.format(contestCode)
 
 
-def get_memberships_of(admin=False, user: int):
+def get_memberships_of(user: int, admin=False):
     if admin:
         queryString = 'SELECT Usergroup.* \
             FROM in_usergroup, Usergroup \
@@ -463,11 +463,11 @@ def get_memberships_of(admin=False, user: int):
         FROM Usergroup \
         WHERE Usergroup.groupadmin = \"{}\"'.format(user)
     with sql.connect(DATABASE_PATH) as dbcon:
-            dbcon.row_factory = dict_factory
-            cur = dbcon.cursor()
-            if cur.rowcount == 0:
-                return None
-            queryResult = cur.execute(queryString)
+        dbcon.row_factory = dict_factory
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        queryResult = cur.execute(queryString)
 
         response = queryResult.fetchall()
         if not response:
@@ -533,14 +533,17 @@ def get_latest_submissions(user: str, contestCode: int):
         FROM submits_task, contains_task \
         WHERE submits_task.task = contains_task.task\
         AND submits_task.user = \"{}\" \
-        AND contains_task.contest = \"{}\"'.format(user, contestCode)
+        AND contains_task.contest = \"{}\" \
+        GROUP BY submits_task.task \
+        HAVING MIN(ROWID) \
+        ORDER BY ROWID'.format(user, contestCode)
     with sql.connect(DATABASE_PATH) as dbcon:
         dbcon.row_factory = dict_factory        
         cur = dbcon.cursor()
         if cur.rowcount == 0:
             return None
         queryResult = cur.execute(queryString)
-    
+    ###TODO:
     response = queryResult.fetchall()
     if not response:
         return None

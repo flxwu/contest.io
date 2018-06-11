@@ -31,6 +31,7 @@ class DB_COLUMNS: #pylint: disable=invalid-name
     
     CONTEST_CONTESTCODE = 'contestcode'
     CONTEST_CONTESTNAME = 'contestname'
+    CONTEST_CONTESTADMIN = 'contestadmin'
     CONTEST_DATE_START = 'date_start'
     CONTEST_DATE_END = 'date_end'
     CONTEST_VISIBLE = 'visible'

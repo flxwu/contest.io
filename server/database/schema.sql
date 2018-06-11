@@ -19,9 +19,11 @@ create table if not exists Usergroup (
 create table if not exists Contest (
     contestcode text primary key not null,
     contestname text not null,
+    contestadmin integer not null,
     date_start timestamp not null,
     date_end timestamp not null,
-    visible integer default 0
+    visible integer default 0,
+    foreign key(contestadmin) references User(userid)        
 );
 
 create table if not exists Task (

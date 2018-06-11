@@ -61,6 +61,7 @@ export default {
   data() {
     return {
       user: {},
+      id: null,
       texts: ['Hi', 'Moin', 'Holl']
     };
   },
@@ -69,8 +70,10 @@ export default {
     axios.get('/api/github-user')
       .then(resp => {
         if(!(resp.data == '401: Bad credentials')) {
-          this.user = resp.data;
-          console.log(this.user);
+          this.user = resp.data.ghdata;
+          this.id = resp.data.id;
+          localStorage.setItem('userid', this.id);
+          console.log(resp.data);
         } else {
           window.location = history.go(-1);
         }

@@ -81,8 +81,8 @@ export default {
   components: {},
   data() {
     return {
-      groupCreatePopup: true,
-      newGroupName: "",
+      groupCreatePopup: false,
+      newGroupName: '',
       groups_joined: [{groupid: 1, groupname: 'Nicegroup', groupadmin: 'flxwu'}],
       groups_owned: [{groupid: 1, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 2, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 3, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 4, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 5, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 6, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 7, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 8, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 9, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 10, groupname: 'Awesomegroup', groupadmin: 'Qo2770'}]
     };
@@ -93,6 +93,29 @@ export default {
 
     // Get groups user is admin/owner of
     axios.get();
+  },
+  methods: {
+    createGroup() {
+      let config = {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      };
+      axios.post('/api/usergroup', {
+        'groupname': this.newGroupName,
+        'groupadmin': localStorage.getItem('userid')
+      }, config)
+        .then(function (resp) {
+          window.location = '/contest/' + resp.data;
+        })
+        .catch(function (error) {
+          this.axiosError = error;
+          this.alertAxios = true;
+          setTimeout(() => {
+            this.alertAxios = false;
+          }, 30000);
+        });
+    }
   }
 };
 

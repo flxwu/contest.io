@@ -61,7 +61,7 @@ export default {
   data() {
     return {
       user: {},
-      texts: ["Hi", "Moin", "Holl"]
+      texts: ['Hi', 'Moin', 'Holl']
     };
   },
   // See if a user is logged in

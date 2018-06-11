@@ -89,7 +89,7 @@ export default {
   },
   created: () => {
     // Get groups user is in
-    axios.get();
+    axios.get("/api/user");
 
     // Get groups user is admin/owner of
     axios.get();
@@ -105,6 +105,7 @@ export default {
         'groupname': this.newGroupName,
         'groupadmin': localStorage.getItem('userid')
       }, config);
+      this.groupCreatePopup = false;
     }
   }
 };

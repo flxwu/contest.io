@@ -12,8 +12,8 @@
 
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn to="/dashboard" flat v-if="loggedIn">Dashboard</v-btn>
-        <v-btn flat href="/api/github-logout" v-if="loggedIn">Logout</v-btn>
-        <v-btn flat @click="loginDialog=true" v-if="!loggedIn">Login</v-btn>
+        <v-btn flat href="/api/github-logout" v-if="logOut()">Logout</v-btn>
+        <v-btn flat @click="loginDialog=true" v-if="logIn()">Login</v-btn>
         <v-dialog v-model="loginDialog" max-width="500px">
         <v-card>
           <v-card-title>
@@ -81,17 +81,30 @@ export default {
   },
   // See if a user is logged in
   created: function () {
-    axios.get('/api/github-user')
-      .then(resp => {
-        if(!(resp.data == '401: Bad credentials')) {
-          this.loggedIn = true;
-          this.user = resp.data.ghdata;
-          this.userid = resp.data.id;
-          localStorage.setItem('userid', this.userid);
-          localStorage.setItem('data', JSON.stringify(this.user));
-          console.log(resp);
-        }
-      });
+    if(localStorage.getItem('userid') != null) {
+      this.loggedIn = true;
+    }
+  },
+  methods: {
+    logIn() {
+      axios.get('/api/github-user')
+        .then(resp => {
+          if(!(resp.data == '401: Bad credentials')) {
+            this.loggedIn = true;
+            this.user = resp.data.ghdata;
+            this.userid = resp.data.id;
+            localStorage.setItem('userid', this.userid);
+            localStorage.setItem('data', JSON.stringify(this.user));
+            console.log(resp);
+          }
+        });
+    }
+
+    logOut() {
+      this.loggedIn = false;
+      localStorage.setItem('userid', null);
+      localStorage.setItem('data', null);
+    }
   }
 };
 </script>

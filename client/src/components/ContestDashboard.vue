@@ -68,6 +68,7 @@
 
 <script>
 import axios from 'axios';
+import * as momentjs from 'moment';
 
 export default {
   name: 'contestdashboard',
@@ -84,14 +85,23 @@ export default {
   mounted() {
     axios.get('/api/contest?code=' + this.$route.params.id)
       .then(response => {
-        this.items = typeof response.data.tasks === 'object' ? [response.data.tasks] : response.data.tasks;
         this.name = response.data.contestname;
         this.code = response.data.contestcode;
         this.date_end = response.data.date_end;
+        console.log(momentjs('2010-10-20').isSameOrAfter('2010-10-19'));
       })
-      .catch(error => {
+      .catch(() => {
         this.exists = 0;
-        window.location = '/404';
+        //window.location = '/404';
+      });
+
+    axios.get('/api/contains_task?code=' + this.$route.params.id)
+      .then(response => {
+        this.items = typeof response.data.tasks === 'object' ? [response.data.tasks] : response.data.tasks;
+      })
+      .catch(() => {
+        this.exists = 0;
+        //window.location = '/404';
       });
   }
 };

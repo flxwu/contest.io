@@ -210,6 +210,7 @@ def api_contest():
     Contest Endpoint: POST with Content-Type = application/json
     {
             "contestname": "testContest-1",
+            "contestadmin": 1,
             "date_start": "2017-05-12",
             "date_end": "2017-06-12",
             "visible": 1,
@@ -257,6 +258,7 @@ def api_contest():
             # insert contest to db contest table
             contestCode = models.insert_contest(
                 postJSON[settings.DB_COLUMNS.CONTEST_CONTESTNAME],
+                postJSON[settings.DB_COLUMNS.CONTEST_CONTESTADMIN],
                 postJSON[settings.DB_COLUMNS.CONTEST_DATE_START],
                 postJSON[settings.DB_COLUMNS.CONTEST_DATE_END],
                 postJSON[settings.DB_COLUMNS.CONTEST_VISIBLE]
@@ -378,6 +380,9 @@ def api_usergroup():
         else:
             usergroupID = models.insert_usergroup(
                 postJSON[settings.DB_COLUMNS.USERGROUP_GROUPNAME],
+                postJSON[settings.DB_COLUMNS.USERGROUP_GROUPADMIN])
+            models.insert_in_usergroup(
+                usergroupID,
                 postJSON[settings.DB_COLUMNS.USERGROUP_GROUPADMIN])
             return str(usergroupID)
     else:

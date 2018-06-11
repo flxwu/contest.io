@@ -152,7 +152,7 @@ def insert_user(name: str, usertype: str, oauthToken: str, email=None, avatar_ur
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         cur.execute(
-            'INSERT INTO User (username, codeforces_handle, usertype, useremail, avatar_url, oauth_token) VALUES (?,?,?,?)',
+            'INSERT INTO User (username, codeforces_handle, usertype, useremail, avatar_url, oauth_token) VALUES (?,?,?,?,?,?)',
             (name, name, usertype, email, avatar_url, oauthToken)
         )
         dbcon.commit()

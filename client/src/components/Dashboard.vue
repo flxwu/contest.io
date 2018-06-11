@@ -15,7 +15,6 @@
                 <v-avatar size="128px"><img :src="user.avatar_url" alt="avatar"></v-avatar><br><br>
                 <div>Username:  {{ user.login }}  ({{ user.name }})</div>
                 <div>Email:  {{ user.email }} </div><br>
-                <div>{{ user.bio }} </div><br>
               </div>
             </v-card-title>
 
@@ -25,12 +24,13 @@
         <v-flex xs9>
           <v-tabs grow icons-and-text centered dark color="primary">
             <v-tabs-slider color="white"></v-tabs-slider>
-            <v-tab
-              v-for="n in 2"
-              :key="n"
-              ripple
-            >
-              Item {{ n }}
+            <v-tab ripple>
+              Groups
+              <v-icon>group</v-icon>
+            </v-tab>
+            <v-tab ripple>
+              Contests
+              <v-icon>list</v-icon>
             </v-tab>
             <v-tab-item>
               <Groups />
@@ -67,17 +67,12 @@ export default {
   },
   // See if a user is logged in
   created: function () {
-    axios.get('/api/github-user')
-      .then(resp => {
-        if(!(resp.data == '401: Bad credentials')) {
-          this.user = resp.data.ghdata;
-          this.id = resp.data.id;
-          localStorage.setItem('userid', this.id);
-          console.log(resp.data);
-        } else {
-          window.location = history.go(-1);
-        }
-      });
+    if(localStorage.getItem('userid') != null) {
+      this.user = JSON.parse(localStorage.getItem('data'));
+      console.log(this.user);
+    } else {
+      window.location = history.go(-1);
+    }
   }
 };
 </script>

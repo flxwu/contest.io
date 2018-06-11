@@ -104,17 +104,7 @@ export default {
       axios.post('/api/usergroup', {
         'groupname': this.newGroupName,
         'groupadmin': localStorage.getItem('userid')
-      }, config)
-        .then(function (resp) {
-          window.location = '/contest/' + resp.data;
-        })
-        .catch(function (error) {
-          this.axiosError = error;
-          this.alertAxios = true;
-          setTimeout(() => {
-            this.alertAxios = false;
-          }, 30000);
-        });
+      }, config);
     }
   }
 };

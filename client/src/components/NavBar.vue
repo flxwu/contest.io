@@ -72,6 +72,7 @@ export default {
       loggedIn: false,
       user: {},
       drawer: false,
+      userid: null,
       links: [
         { title: 'Home', url: '/' },
         { title: 'Contests', url: 'contests' }
@@ -84,7 +85,10 @@ export default {
       .then(resp => {
         if(!(resp.data == '401: Bad credentials')) {
           this.loggedIn = true;
-          this.user = resp.data;
+          this.user = resp.data.ghdata;
+          this.userid = resp.data.id;
+          localStorage.setItem('userid', this.userid);
+          localStorage.setItem('data', JSON.stringify(this.user));
           console.log(resp);
         }
       });

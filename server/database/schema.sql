@@ -69,3 +69,11 @@ create table if not exists submits_task (
     foreign key(task) references Task(taskid),
     primary key (user, task)
 );
+
+create table if not exists joined_contest (
+    user integer not null,
+    contest integer not null,
+    foreign key(user) references User(userid),
+    foreign key(contest) references Contest(contestcode),
+    primary key (user, contest)
+);

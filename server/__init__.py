@@ -295,8 +295,16 @@ def api_contest():
         return None
 
 
+@app.route('/api/contest.join', methods=['POST'])
+def api_contest_join():
+    user = get_queryparam('user')
+    contest = get_queryparam('contest')
+
+
+
+
 @app.route('/api/contest.results', methods=['GET'])
-def api_contestResults():
+def api_contest_results():
     user = get_queryparam('user')
     contest = get_queryparam('contest')
     returnJSON = None
@@ -323,16 +331,17 @@ def api_contests():
                     settings.DB_COLUMNS.CONTEST_VISIBLE,
                     1))
             ))
+            return jsonify(contests)
         elif get_queryparam('admin'):
-            contests = (models.select_contest(
+            contests = models.select_contest(
                 params=('*'),
                 conditions=('{}=\"{}\"'.format(
                     settings.DB_COLUMNS.CONTEST_CONTESTADMIN,
                     get_queryparam('admin')))
-            ))
+            )
+            return jsonify(contests)
         else:
             return None
-        return contests
     else:
         return None
 
@@ -397,7 +406,7 @@ def api_usergroup():
 
 @app.route('/api/usergroup.memberships', methods=['GET'])
 def api_usergroup_membership():
-    memberships = models.get_memberships_of(get_queryparam('user'),admin=get_queryparam('admin'))
+    memberships = models.get_memberships_of(get_queryparam('user'), admin=get_queryparam('admin'))
     return jsonify(memberships)
 
 

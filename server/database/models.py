@@ -533,14 +533,17 @@ def get_latest_submissions(user: str, contestCode: int):
         FROM submits_task, contains_task \
         WHERE submits_task.task = contains_task.task\
         AND submits_task.user = \"{}\" \
-        AND contains_task.contest = \"{}\"'.format(user, contestCode)
+        AND contains_task.contest = \"{}\" \
+        GROUP BY submits_task.task \
+        HAVING MIN(ROWID) \
+        ORDER BY ROWID'.format(user, contestCode)
     with sql.connect(DATABASE_PATH) as dbcon:
         dbcon.row_factory = dict_factory
         cur = dbcon.cursor()
         if cur.rowcount == 0:
             return None
         queryResult = cur.execute(queryString)
-
+    ###TODO:
     response = queryResult.fetchall()
     if not response:
         return None

@@ -13,7 +13,7 @@
             <div><v-subheader style="width: 270px;">Contest code: <v-text-field :value="code" disabled style="width: 100px; margin-left: 10px; margin-top: 10px;"></v-text-field></v-subheader> </div>
             <v-expansion-panel popout>
 
-             <v-expansion-panel-content v-for="item in items" :key="item.taskid">
+             <v-expansion-panel-content v-for="task in tasks" :key="task.taskid">
                <div slot="header">{{ item.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
                    <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
                    <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
@@ -78,6 +78,7 @@ export default {
       items: [],
       name: '',
       code: '',
+      tasks: [{}],
       date_end: null,
       exists: 1
     };
@@ -88,16 +89,8 @@ export default {
         this.name = response.data.contestname;
         this.code = response.data.contestcode;
         this.date_end = response.data.date_end;
+        this.tasks = response.data.tasks;
         console.log(momentjs('2010-10-20').isSameOrAfter('2010-10-19'));
-      })
-      .catch(() => {
-        this.exists = 0;
-        //window.location = '/404';
-      });
-
-    axios.get('/api/contains_task?code=' + this.$route.params.id)
-      .then(response => {
-        this.items = typeof response.data.tasks === 'object' ? [response.data.tasks] : response.data.tasks;
       })
       .catch(() => {
         this.exists = 0;

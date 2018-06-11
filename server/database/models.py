@@ -486,7 +486,7 @@ def get_cfhandle(user: int):
     else:
         return response
 
-def get_userID(cfhandle: str):
+def get_userid(cfhandle: str):
     queryString = 'SELECT userid \
         FROM User \
         WHERE codeforces_handle = \"{}\"'.format(cfhandle)

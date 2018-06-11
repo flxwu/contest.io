@@ -379,7 +379,7 @@ def api_usergroup():
             usergroupID = models.insert_usergroup(
                 postJSON[settings.DB_COLUMNS.USERGROUP_GROUPNAME],
                 postJSON[settings.DB_COLUMNS.USERGROUP_GROUPADMIN])
-            return usergroupID
+            return str(usergroupID)
     else:
         return None
 

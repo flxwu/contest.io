@@ -7,6 +7,7 @@ const routerOptions = [
   { path: '/profile/:id', component: 'Profile' },
   { path: '/contestcreate', component: 'CreateContest' },
   { path: '/dashboard', component: 'Dashboard' },
+  { path: '/contests', component: 'Contests' },
   { path: '*', component: '404Error' }
 ];
 

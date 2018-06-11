@@ -8,7 +8,7 @@ class EndpointInterface(metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def get(self, tags=None):
+    def get(self):
         raise NotImplementedError
 
     @abstractmethod

@@ -2,6 +2,7 @@ import sqlite3 as sql
 import json
 import secrets
 from dateutil import parser
+from datetime import datetime
 
 DATABASE_PATH = 'server/database/database.db'
 
@@ -151,8 +152,8 @@ def insert_user(name: str, usertype: str, oauthToken: str):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         cur.execute(
-            'INSERT INTO User (username, usertype, oauth_token) VALUES (?,?,?)',
-            (name, usertype, oauthToken)
+            'INSERT INTO User (username, codeforces_handle, usertype, oauth_token) VALUES (?,?,?,?)',
+            (name, name, usertype, oauthToken)
         )
         dbcon.commit()
 
@@ -396,6 +397,16 @@ def select_in_usergroup(params=(), conditions=()):
     else:
         return response
 
+
+def insert_submits_task(user: int, task:int, verdict: str, submission_timestamp: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        submission_time = datetime.fromtimestamp(submission_timestamp)
+        cur.execute(
+            'INSERT INTO submits_task (user, task, verdict, submission_time) VALUES (?,?,?,?)',
+            (user, task, verdict, submission_time))
+        dbcon.commit()
+
 # TODO:
 # def get_users_in_contest(contestCode: int):
 #     queryString = 'SELECT Task.* \
@@ -418,6 +429,59 @@ def get_tasks_in_contest(contestCode: int):
 
     response = queryResult.fetchall()
     response = response[0] if len(response) == 1 else response
+    if not response:
+        return None
+    else:
+        return response
+
+
+def get_cfhandle(user: int):
+    queryString = 'SELECT codeforces_handle \
+        FROM User \
+        WHERE userid = \"{}\"'.format(user)
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchone()
+    if not response:
+        return None
+    else:
+        return response
+
+def get_userID(cfhandle: str):
+    queryString = 'SELECT userid \
+        FROM User \
+        WHERE codeforces_handle = \"{}\"'.format(cfhandle)
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchone()
+    if not response:
+        return None
+    else:
+        return response
+
+
+def get_latest_submissions(user: str, contestCode: int):
+    queryString = 'SELECT submits_task.verdict, submits_task.task \
+        FROM submits_task, contains_task \
+        WHERE submits_task.task = contains_task.task\
+        AND submits_task.user = \"{}\" \
+        AND contains_task.contest = \"{}\"'.format(user, contestCode)
+    with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory        
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        queryResult = cur.execute(queryString)
+    
+    response = queryResult.fetchall()
     if not response:
         return None
     else:

@@ -380,14 +380,12 @@ def api_usergroup():
                 postJSON[settings.DB_COLUMNS.USERGROUP_GROUPNAME],
                 postJSON[settings.DB_COLUMNS.USERGROUP_GROUPADMIN])
             return usergroupID
-        else:
-            return None
     else:
         return None
 
 
 @app.route('/api/usergroup.members', methods=['GET', 'POST'])
-def api_usergroup():
+def api_usergroup_members():
     """
     Contest Endpoint: POST with Content-Type = application/json
     {
@@ -403,20 +401,24 @@ def api_usergroup():
                 get_queryparam('group')
             ))
         )
-        for user in userIDsInGroup:
-
-        return str(returnJSON)
+        userObjects = []
+        for userID in userIDsInGroup:
+            userObjects.append(
+                models.select_user(
+                    params=('*'), 
+                    conditions=('{}=\"{}\"'.format(settings.DB_COLUMNS.USER_USERID, userID))
+                )
+            )
+        return jsonify(userObjects)
     elif request.method == 'POST':
         # add user to group
-        postJSON = request.get_json()
+        postJSON=request.get_json()
         if not postJSON:
             return None
         else:
             models.insert_in_usergroup(
                 postJSON[settings.DB_COLUMNS.IN_USERGROUP_USERGROUP],
                 postJSON[settings.DB_COLUMNS.IN_USERGROUP_USER])
-        else:
-            return None
     else:
         return None
 

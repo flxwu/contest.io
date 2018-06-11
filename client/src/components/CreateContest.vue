@@ -370,7 +370,7 @@ export default {
 }
 
 #taskselection {
-  margin-left: -10%;
+  /* margin-left: -10%; */
 }
 
 .search {

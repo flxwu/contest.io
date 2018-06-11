@@ -100,8 +100,6 @@
                     </v-card>
                   </v-dialog>
 
-                   <v-divider :key="item.taskid + '-divider'"></v-divider>
-
                    <v-list-tile avatar :key="item.taskid + '-avatar2'" @click="() => {}">
 
                      <v-list-tile-action>
@@ -123,6 +121,8 @@
                     <v-chip :key="tag" small v-for="tag in item.tasktags.slice(0, 2)" >{{ tag }}</v-chip>
 
                    </v-list-tile>
+
+                   <v-divider :key="item.taskid + '-divider'"></v-divider>
 
                  </template>
 

@@ -5,7 +5,7 @@
 
       <v-layout>
 
-        <v-flex xs3>
+        <v-flex xs3 style="margin-right: 3%">
           <v-card class="cardprofile">
 
             <v-card-title primary-title>
@@ -23,7 +23,26 @@
         </v-flex>
 
         <v-flex xs9>
-
+          <v-tabs grow icons-and-text centered dark color="primary">
+            <v-tabs-slider color="white"></v-tabs-slider>
+            <v-tab
+              v-for="n in 2"
+              :key="n"
+              ripple
+            >
+              Item {{ n }}
+            </v-tab>
+            <v-tab-item>
+              <v-card flat>
+                <v-card-text>Contents for Item 1 go here</v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card flat>
+                <v-card-text>Contents for Item 2 go here</v-card-text>
+              </v-card>
+            </v-tab-item>
+          </v-tabs>
         </v-flex>
 
       </v-layout>
@@ -40,7 +59,8 @@ export default {
   components: {},
   data() {
     return {
-      user: {}
+      user: {},
+      texts: ["Hi", "Moin", "Holl"]
     };
   },
   // See if a user is logged in

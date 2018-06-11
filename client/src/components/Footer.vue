@@ -11,7 +11,7 @@
         {{ link.title }}
       </v-btn>
       <v-flex xs12 py-3 text-xs-center white--text>
-        &copy;2018 — <strong>contest.io</strong>
+        &copy;2018 — <strong>contest.io (Quentin Oschatz and Felix Wu)</strong>
       </v-flex>
     </v-layout>
   </v-footer>

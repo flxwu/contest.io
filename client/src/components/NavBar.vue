@@ -11,7 +11,7 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn to="/dashboard" flat>Dashboard</v-btn>
+        <v-btn to="/dashboard" flat v-if="loggedIn">Dashboard</v-btn>
         <v-btn flat href="/api/github-logout" v-if="loggedIn">Logout</v-btn>
         <v-btn flat @click="loginDialog=true" v-if="!loggedIn">Login</v-btn>
         <v-dialog v-model="loginDialog" max-width="500px">

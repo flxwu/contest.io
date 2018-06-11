@@ -316,12 +316,22 @@ def api_contestResults():
 @app.route('/api/contests', methods=['GET'])
 def api_contests():
     if request.method == 'GET':
-        contests = models.select_contest(
-            params=('*'),
-            conditions=('{}=\"{}\"'.format(
-                settings.DB_COLUMNS.CONTEST_VISIBLE,
-                1))
-        )
+        if get_queryparam('visible'):
+            contests = (models.select_contest(
+                params=('*'),
+                conditions=('{}=\"{}\"'.format(
+                    settings.DB_COLUMNS.CONTEST_VISIBLE,
+                    1))
+            ))
+        elif get_queryparam('admin'):
+            contests = (models.select_contest(
+                params=('*'),
+                conditions=('{}=\"{}\"'.format(
+                    settings.DB_COLUMNS.CONTEST_CONTESTADMIN,
+                    get_queryparam('admin')))
+            ))
+        else:
+            return None
         return contests
     else:
         return None
@@ -338,19 +348,16 @@ def api_user():
 
 @app.route('/api/user.cfHandle', methods=['POST'])
 def api_user_cfHandle():
-    if request.method == 'POST':
-        models.update_user(
-            updatedValues=('{}=\"{}\"'.format(
-                settings.DB_COLUMNS.USER_CODEFORCES_HANDLE,
-                request.get_json()['handle']
-            )),
-            setConditions=('{}=\"{}\"'.format(
-                settings.DB_COLUMNS.USER_USERNAME,
-                request.get_json()['username']
-            ))
-        )
-    else:
-        return None
+    models.update_user(
+        updatedValues=('{}=\"{}\"'.format(
+            settings.DB_COLUMNS.USER_CODEFORCES_HANDLE,
+            request.get_json()['handle']
+        )),
+        setConditions=('{}=\"{}\"'.format(
+            settings.DB_COLUMNS.USER_USERNAME,
+            request.get_json()['username']
+        ))
+    )
 
 
 @app.route('/api/usergroup', methods=['GET', 'POST'])
@@ -388,6 +395,11 @@ def api_usergroup():
     else:
         return None
 
+@app.route('/api/usergroup.memberships', methods=['GET'])
+def api_usergroup_membership():
+    memberships = models.get_memberships_of(admin=get_queryparam('admin'),get_queryparam('user'))
+    return jsonify(memberships)
+
 
 @app.route('/api/usergroup.members', methods=['GET', 'POST'])
 def api_usergroup_members():
@@ -411,13 +423,14 @@ def api_usergroup_members():
             userObjects.append(
                 models.select_user(
                     params=('*'),
-                    conditions=('{}=\"{}\"'.format(settings.DB_COLUMNS.USER_USERID, userID))
+                    conditions=('{}=\"{}\"'.format(
+                        settings.DB_COLUMNS.USER_USERID, userID))
                 )
             )
         return jsonify(userObjects)
     elif request.method == 'POST':
         # add user to group
-        postJSON=request.get_json()
+        postJSON = request.get_json()
         if not postJSON:
             return None
         else:

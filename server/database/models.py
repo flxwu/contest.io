@@ -452,6 +452,29 @@ def insert_submits_task(user: int, task:int, verdict: str, submission_timestamp:
 #             contains_task.contest = \"{}\"'.format(contestCode)
 
 
+def get_memberships_of(admin=False, user: int):
+    if admin:
+        queryString = 'SELECT Usergroup.* \
+            FROM in_usergroup, Usergroup \
+            WHERE Usergroup.groupid = in_usergroup.usergroup AND \
+                in_usergroup.user = \"{}\"'.format(user)
+    else:
+        queryString = 'SELECT Usergroup.* \
+        FROM Usergroup \
+        WHERE Usergroup.groupadmin = \"{}\"'.format(user)
+    with sql.connect(DATABASE_PATH) as dbcon:
+            dbcon.row_factory = dict_factory
+            cur = dbcon.cursor()
+            if cur.rowcount == 0:
+                return None
+            queryResult = cur.execute(queryString)
+
+        response = queryResult.fetchall()
+        if not response:
+            return None
+        else:
+            return response
+
 def get_tasks_in_contest(contestCode: int):
     queryString = 'SELECT Task.* \
         FROM contains_task, Task \

@@ -348,19 +348,16 @@ def api_user():
 
 @app.route('/api/user.cfHandle', methods=['POST'])
 def api_user_cfHandle():
-    if request.method == 'POST':
-        models.update_user(
-            updatedValues=('{}=\"{}\"'.format(
-                settings.DB_COLUMNS.USER_CODEFORCES_HANDLE,
-                request.get_json()['handle']
-            )),
-            setConditions=('{}=\"{}\"'.format(
-                settings.DB_COLUMNS.USER_USERNAME,
-                request.get_json()['username']
-            ))
-        )
-    else:
-        return None
+    models.update_user(
+        updatedValues=('{}=\"{}\"'.format(
+            settings.DB_COLUMNS.USER_CODEFORCES_HANDLE,
+            request.get_json()['handle']
+        )),
+        setConditions=('{}=\"{}\"'.format(
+            settings.DB_COLUMNS.USER_USERNAME,
+            request.get_json()['username']
+        ))
+    )
 
 
 @app.route('/api/usergroup', methods=['GET', 'POST'])
@@ -397,6 +394,11 @@ def api_usergroup():
             return str(usergroupID)
     else:
         return None
+
+@app.route('/api/usergroup.memberships', methods=['GET'])
+def api_usergroup_membership():
+    memberships = models.get_memberships_of(get_queryparam('user'))
+    return jsonify(memberships)
 
 
 @app.route('/api/usergroup.members', methods=['GET', 'POST'])

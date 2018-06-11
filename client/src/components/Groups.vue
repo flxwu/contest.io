@@ -27,11 +27,30 @@
           </v-flex>
 
           <v-flex xs6 style="padding-left: 1%;">
+
+            <v-dialog v-model="groupCreatePopup" max-width="500px">
+              <v-card>
+                <v-card-title>
+                  Create new group
+                </v-card-title>
+                <v-card-text>
+                  <v-text-field id="newGroupName" v-model="newGroupName" label="Group Name"></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn color="success" flat @click.stop="createGroup()">Create group</v-btn>
+                  <v-btn color="error" flat @click.stop="groupCreatePopup=false">Close</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
             <v-list style="max-height: 70%; overflow: scroll;">
               <v-card>
                 <v-toolbar color="special1" dark>
                   <v-toolbar-title>Groups you have created</v-toolbar-title>
                   <v-spacer></v-spacer>
+                  <v-btn icon ripple fab small @click="groupCreatePopup=!groupCreatePopup">
+                    <v-icon>add</v-icon>
+                  </v-btn>
                 </v-toolbar>
                 <v-list two-line>
                   <v-list-tile v-for="group in groups_owned" :key="group.groupid">
@@ -62,6 +81,8 @@ export default {
   components: {},
   data() {
     return {
+      groupCreatePopup: true,
+      newGroupName: "",
       groups_joined: [{groupid: 1, groupname: 'Nicegroup', groupadmin: 'flxwu'}],
       groups_owned: [{groupid: 1, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 2, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 3, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 4, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 5, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 6, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 7, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 8, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 9, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 10, groupname: 'Awesomegroup', groupadmin: 'Qo2770'}]
     };

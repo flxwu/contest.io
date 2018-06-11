@@ -33,14 +33,10 @@
               Item {{ n }}
             </v-tab>
             <v-tab-item>
-              <v-card flat>
-                <v-card-text>Contents for Item 1 go here</v-card-text>
-              </v-card>
+              <Groups />
             </v-tab-item>
             <v-tab-item>
-              <v-card flat>
-                <v-card-text>Contents for Item 2 go here</v-card-text>
-              </v-card>
+              <Contests />
             </v-tab-item>
           </v-tabs>
         </v-flex>
@@ -54,9 +50,14 @@
 <script>
 import axios from 'axios';
 
+import Groups from './Groups.vue';
+import Contests from './ContestsOverview.vue';
+
 export default {
   name: 'dashboard',
-  components: {},
+  components: {
+    Groups, Contests
+  },
   data() {
     return {
       user: {},

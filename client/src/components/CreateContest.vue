@@ -94,7 +94,7 @@
 
                       <v-card-actions>
 
-                        <v-btn flat color="orange" :href="item.codeforces_url" target="blank">Solve</v-btn>
+                        <v-btn flat color="orange" :href="item.codeforces_url" target="blank">Preview</v-btn>
                         <v-btn color="primary" flat @click.stop="detailPopup=false">Close</v-btn>
                       </v-card-actions>
                     </v-card>
@@ -159,7 +159,7 @@
 
                 <v-card-actions>
                   <v-btn flat color="red" @click="removeTask(item.taskid)">Remove</v-btn>
-                  <v-btn flat color="orange" :href="item.codeforces_url" target="blank">Solve</v-btn>
+                  <v-btn flat color="orange" :href="item.codeforces_url" target="blank">Preview</v-btn>
                 </v-card-actions>
 
               </v-card>

@@ -147,8 +147,8 @@ def auth_user():
                     userLoginName)))
         session.pop('user_id', None)
         session['user_id'] = user['userid']
-    return str(userData)
-
+    return dict(id=user['userid'],ghdata=jsonify(userData))
+    
 
 @app.route('/api/tasks', methods=['GET', 'POST'])
 def api_tasks():
@@ -362,8 +362,8 @@ def api_usergroup():
         returnJSON = models.select_in_usergroup(
             params=('*'),
             conditions=('{}=\"{}\"'.format(
-                settings.DB_COLUMNS.USERGROUP_GROUPID,
-                get_queryparam('groupID')
+                settings.DB_COLUMNS.IN_USERGROUP_USERGROUP,
+                get_queryparam('group')
             ))
         )
         return returnJSON

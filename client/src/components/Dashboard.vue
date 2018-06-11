@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>Dashboard</p>
+    <p>{{ user.login }}</p>
   </div>
 </template>
 
@@ -12,9 +12,18 @@ export default {
   components: {},
   data() {
     return {
+      user: {}
     };
   },
-  mounted() {
+  // See if a user is logged in
+  created: function () {
+    axios.get('/api/github-user')
+      .then(resp => {
+        if(!(resp.data == '401: Bad credentials')) {
+          this.user = resp.data;
+          console.log(typeof(this.user));
+        }
+      });
   }
 };
 </script>

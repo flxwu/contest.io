@@ -37,6 +37,7 @@ app.url_map.converters['regex'] = RegexConverter
 
 # Set Endpoints
 TasksEndpoint = api_connector.Tasks()  # pylint: disable=invalid-name
+UserContestResultsEndpoint = api_connector.UserContestResults() # pylint: disable=invalid-name
 
 # Github-Flask
 github = flask_github.GitHub(app)  # pylint: disable=invalid-name
@@ -284,17 +285,60 @@ def api_contest():
     else:
         return None
 
+@app.route('/api/contest.results', methods=['GET'])
+def api_contestResults():
+    user = get_queryparam('user')
+    contest = get_queryparam('contest')
+    returnJSON = None
+
+    resultsInDatabase = models.get_latest_submissions(user, contest)
+
+    if resultsInDatabase is not None:
+        returnJSON = resultsInDatabase
+    else:
+        cfHandle = models.get_cfhandle(user)
+        UserContestResultsEndpoint.get(cfHandle, contest)
+        returnJSON = models.get_latest_submissions(user, contest)
+
+    return jsonify(returnJSON)
+
 
 @app.route('/api/contests', methods=['GET'])
 def api_contests():
     if request.method == 'GET':
         contests = models.select_contest(
             params=('*'),
-            conditions=('{}=\"{}\"').format(
+            conditions=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.CONTEST_VISIBLE,
-                1)
+                1))
         )
         return contests
+    else:
+        return None
+
+
+@app.route('/api/user', methods=['GET'])
+def api_user():
+    if request.method == 'GET':
+        # TODO: return user
+        return None
+    else:
+        return None
+
+
+@app.route('/api/user.cfHandle', methods=['POST'])
+def api_user_cfHandle():
+    if request.method == 'POST':
+        models.update_user(
+            updatedValues=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.USER_CODEFORCES_HANDLE,
+                request.get_json()['handle']
+            )),
+            setConditions=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.USER_USERNAME,
+                request.get_json()['username']
+            ))
+        )
     else:
         return None
 
@@ -317,10 +361,11 @@ def api_usergroup():
     if request.method == 'GET':
         returnJSON = models.select_in_usergroup(
             params=('*'),
-            conditions=('{}=\"{}\"').format(
+            conditions=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.USERGROUP_GROUPID,
                 get_queryparam('groupID')
             ))
+        )
         return returnJSON
     elif request.method == 'POST':
         if get_queryparam('users'):
@@ -346,6 +391,7 @@ def api_usergroup():
             return None
     else:
         return None
+
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

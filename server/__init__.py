@@ -146,7 +146,7 @@ def auth_user():
                     userLoginName)))
         session.pop('user_id', None)
         session['user_id'] = user['userid']
-    return str(userData)
+    return jsonify(userData)
 
 
 @app.route('/api/tasks', methods=['GET', 'POST'])

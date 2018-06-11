@@ -34,7 +34,7 @@ export default {
     };
   },
   created: () => {
-    axios.get("/api/contests?visible")
+    axios.get("/api/contests?visible=1")
     .then(response => {
       this.contests = response.data;
     });

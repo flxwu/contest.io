@@ -66,11 +66,15 @@ export default {
   components: {},
   data() {
     return {
-
+      contests_owned: [{}]
     };
   },
   created: () => {
-
+    axios.get("/api/contest?admin")
+      .then(response => {
+        this.contests_owned = response.data;
+      }
+    );
   },
   methods: {
 

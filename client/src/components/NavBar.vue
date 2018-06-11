@@ -80,8 +80,8 @@ export default {
     };
   },
   // See if a user is logged in
-  created: function () {
-    if(localStorage.getItem('userid') != null) {
+  mounted: function () {
+    if(localStorage.getItem('userid') != -1) {
       this.loggedIn = true;
     }
   },
@@ -102,7 +102,7 @@ export default {
 
     logOut() {
       this.loggedIn = false;
-      localStorage.setItem('userid', null);
+      localStorage.setItem('userid', -1);
       localStorage.setItem('data', null);
     }
   }

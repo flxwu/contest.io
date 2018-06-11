@@ -16,6 +16,7 @@ NORMAL_USERTYPE = 'normal'
 class DB_COLUMNS: #pylint: disable=invalid-name
     USER_USERID = 'userid'
     USER_USERNAME = 'username'
+    USER_CODEFORCES_HANDLE = 'codeforces_handle'
     USER_USERTYPE = 'usertype'
     USER_DATE_JOINED = 'date_joined'
     USER_OAUTH_TOKEN = 'oauth_token'

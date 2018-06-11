@@ -154,7 +154,7 @@ def auth_user():
                     userLoginName)))
         session.pop('user_id', None)
         session['user_id'] = user['userid']
-    return jsonify(dict(id=user['userid'], ghdata=jsonify(userData)))
+    return jsonify(dict(id=user['userid'], ghdata=userData))
 
 
 @app.route('/api/tasks', methods=['GET', 'POST'])

@@ -148,12 +148,12 @@ def delete_contest(deleteConditions=()):
             dbcon.commit()
 
 
-def insert_user(name: str, usertype: str, oauthToken: str, email=None, avatar_url=None):
+def insert_user(name: str, usertype: str, oauthToken: str, email=None, avatarUrl=None):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         cur.execute(
             'INSERT INTO User (username, codeforces_handle, usertype, useremail, avatar_url, oauth_token) VALUES (?,?,?,?,?,?)',
-            (name, name, usertype, email, avatar_url, oauthToken)
+            (name, name, usertype, email, avatarUrl, oauthToken)
         )
         dbcon.commit()
 

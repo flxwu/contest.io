@@ -305,6 +305,7 @@ def insert_usergroup(
         dbcon.commit()
         return groupID
 
+
 def select_usergroup(params=(), conditions=()):
     with sql.connect(DATABASE_PATH) as dbcon:
         dbcon.row_factory = dict_factory
@@ -435,14 +436,60 @@ def select_in_usergroup(params=(), conditions=()):
         return [user[0] for user in response]
 
 
-def insert_submits_task(user: int, task:int, verdict: str, submission_timestamp: int):
+def insert_submits_task(user: int, task: int, verdict: str, submissionTimestamp: int):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
-        submission_time = datetime.fromtimestamp(submission_timestamp)
+        submissionTime = datetime.fromtimestamp(submissionTimestamp)
         cur.execute(
             'INSERT INTO submits_task (user, task, verdict, submission_time) VALUES (?,?,?,?)',
-            (user, task, verdict, submission_time))
+            (user, task, verdict, submissionTime))
         dbcon.commit()
+
+
+def insert_joined_contest(user: int, contestcode: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute(
+            'INSERT INTO joined_contest (user, contestcode) VALUES (?,?)',
+            (user, contestcode))
+        dbcon.commit()
+
+
+def select_joined_contest(params=(), conditions=()):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        dbcon.row_factory = dict_factory
+        cur = dbcon.cursor()
+        if cur.rowcount == 0:
+            return None
+        if params == () and conditions == ():
+            queryResult = cur.execute('SELECT * FROM joined_contest')
+        else:
+            # convert one-value tuples to real tuples
+            if not isinstance(params, tuple):
+                params = (params,)
+            if not isinstance(conditions, tuple):
+                conditions = (conditions,)
+
+            if params != ():
+                queryString = 'SELECT'
+                # add a format-placeholder for every parameter
+                for paramString in params:
+                    queryString += ' {},'.format(paramString)
+                queryString = queryString[:-1]
+                queryString += ' FROM joined_contest'
+            if conditions != ():
+                queryString += ' WHERE'
+                for conditionString in conditions:
+                    queryString += ' {} AND'.format(conditionString)
+                queryString = queryString[:-4]
+            queryResult = cur.execute(queryString)
+
+    response = queryResult.fetchall()
+    response = response[0] if len(response) == 1 else response
+    if not response:
+        return None
+    else:
+        return response
 
 # TODO:
 # def get_users_in_contest(contestCode: int):
@@ -474,6 +521,7 @@ def get_memberships_of(user: int, admin=False):
             return None
         else:
             return response
+
 
 def get_tasks_in_contest(contestCode: int):
     queryString = 'SELECT Task.* \
@@ -511,6 +559,7 @@ def get_cfhandle(user: int):
     else:
         return response
 
+
 def get_userid(cfhandle: str):
     queryString = 'SELECT userid \
         FROM User \
@@ -543,7 +592,7 @@ def get_latest_submissions(user: str, contestCode: int):
         if cur.rowcount == 0:
             return None
         queryResult = cur.execute(queryString)
-    ###TODO:
+    # TODO:
     response = queryResult.fetchall()
     if not response:
         return None

@@ -48,3 +48,6 @@ class DB_COLUMNS: #pylint: disable=invalid-name
 
     IN_USERGROUP_USERGROUP = 'usergroup'
     IN_USERGROUP_USER = 'user'
+
+    JOINED_CONTEST_USER = 'user'
+    JOINED_CONTEST_CONTEST = 'contest'

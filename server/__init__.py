@@ -295,12 +295,18 @@ def api_contest():
         return None
 
 
-@app.route('/api/contest.join', methods=['POST'])
+@app.route('/api/contest.joined', methods=['GET', 'POST'])
 def api_contest_join():
-    user = get_queryparam('user')
-    contest = get_queryparam('contest')
+    if request.method == 'GET':
+        user = get_queryparam('user')
+        #models.insert_
 
-
+    elif request.method == 'POST':
+        postJSON = request.get_json()
+        models.insert_joined_contest(
+            postJSON[settings.DB_COLUMNS.JOINED_CONTEST_USER],
+            postJSON[settings.DB_COLUMNS.JOINED_CONTEST_CONTEST]
+        )
 
 
 @app.route('/api/contest.results', methods=['GET'])
@@ -404,9 +410,11 @@ def api_usergroup():
     else:
         return None
 
+
 @app.route('/api/usergroup.memberships', methods=['GET'])
 def api_usergroup_membership():
-    memberships = models.get_memberships_of(get_queryparam('user'), admin=get_queryparam('admin'))
+    memberships = models.get_memberships_of(
+        get_queryparam('user'), admin=get_queryparam('admin'))
     return jsonify(memberships)
 
 

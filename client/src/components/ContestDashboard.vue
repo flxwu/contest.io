@@ -1,7 +1,11 @@
 <template>
   <div id="contestdashboard">
+    <div v-if="expired" style="margin-top: 20px; font-size: 20pt;">
+      This contest is no longer active!
+    </div>
+
     <!-- Layout container -->
-    <v-container>
+    <v-container v-else>
 
       <v-layout>
 
@@ -14,12 +18,12 @@
             <v-expansion-panel popout>
 
              <v-expansion-panel-content v-for="task in tasks" :key="task.taskid">
-               <div slot="header">{{ item.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
-                   <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
-                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
-                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="float:left; width: 100px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
-                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="float:left; width: 100px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
-                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
+               <div slot="header">{{ task.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ task.codeforces_index }}): </small>
+                   <v-progress-linear v-if="task.codeforces_index.split('')[0] === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
+                   <v-progress-linear v-else-if="task.codeforces_index.split('')[0] === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
+                   <v-progress-linear v-else-if="task.codeforces_index.split('')[0] === 'C'" style="float:left; width: 100px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
+                   <v-progress-linear v-else-if="task.codeforces_index.split('')[0] === 'D'" style="float:left; width: 100px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
+                   <v-progress-linear v-else-if="task.codeforces_index.split('')[0] === 'E'" style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
                    <v-progress-linear v-else style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
                </div>
 
@@ -27,11 +31,11 @@
 
                 <!-- Tags -->
                 <div class="chiptag">
-                  <v-chip small :key="tag"  v-for="tag in JSON.parse(item.tasktags)">{{ tag }}</v-chip>
+                  <v-chip small :key="tag"  v-for="tag in JSON.parse(task.tasktags)">{{ tag }}</v-chip>
                 </div>
 
                 <v-card-actions>
-                  <v-btn flat color="orange" :href="item.codeforces_url">Solve</v-btn>
+                  <v-btn flat color="orange" :href="task.codeforces_url">Solve</v-btn>
                 </v-card-actions>
 
               </v-card>
@@ -52,7 +56,7 @@
               <div  style="width: 100% !important">
                 <h3 class="headline mb-0">Progress</h3>
                 <v-divider></v-divider>
-                <div>0 / {{ items.length }} Tasks completed (<span>{{ (0 / items.length) * 100 }}%</span>)</div>
+                <div>0 / {{ tasks.length }} Tasks completed (<span>{{ (0 / tasks.length) * 100 }}%</span>)</div>
                 <div>Time remaining: {{ date_end | moment("from", true) }}</div>
               </div>
             </v-card-title>
@@ -80,7 +84,8 @@ export default {
       code: '',
       tasks: [{}],
       date_end: null,
-      exists: 1
+      exists: 1,
+      expired: false
     };
   },
   mounted() {
@@ -90,7 +95,9 @@ export default {
         this.code = response.data.contestcode;
         this.date_end = response.data.date_end;
         this.tasks = response.data.tasks;
-        console.log(momentjs('2010-10-20').isSameOrAfter('2010-10-19'));
+        if(!momentjs(new Date()).isSameOrAfter(this.date_end)) {
+          this.expired = true;
+        }
       })
       .catch(() => {
         this.exists = 0;

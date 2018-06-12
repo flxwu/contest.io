@@ -83,7 +83,7 @@ def insert_contest(
         dateStart = parser.parse(dateStart)
         dateEnd = parser.parse(dateEnd)
         cur.execute(
-            'INSERT INTO Contest (contestcode, contestname, contestadmin, date_start, date_end, visible) VALUES (?,?,?,?,?)',
+            'INSERT INTO Contest (contestcode, contestname, contestadmin, date_start, date_end, visible) VALUES (?,?,?,?,?,?)',
             (randomCode,
                 name,
                 admin,

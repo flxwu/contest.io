@@ -70,11 +70,11 @@ export default {
     };
   },
   created: () => {
-    axios.get("/api/contest?admin")
+    axios.get('/api/contest?admin')
       .then(response => {
         this.contests_owned = response.data;
       }
-    );
+      );
   },
   methods: {
 

@@ -89,7 +89,7 @@ export default {
   },
   created: () => {
     // Get groups user is in
-    axios.get("/api/user");
+    axios.get('/api/user');
 
     // Get groups user is admin/owner of
     axios.get();

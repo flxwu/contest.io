@@ -67,7 +67,7 @@ export default {
   },
   // See if a user is logged in
   created: function () {
-    if(localStorage.getItem('userid') != null) {
+    if(localStorage.getItem('userid') != -1 || localStorage.getItem('userid') != null) {
       this.user = JSON.parse(localStorage.getItem('data'));
       console.log(this.user);
     } else {

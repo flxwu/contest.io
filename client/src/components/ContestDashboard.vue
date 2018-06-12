@@ -82,7 +82,7 @@ export default {
       items: [],
       name: '',
       code: '',
-      tasks: [{}],
+      tasks: [],
       date_end: null,
       exists: 1,
       expired: false
@@ -91,11 +91,12 @@ export default {
   mounted() {
     axios.get('/api/contest?code=' + this.$route.params.id)
       .then(response => {
+        console.log(response.data);
         this.name = response.data.contestname;
         this.code = response.data.contestcode;
         this.date_end = response.data.date_end;
-        this.tasks = response.data.tasks;
-        if(!momentjs(new Date()).isSameOrAfter(this.date_end)) {
+        this.tasks = [response.data.tasks];
+        if(momentjs(new Date()).isSameOrAfter(this.date_end)) {
           this.expired = true;
         }
       })

@@ -77,11 +77,11 @@ export default {
     //   }
     // );
 
-    axios.get("/api/contests?admin=" + localStorage.getItem('userid'))
+    axios.get('/api/contests?admin=' + localStorage.getItem('userid'))
       .then(response => {
         this.contests_owned = response.data;
       }
-    );
+      );
   },
   methods: {
 

@@ -48,7 +48,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 
 import Groups from './Groups.vue';
 import Contests from './ContestsOverview.vue';

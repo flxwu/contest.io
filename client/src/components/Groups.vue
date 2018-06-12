@@ -98,9 +98,9 @@ export default {
   },
   created: function() {
     // Get groups user is in
-    axios.get("/api/usergroup.memberships?admin=" + localStorage.getItem('userid'))
+    axios.get('/api/usergroup.memberships?admin=' + localStorage.getItem('userid'))
       .then(response => {
-        console.log(response.data)
+        console.log(response.data);
         if(response.data == null)
           this.inGroup = true;
         else
@@ -108,9 +108,9 @@ export default {
       });
 
     //Get groups user is admin/owner of
-    axios.get("/api/usergroup.memberships?user=" + localStorage.getItem('userid'))
+    axios.get('/api/usergroup.memberships?user=' + localStorage.getItem('userid'))
       .then(response => {
-        console.log(response.data)
+        console.log(response.data);
         if(response.data == null)
           this.createdGroup = true;
         else
@@ -129,7 +129,7 @@ export default {
         'groupname': this.newGroupName,
         'groupadmin': localStorage.getItem('userid')
       }, config);
-      window.location = "/dashboard";
+      window.location = '/dashboard';
       this.groupCreatePopup = false;
     }
   }

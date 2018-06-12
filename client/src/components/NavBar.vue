@@ -20,7 +20,7 @@
             Login
           </v-card-title>
           <v-card-text>
-            <v-btn color="grey darken-4" style="color: white" href="/api/github-login" @click="logIn()"><span style="font-size: 2em; margin-right: 10px;"><i class="fab fa-github"></i></span> Login with Github</v-btn>
+            <v-btn color="grey darken-4" style="color: white" href="/api/github-login"><span style="font-size: 2em; margin-right: 10px;"><i class="fab fa-github"></i></span> Login with Github</v-btn>
           </v-card-text>
           <v-card-actions>
             <v-btn color="primary" flat @click.stop="loginDialog=false">Close</v-btn>
@@ -83,28 +83,27 @@ export default {
   mounted: function () {
     if(localStorage.getItem('userid') != -1) {
       this.loggedIn = true;
-    }
-  },
-  methods: {
-    logIn() {
+    } else {
       axios.get('/api/github-user')
         .then(resp => {
           if(!(resp.data == '401: Bad credentials')) {
+            console.log(resp);
             this.loggedIn = true;
             this.user = resp.data.ghdata;
             this.userid = resp.data.id;
             localStorage.setItem('userid', this.userid);
             localStorage.setItem('data', JSON.stringify(this.user));
-            console.log(resp);
           }
         });
-    },
-
-    logOut() {
-      this.loggedIn = false;
-      localStorage.setItem('userid', -1);
-      localStorage.setItem('data', null);
     }
+  },
+  methods: {
+
+    // logOut() {
+    //   this.loggedIn = false;
+    //   localStorage.setItem('userid', -1);
+    //   localStorage.setItem('data', null);
+    // }
   }
 };
 </script>

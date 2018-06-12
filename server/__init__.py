@@ -467,7 +467,7 @@ def send_css(path):
     return app.send_static_file('css/{}'.format(path))
 
 @app.route('/favicon.ico')
-def send_favicon(path):
+def send_favicon():
     return app.send_static_file('favicon.ico')
 
 @app.route('/', defaults={'path': 'index.html'})

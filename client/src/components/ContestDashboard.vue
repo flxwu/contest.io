@@ -19,13 +19,13 @@
 
              <v-expansion-panel-content v-for="task in tasks" :key="task.taskid">
                <div slot="header">{{ task.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ task.codeforces_index }}): </small>
-                   <v-progress-linear v-if="task.codeforces_index.split('')[0] === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
-                   <v-progress-linear v-else-if="task.codeforces_index.split('')[0] === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
-                   <v-progress-linear v-else-if="task.codeforces_index.split('')[0] === 'C'" style="float:left; width: 100px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
-                   <v-progress-linear v-else-if="task.codeforces_index.split('')[0] === 'D'" style="float:left; width: 100px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
-                   <v-progress-linear v-else-if="task.codeforces_index.split('')[0] === 'E'" style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
-                   <v-progress-linear v-else style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
-               </div>
+                 <v-progress-linear v-if="task.taskname === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
+                 <v-progress-linear v-else-if="task.taskname === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
+                 <v-progress-linear v-else-if="task.taskname === 'C'" style="float:left; width: 100px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
+                 <v-progress-linear v-else-if="task.taskname === 'D'" style="float:left; width: 100px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
+                 <v-progress-linear v-else-if="task.taskname === 'E'" style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
+                 <v-progress-linear v-else style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
+              </div>
 
               <v-card>
 
@@ -80,17 +80,17 @@ export default {
   data() {
     return {
       items: [],
-      name: '',
-      code: '',
+      name: 'loading...',
+      code: 'loading...',
       tasks: [],
-      date_end: null,
+      date_end: '',
       exists: 1,
       expired: false
     };
   },
-  mounted() {
-    axios.get('/api/contest?code=' + this.$route.params.id)
-      .then(response => {
+  async created() {
+    await axios.get('/api/contest?code=' + this.$route.params.id)
+      .then((response) => {
         this.name = response.data.contestname;
         this.code = response.data.contestcode;
         this.date_end = response.data.date_end;
@@ -99,9 +99,10 @@ export default {
           this.expired = true;
         }
       })
-      .catch(() => {
+      .catch((error) => {
         this.exists = 0;
-        //window.location = '/404';
+        console.log(error);
+        window.location = '/404';
       });
   }
 };

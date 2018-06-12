@@ -9,7 +9,7 @@
                   <v-toolbar-title>Contests you have joined</v-toolbar-title>
                   <v-spacer></v-spacer>
                 </v-toolbar>
-                <v-list two-line style="max-height: 65vh; overflow: scroll;">
+                <v-list two-line style="max-height: 50vh; overflow: scroll;">
                   <v-list-tile v-for="contest in contests_joined" :key="contest.contestcode" :to="'contest/' + contest.contestcode">
                     <v-list-tile-content>
                       <v-list-tile-title>{{ contest.contestname }}</v-list-tile-title>
@@ -28,7 +28,7 @@
 
           <v-flex xs6 style="padding-left: 1%;">
 
-            <v-list style="max-height: 65vh; overflow: scroll;">
+            <v-list style="max-height: 50vh; overflow: scroll;">
               <v-card>
                 <v-toolbar color="special1" dark>
                   <v-toolbar-title>Contests you have created</v-toolbar-title>
@@ -77,11 +77,11 @@ export default {
     //   }
     // );
 
-    axios.get('/api/contests?admin=' + localStorage.getItem('userid'))
+    axios.get("/api/contests?admin=" + localStorage.getItem('userid'))
       .then(response => {
         this.contests_owned = response.data;
       }
-      );
+    );
   },
   methods: {
 
@@ -93,7 +93,7 @@ export default {
 <style scoped>
 #wrapper {
   background: white;
-  min-height: 68vh;
-  max-height: 68vh;
+  min-height: 60vh;
+  max-height: 60vh;
 }
 </style>

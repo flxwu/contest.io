@@ -129,7 +129,6 @@ export default {
         'groupname': this.newGroupName,
         'groupadmin': localStorage.getItem('userid')
       }, config);
-      window.location = '/dashboard';
       this.groupCreatePopup = false;
     }
   }

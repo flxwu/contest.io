@@ -99,11 +99,11 @@ export default {
   },
   methods: {
 
-    // logOut() {
-    //   this.loggedIn = false;
-    //   localStorage.setItem('userid', -1);
-    //   localStorage.setItem('data', null);
-    // }
+    logOut() {
+      this.loggedIn = false;
+      localStorage.setItem('userid', -1);
+      localStorage.setItem('data', null);
+    }
   }
 };
 </script>

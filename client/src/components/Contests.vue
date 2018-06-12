@@ -6,14 +6,14 @@
         <v-spacer></v-spacer>
       </v-toolbar>
       <v-list two-line>
-        <v-list-tile v-for="contest in contests" :key="contest.contestcode">
+        <v-list-tile v-for="contest in contests" :key="contest.contestcode" :to="'contest/' + contest.contestcode">
           <v-list-tile-content>
             <v-list-tile-title>{{ contest.contestname }}</v-list-tile-title>
-            <v-list-tile-sub-title>{{contest.tasks.length}} Problems</v-list-tile-sub-title>
+            <v-list-tile-sub-title>Ends on {{contest.date_end | moment("dddd, MMMM Do YYYY") }} ({{contest.date_end | moment("from", true) }})</v-list-tile-sub-title>
           </v-list-tile-content>
           <v-list-tile-action>
             <v-btn icon ripple>
-              <v-icon color="grey lighten-1">info</v-icon>
+              <v-icon color="grey lighten-1">go</v-icon>
             </v-btn>
           </v-list-tile-action>
         </v-list-tile>
@@ -24,6 +24,8 @@
 
 <script>
 import axios from 'axios';
+// eslint-disable-next-line
+import moment from 'vue-moment'
 
 export default {
   name: 'contests',

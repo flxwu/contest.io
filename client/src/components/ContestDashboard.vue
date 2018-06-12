@@ -95,7 +95,7 @@ export default {
         this.name = response.data.contestname;
         this.code = response.data.contestcode;
         this.date_end = response.data.date_end;
-        this.tasks = [response.data.tasks];
+        this.tasks = response.data.tasks;
         if(momentjs(new Date()).isSameOrAfter(this.date_end)) {
           this.expired = true;
         }

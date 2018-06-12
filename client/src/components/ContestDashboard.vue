@@ -91,7 +91,6 @@ export default {
   mounted() {
     axios.get('/api/contest?code=' + this.$route.params.id)
       .then(response => {
-        console.log(response.data);
         this.name = response.data.contestname;
         this.code = response.data.contestcode;
         this.date_end = response.data.date_end;

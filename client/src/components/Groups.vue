@@ -3,16 +3,19 @@
       <v-container grow>
         <v-layout>
           <v-flex xs6 style="padding-right: 1%;">
-            <v-list>
+            <v-list style="max-height: 65vh; overflow: scroll;">
               <v-card>
                 <v-toolbar color="special1" dark>
                   <v-toolbar-title>Groups you have joined</v-toolbar-title>
                   <v-spacer></v-spacer>
                 </v-toolbar>
-                <v-list two-line>
+                <p v-if="inGroup" style="color: red; padding: 29px; font-size: 15pt;">
+                  You have not joined any groups!
+                </p>
+                <v-list two-line v-else>
                   <v-list-tile v-for="group in groups_joined" :key="group.groupid">
                     <v-list-tile-content>
-                      <v-list-tile-title>{{ group.groupname }} - 20 Members</v-list-tile-title>
+                      <v-list-tile-title>{{ group.groupname }}</v-list-tile-title>
                       <v-list-tile-sub-title>{{ group.groupadmin }}</v-list-tile-sub-title>
                     </v-list-tile-content>
                     <v-list-tile-action>
@@ -43,7 +46,7 @@
               </v-card>
             </v-dialog>
 
-            <v-list style="max-height: 70%; overflow: scroll;">
+            <v-list style="max-height: 65vh; overflow: scroll;">
               <v-card>
                 <v-toolbar color="special1" dark>
                   <v-toolbar-title>Groups you have created</v-toolbar-title>
@@ -52,10 +55,14 @@
                     <v-icon>add</v-icon>
                   </v-btn>
                 </v-toolbar>
-                <v-list two-line>
+                <p v-if="createdGroup" style="color: red; padding: 20px; font-size: 15pt;">
+                  You have not joined any groups!
+                </p>
+
+                <v-list v-else two-line>
                   <v-list-tile v-for="group in groups_owned" :key="group.groupid">
                     <v-list-tile-content>
-                      <v-list-tile-title>{{ group.groupname }} - 20 Members</v-list-tile-title>
+                      <v-list-tile-title>{{ group.groupname }}</v-list-tile-title>
                       <v-list-tile-sub-title>{{ group.groupadmin }}</v-list-tile-sub-title>
                     </v-list-tile-content>
                     <v-list-tile-action>
@@ -83,16 +90,33 @@ export default {
     return {
       groupCreatePopup: false,
       newGroupName: '',
-      groups_joined: [{groupid: 1, groupname: 'Nicegroup', groupadmin: 'flxwu'}],
-      groups_owned: [{groupid: 1, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 2, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 3, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 4, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 5, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 6, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 7, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 8, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 9, groupname: 'Awesomegroup', groupadmin: 'Qo2770'},{groupid: 10, groupname: 'Awesomegroup', groupadmin: 'Qo2770'}]
+      groups_joined: [],
+      inGroup: false,
+      createdGroup: false,
+      groups_owned: []
     };
   },
-  created: () => {
+  created: function() {
     // Get groups user is in
-    axios.get('/api/user');
+    axios.get("/api/usergroup.memberships?admin=" + localStorage.getItem('userid'))
+      .then(response => {
+        console.log(response.data)
+        if(response.data == null)
+          this.inGroup = true;
+        else
+          this.groups_joined = response.data;
+      });
 
-    // Get groups user is admin/owner of
-    axios.get();
+    //Get groups user is admin/owner of
+    axios.get("/api/usergroup.memberships?user=" + localStorage.getItem('userid'))
+      .then(response => {
+        console.log(response.data)
+        if(response.data == null)
+          this.createdGroup = true;
+        else
+          this.groups_owned = response.data;
+      });
+
   },
   methods: {
     createGroup() {
@@ -105,6 +129,7 @@ export default {
         'groupname': this.newGroupName,
         'groupadmin': localStorage.getItem('userid')
       }, config);
+      window.location = "/dashboard";
       this.groupCreatePopup = false;
     }
   }

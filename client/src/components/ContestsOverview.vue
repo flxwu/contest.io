@@ -9,11 +9,11 @@
                   <v-toolbar-title>Contests you have joined</v-toolbar-title>
                   <v-spacer></v-spacer>
                 </v-toolbar>
-                <v-list two-line>
-                  <v-list-tile v-for="contest in contest_joined" :key="contest.contestcode">
+                <v-list two-line style="max-height: 65vh; overflow: scroll;">
+                  <v-list-tile v-for="contest in contests_joined" :key="contest.contestcode" :to="'contest/' + contest.contestcode">
                     <v-list-tile-content>
                       <v-list-tile-title>{{ contest.contestname }}</v-list-tile-title>
-                      <v-list-tile-sub-title>{{length(contest.tasks)}} Problems</v-list-tile-sub-title>
+                      <v-list-tile-sub-title>Ends on {{contest.date_end | moment("dddd, MMMM Do YYYY") }} ({{contest.date_end | moment("from", true) }})</v-list-tile-sub-title>
                     </v-list-tile-content>
                     <v-list-tile-action>
                       <v-btn icon ripple>
@@ -28,7 +28,7 @@
 
           <v-flex xs6 style="padding-left: 1%;">
 
-            <v-list style="max-height: 70%; overflow: scroll;">
+            <v-list style="max-height: 65vh; overflow: scroll;">
               <v-card>
                 <v-toolbar color="special1" dark>
                   <v-toolbar-title>Contests you have created</v-toolbar-title>
@@ -38,10 +38,10 @@
                   </v-btn>
                 </v-toolbar>
                 <v-list two-line>
-                  <v-list-tile v-for="contest in contests_owned" :key="contest.contestcode">
+                  <v-list-tile v-for="contest in contests_owned" :key="contest.contestcode" :to="'contest/' + contest.contestcode">
                     <v-list-tile-content>
                       <v-list-tile-title>{{ contest.contestname }}</v-list-tile-title>
-                      <v-list-tile-sub-title>{{length(contest.tasks)}} Problems</v-list-tile-sub-title>
+                      <v-list-tile-sub-title>Ends on {{contest.date_end | moment("dddd, MMMM Do YYYY") }} ({{contest.date_end | moment("from", true) }})</v-list-tile-sub-title>
                     </v-list-tile-content>
                     <v-list-tile-action>
                       <v-btn icon ripple>
@@ -66,15 +66,22 @@ export default {
   components: {},
   data() {
     return {
-      contests_owned: [{}]
+      contests_owned: [],
+      contests_joined: []
     };
   },
   created: () => {
-    axios.get('/api/contest?admin')
+    // axios.get("/api/contest.joined?user=" + localStorage.getItem('userid'))
+    //   .then(response => {
+    //     this.contests_joined = response.data;
+    //   }
+    // );
+
+    axios.get("/api/contests?admin=" + localStorage.getItem('userid'))
       .then(response => {
         this.contests_owned = response.data;
       }
-      );
+    );
   },
   methods: {
 

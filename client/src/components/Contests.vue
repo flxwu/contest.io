@@ -36,7 +36,7 @@ export default {
     };
   },
   mounted() {
-    axios.get("/api/contests?visible=1")
+    axios.get('/api/contests?visible=1')
       .then(response => {
         this.contests = [response.data];
       })

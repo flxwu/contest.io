@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, g, session, redirect, url_for, flash
+from flask import Flask, jsonify, render_template,send_from_directory,request, g, session, redirect, url_for, flash
 from flask_cors import CORS
 from werkzeug.routing import BaseConverter
 from http import HTTPStatus
@@ -458,10 +458,22 @@ def api_usergroup_members():
         return None
 
 
-@app.route('/', defaults={'path': ''})
+@app.route('/js/<path:path>')
+def send_js(path):
+    return app.send_static_file('js/{}'.format(path))
+
+@app.route('/css/<path:path>')
+def send_css(path):
+    return app.send_static_file('css/{}'.format(path))
+
+@app.route('/favicon.ico')
+def send_favicon(path):
+    return app.send_static_file('favicon.ico')
+
+@app.route('/', defaults={'path': 'index.html'})
 @app.route('/<path:path>')
 def catch_all(path):
 
     # if app.debug:
     #     return requests.get('http://localhost:3000/{}'.format(path)).text
-    return app.send_static_file(path)
+    return render_template("index.html")

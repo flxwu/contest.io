@@ -1,5 +1,5 @@
 <template>
-  <v-footer height="auto" class="grey darken-3">
+  <v-footer height="10vh" class="grey darken-3">
     <v-layout row wrap justify-center>
       <v-btn
         v-for="link in links"

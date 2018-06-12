@@ -60,8 +60,7 @@ export default {
   data() {
     return {
       user: {},
-      id: null,
-      texts: ['Hi', 'Moin', 'Holl']
+      id: null
     };
   },
   // See if a user is logged in

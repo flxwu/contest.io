@@ -9,7 +9,7 @@
         <v-list-tile v-for="contest in contests" :key="contest.contestcode">
           <v-list-tile-content>
             <v-list-tile-title>{{ contest.contestname }}</v-list-tile-title>
-            <v-list-tile-sub-title>{{sizeof(contest.tasks)}} Problems</v-list-tile-sub-title>
+            <v-list-tile-sub-title>{{contest.tasks.length}} Problems</v-list-tile-sub-title>
           </v-list-tile-content>
           <v-list-tile-action>
             <v-btn icon ripple>
@@ -30,13 +30,16 @@ export default {
   components: {},
   data() {
     return {
-      contests: [{}]
+      contests: []
     };
   },
-  created: () => {
-    axios.get('/api/contests?visible=1')
+  mounted() {
+    axios.get("/api/contests?visible=1")
       .then(response => {
-        this.contests = response.data;
+        this.contests = [response.data];
+      })
+      .catch(error => {
+        alert(error);
       });
   },
   methods: {

@@ -450,7 +450,7 @@ def insert_joined_contest(user: int, contestcode: int):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         cur.execute(
-            'INSERT INTO joined_contest (user, contestcode) VALUES (?,?)',
+            'INSERT INTO joined_contest (user, contest) VALUES (?,?)',
             (user, contestcode))
         dbcon.commit()
 

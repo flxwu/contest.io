@@ -54,7 +54,7 @@
                 </template>
               </v-select>
             </div>
-            <div style="height: 320px; overflow: scroll; margin-top: 40px; min-width: 100%;">
+            <div style="height: 320px; overflow: hidden; margin-top: 40px; min-width: 100%;">
               <v-list>
 
                 <template v-if="!filteredItems.length">
@@ -62,7 +62,7 @@
                   <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
 
                   <v-list-tile-content v-else>
-                     <v-list-tile-title style="color: red; text-align: center;">No tasks match search parameters!</v-list-tile-title>
+                    <v-list-tile-title style="color: red; text-align: center;">No tasks match search parameters!</v-list-tile-title>
                   </v-list-tile-content>
 
                 </template>
@@ -100,14 +100,14 @@
                     </v-card>
                   </v-dialog>
 
-                   <v-list-tile avatar :key="item.taskid + '-avatar2'" @click="() => {}">
+                  <v-list-tile avatar :key="item.taskid + '-avatar2'" @click="() => {}">
 
-                     <v-list-tile-action>
-                         <v-icon @click="addTask(item.taskid)">add</v-icon>
-                     </v-list-tile-action>
+                    <v-list-tile-action>
+                        <v-icon @click="addTask(item.taskid)">add</v-icon>
+                    </v-list-tile-action>
 
                     <v-list-tile-content @click="detailPopup=true">
-                       <v-list-tile-title v-html="item.taskname"></v-list-tile-title>
+                      <v-list-tile-title v-html="item.taskname"></v-list-tile-title>
                     </v-list-tile-content>
 
                     <small style="position: absolute; left: 380px;">Difficulty ({{ item.codeforces_index }}): </small>
@@ -120,13 +120,13 @@
 
                     <v-chip :key="tag" small v-for="tag in item.tasktags.slice(0, 2)" >{{ tag }}</v-chip>
 
-                   </v-list-tile>
+                  </v-list-tile>
 
-                   <v-divider :key="item.taskid + '-divider'"></v-divider>
+                  <v-divider :key="item.taskid + '-divider'"></v-divider>
 
-                 </template>
+                </template>
 
-             </v-list>
+            </v-list>
             </div>
 
             <!-- Task list -->
@@ -135,18 +135,18 @@
             <p v-if="!tasks.length" style="color: red;">No tasks selected! Browse above tasks and click the '+' icon to add them!</p>
             <v-expansion-panel popout>
 
-             <v-expansion-panel-content v-for="item in tasks" :key="item.id">
+            <v-expansion-panel-content v-for="item in tasks" :key="item.id">
 
-               <div slot="header">
-                  {{ item.taskname }}<br>
-                  <small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
-                   <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="float:left; width: 50px;" value="20" buffer-value="20" color="green"></v-progress-linear>
-                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="float:left; width: 50px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
-                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="float:left; width: 50px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
-                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="float:left; width: 50px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
-                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="float:left; width: 50px;" value="100" color="red"></v-progress-linear>
-                   <v-progress-linear v-else style="float:left; width: 50px;" value="100" color="red"></v-progress-linear>
-               </div>
+              <div slot="header">
+                {{ item.taskname }}<br>
+                <small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
+                  <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="float:left; width: 50px;" value="20" buffer-value="20" color="green"></v-progress-linear>
+                  <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="float:left; width: 50px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
+                  <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="float:left; width: 50px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
+                  <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="float:left; width: 50px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
+                  <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="float:left; width: 50px;" value="100" color="red"></v-progress-linear>
+                  <v-progress-linear v-else style="float:left; width: 50px;" value="100" color="red"></v-progress-linear>
+              </div>
 
               <v-card>
 
@@ -164,9 +164,9 @@
 
               </v-card>
 
-             </v-expansion-panel-content>
+            </v-expansion-panel-content>
 
-           </v-expansion-panel>
+          </v-expansion-panel>
           </v-flex>
 
           <!-- Divider -->
@@ -223,21 +223,19 @@
 
 <script>
 // eslint-disable-next-line
-import moment from 'vue-moment'
-import axios from 'axios';
+import moment from "vue-moment";
+import axios from "axios";
 
 export default {
-  name: 'createcontest',
-  components: {
-
-  },
-  data () {
+  name: "createcontest",
+  components: {},
+  data() {
     return {
-      searchtitle: '',
-      searchtags: '',
-      contestdate: '',
+      searchtitle: "",
+      searchtags: "",
+      contestdate: "",
       dialog2: false,
-      contestname: '',
+      contestname: "",
       visible: false,
       detailPopup: false,
       first: 0,
@@ -245,7 +243,7 @@ export default {
       alertDate: false,
       alertName: false,
       alertAxios: false,
-      axiosError: '',
+      axiosError: "",
       items: [],
       selectedtags: [],
       tasks: [],
@@ -285,10 +283,9 @@ export default {
       this.selectedtags = [...this.selectedtags];
     },
     // This posts data to api
-    postContest() {
-
+    postContest: async function() {
       // Ensure required fields are filled out
-      if(this.tasks.length == 0) {
+      if (this.tasks.length == 0) {
         this.alertTask = true;
         setTimeout(() => {
           this.alertTask = false;
@@ -296,7 +293,7 @@ export default {
         return false;
       }
 
-      if(this.contestdate == '') {
+      if (this.contestdate == "") {
         this.alertDate = true;
         setTimeout(() => {
           this.alertDate = false;
@@ -304,7 +301,7 @@ export default {
         return false;
       }
 
-      if(this.contestname == '') {
+      if (this.contestname == "") {
         this.alertName = true;
         setTimeout(() => {
           this.alertName = false;
@@ -314,55 +311,71 @@ export default {
 
       let config = {
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
         }
       };
 
       // Create AXIOS Post request
-      axios.post('/api/contest', {
-        'contestname': this.contestname,
-        'date_start': new Date().toISOString().substring(0, 19),
-        'date_end': this.contestdate + ' 23:59:59',
-        'visible': this.visible,
-        'usergroups': this.selectedgroups,
-        'tasks': this.tasks.map(task => task.taskid),
-        'contestadmin': localStorage.getItem('userid')
-      }, config)
-        .then(function (resp) {
-          window.location = '/contest/' + resp.data;
+      await axios
+        .post(
+          "/api/contest",
+          {
+            contestname: this.contestname,
+            date_start: new Date().toISOString().substring(0, 19),
+            date_end: this.contestdate + " 23:59:59",
+            visible: this.visible,
+            usergroups: this.selectedgroups,
+            tasks: this.tasks.map(task => task.taskid),
+            contestadmin: localStorage.getItem("userid")
+          },
+          config
+        )
+        .then(function(resp) {
+          window.location = "/contest/" + resp.data;
         })
-        .catch(function (error) {
+        .catch(function(error) {
           this.axiosError = error;
           this.alertAxios = true;
           setTimeout(() => {
             this.alertAxios = false;
           }, 30000);
         });
-
     }
   },
   computed: {
     // Get current date
-    now: function () {
+    now: function() {
       return new Date().toISOString().substring(0, 10);
     },
     filteredItems() {
       return this.items.filter(item => {
-        return item.taskname.toLowerCase().includes(this.searchtitle.toLowerCase()) && this.selectedtags.every(selectedtag => item.tasktags.includes(selectedtag));
+        return (
+          item.taskname
+            .toLowerCase()
+            .includes(this.searchtitle.toLowerCase()) &&
+          this.selectedtags.every(selectedtag =>
+            item.tasktags.includes(selectedtag)
+          )
+        );
       });
     }
   },
   mounted() {
-    axios.get('/api/tasks?tags=geometry')
-      .then(response => {
-        this.items = response.data;
-        this.loading = false;
-      });
+    axios.get("/api/tasks?tags=geometry").then((response) => {
+      this.items = response.data;
+      this.loading = false;
+    });
 
-    axios.get('/api/usergroup.memberships?admin=' + localStorage.getItem('userid') + '&user=' + localStorage.getItem('userid'))
+    axios
+      .get(
+        "/api/usergroup.memberships?admin=" +
+          localStorage.getItem("userid") +
+          "&user=" +
+          localStorage.getItem("userid")
+      )
       .then((response) => {
-        console.log(response.data);
+        if (response.data === null || typeof(response.data) === 'undefined') return
         this.groups = response.data;
       });
   }
@@ -370,7 +383,6 @@ export default {
 </script>
 
 <style scoped>
-
 .vlink {
   cursor: pointer;
 }

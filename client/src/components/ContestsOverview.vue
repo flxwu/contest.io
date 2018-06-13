@@ -31,7 +31,7 @@
 
           <v-flex xs6 style="padding-left: 1%;">
 
-            <v-list style="max-height: 50vh; overflow: scroll;">
+            <v-list style="max-height: 50vh; overflow: hidden;">
               <v-card>
                 <v-toolbar color="special1" dark>
                   <v-toolbar-title>Contests you have created</v-toolbar-title>
@@ -80,7 +80,7 @@ export default {
     var contests = [];
     await axios.get("/api/contest.joined?user=" + localStorage.getItem('userid'))
       .then(response => {
-        console.log(response.data)
+        if(response.data === null || typeof(response.data) === 'undefined') return                
         contests = Array.isArray(response.data) ? response.data : [response.data];
         for (var i = 0; i < contests.length; i++) {
           axios.get("/api/contest?code=" + contests[i].contest)
@@ -94,6 +94,7 @@ export default {
 
     await axios.get("/api/contests?admin=" + localStorage.getItem('userid'))
       .then((response) => {
+        if(response.data === null || typeof(response.data) === 'undefined') return                
         this.contests_owned = response.data;
       }
     );

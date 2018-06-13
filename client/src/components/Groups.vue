@@ -3,13 +3,13 @@
       <v-container grow>
         <v-layout>
           <v-flex xs6 style="padding-right: 1%;">
-            <v-list style="max-height: 65vh; overflow: scroll;">
+            <v-list style="max-height: 65vh; overflow: hidden;">
               <v-card>
                 <v-toolbar color="special1" dark>
                   <v-toolbar-title>Groups you have joined</v-toolbar-title>
                   <v-spacer></v-spacer>
                 </v-toolbar>
-                <p v-if="!groups_joined.length" style="color: red; padding: 29px; font-size: 15pt;">
+                <p v-if="!groups_joined.length" style="color: red; padding: 30px; font-size: 15pt;">
                   You have not joined any groups!
                 </p>
                 <v-list two-line v-else>
@@ -46,7 +46,7 @@
               </v-card>
             </v-dialog>
 
-            <v-list style="max-height: 65vh; overflow: scroll;">
+            <v-list style="max-height: 65vh; overflow: hidden;">
               <v-card>
                 <v-toolbar color="special1" dark>
                   <v-toolbar-title>Groups you have created</v-toolbar-title>
@@ -55,8 +55,8 @@
                     <v-icon>add</v-icon>
                   </v-btn>
                 </v-toolbar>
-                <p v-if="!groups_owned.length" style="color: red; padding: 20px; font-size: 15pt;">
-                  You have not joined any groups!
+                <p v-if="!groups_owned.length" style="color: red; padding: 30px; font-size: 15pt;">
+                  You have not created any groups!
                 </p>
 
                 <v-list v-else two-line>
@@ -94,32 +94,33 @@ export default {
       groups_owned: []
     };
   },
-  created: function() {
+  created: async function() {
     var groups_joined = [];
     // Get groups user is in
-    axios.get('/api/usergroup.memberships?admin=-1&user=' + localStorage.getItem('userid'))
+    await axios.get('/api/usergroup.memberships?admin=-1&user=' + localStorage.getItem('userid'))
       .then((response) => {
+        if(response.data === null || typeof(response.data) === 'undefined') return        
         groups_joined = response.data;
       });
 
     //Get groups user is admin/owner of
-    axios.get('/api/usergroup.memberships?admin=' + localStorage.getItem('userid') + '&user=' + localStorage.getItem('userid'))
+    await axios.get('/api/usergroup.memberships?admin=' + localStorage.getItem('userid') + '&user=' + localStorage.getItem('userid'))
       .then((response) => {
+        if(response.data === null || typeof(response.data) === 'undefined') return
         this.groups_owned = response.data;
       });
 
     // Remove all groups user is admin of from groups_joined
     this.groups_joined = groups_joined.filter(x => this.groups_owned[x]);
-
   },
   methods: {
-    createGroup() {
+    createGroup: async function() {
       let config = {
         headers: {
-          'Content-Type': 'application/'
+          'Content-Type': 'application/json'
         }
       };
-      axios.post('/api/usergroup', {
+      await axios.post('/api/usergroup', {
         'groupname': this.newGroupName,
         'groupadmin': localStorage.getItem('userid')
       }, config);

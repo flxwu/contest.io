@@ -9,7 +9,7 @@
                   <v-toolbar-title>Groups you have joined</v-toolbar-title>
                   <v-spacer></v-spacer>
                 </v-toolbar>
-                <p v-if="inGroup" style="color: red; padding: 29px; font-size: 15pt;">
+                <p v-if="!groups_joined.length" style="color: red; padding: 29px; font-size: 15pt;">
                   You have not joined any groups!
                 </p>
                 <v-list two-line v-else>
@@ -55,7 +55,7 @@
                     <v-icon>add</v-icon>
                   </v-btn>
                 </v-toolbar>
-                <p v-if="createdGroup" style="color: red; padding: 20px; font-size: 15pt;">
+                <p v-if="!groups_owned.length" style="color: red; padding: 20px; font-size: 15pt;">
                   You have not joined any groups!
                 </p>
 
@@ -91,30 +91,20 @@ export default {
       groupCreatePopup: false,
       newGroupName: '',
       groups_joined: [],
-      inGroup: false,
-      createdGroup: false,
       groups_owned: []
     };
   },
   created: function() {
     // Get groups user is in
-    axios.get('/api/usergroup.memberships?admin=' + localStorage.getItem('userid'))
+    axios.get("/api/usergroup.memberships?admin=" + localStorage.getItem('userid'))
       .then(response => {
-        console.log(response.data);
-        if(response.data == null)
-          this.inGroup = true;
-        else
-          this.groups_joined = response.data;
+        this.groups_joined = response.data;
       });
 
     //Get groups user is admin/owner of
-    axios.get('/api/usergroup.memberships?user=' + localStorage.getItem('userid'))
+    axios.get("/api/usergroup.memberships?user=" + localStorage.getItem('userid'))
       .then(response => {
-        console.log(response.data);
-        if(response.data == null)
-          this.createdGroup = true;
-        else
-          this.groups_owned = response.data;
+        this.groups_owned = response.data;
       });
 
   },

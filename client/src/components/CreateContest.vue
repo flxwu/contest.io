@@ -328,7 +328,7 @@ export default {
         'visible': this.visible,
         'usergroups': this.selectedgroups,
         'tasks': this.tasks.map(task => task.taskid),
-        'contestadmin': 1
+        'contestadmin': localStorage.getItem('userid')
       }, config)
         .then(function (resp) {
           window.location = '/contest/' + resp.data;

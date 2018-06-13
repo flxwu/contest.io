@@ -104,7 +104,8 @@ export default {
         this.name = response.data.contestname;
         this.code = response.data.contestcode;
         this.date_end = response.data.date_end;
-        this.tasks = response.data.tasks;
+        this.tasks = typeof(response.data.tasks) == "array" ? response.data.tasks : [response.data.tasks];
+        console.log(this.tasks);
         if(momentjs(new Date()).isSameOrAfter(this.date_end)) {
           this.expired = true;
         }
@@ -138,10 +139,10 @@ export default {
 
     joinContest() {
       axios.post('/api/contest.joined',
-      {
-        'user': localStorage.getItem('userid'),
-        'contest': this.code
-      });
+        {
+          'user': localStorage.getItem('userid'),
+          'contest': this.code
+        });
     }
   }
 };

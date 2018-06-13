@@ -369,10 +369,11 @@ def api_user_cfHandle():
             request.get_json()['handle']
         )),
         setConditions=('{}=\"{}\"'.format(
-            settings.DB_COLUMNS.USER_USERNAME,
-            request.get_json()['username']
+            settings.DB_COLUMNS.USER_USERID,
+            request.get_json()['userid']
         ))
     )
+    return request.get_json()['handle']
 
 
 @app.route('/api/usergroup', methods=['GET', 'POST'])

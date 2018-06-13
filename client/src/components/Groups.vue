@@ -95,24 +95,28 @@ export default {
     };
   },
   created: function() {
+    var groups_joined = [];
     // Get groups user is in
-    axios.get("/api/usergroup.memberships?admin=" + localStorage.getItem('userid'))
-      .then(response => {
-        this.groups_joined = response.data;
+    axios.get("/api/usergroup.memberships?admin=-1&user=" + localStorage.getItem('userid'))
+      .then((response) => {
+        groups_joined = response.data;
       });
 
     //Get groups user is admin/owner of
-    axios.get("/api/usergroup.memberships?user=" + localStorage.getItem('userid'))
-      .then(response => {
+    axios.get("/api/usergroup.memberships?admin=" + localStorage.getItem('userid') + '&user=' + localStorage.getItem('userid'))
+      .then((response) => {
         this.groups_owned = response.data;
       });
+
+    // Remove all groups user is admin of from groups_joined
+    this.groups_joined = groups_joined.filter(x => this.groups_owned[x]);
 
   },
   methods: {
     createGroup() {
       let config = {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/'
         }
       };
       axios.post('/api/usergroup', {

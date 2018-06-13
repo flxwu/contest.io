@@ -428,7 +428,7 @@ def api_usergroup():
 @app.route('/api/usergroup.memberships', methods=['GET'])
 def api_usergroup_membership():
     memberships = models.get_memberships_of(
-        get_queryparam('user'), admin=get_queryparam('admin'))
+        user=get_queryparam('user'), admin=get_queryparam('admin'))
     return jsonify(memberships)
 
 

@@ -40,8 +40,18 @@
       absolute
     >
       <v-list class="pt-0" dense>
-        <span style="float: left; margin: 20px; margin-top: 15px;" class="title">Navigation</span>
-        <v-btn small flat fab style="float: right; margin-top: 10px;" @click.stop="drawer = false"><v-icon>chevron_left</v-icon></v-btn>
+        <v-toolbar flat>
+          <v-list>
+            <v-list-tile>
+              <v-list-tile-title class="title">
+                Navigation
+              </v-list-tile-title>
+              <v-btn small flat fab style="float: right; margin-top: 10px;" @click.stop="drawer = false">
+                <v-icon>chevron_left</v-icon>
+              </v-btn>
+            </v-list-tile>
+          </v-list>
+        </v-toolbar>
         <v-divider light></v-divider>
         <v-list-tile v-for="link in links" :key="link.title" :to="link.url">
           <v-list-tile-action>
@@ -58,51 +68,47 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  name: 'navbar',
-  components: {
-
-  },
+  name: "navbar",
+  components: {},
   data() {
     return {
       loginDialog: false,
-      github: '',
+      github: "",
       loggedIn: false,
       user: {},
       drawer: false,
       userid: null,
       links: [
-        { title: 'Home', url: '/' },
-        { title: 'Contests', url: 'contests' }
+        { title: "Home", url: "/" },
+        { title: "Contests", url: "contests" }
       ]
     };
   },
   // See if a user is logged in
-  mounted: function () {
-    if(localStorage.getItem('userid') != -1) {
+  mounted: function() {
+    if (localStorage.getItem("userid") != -1) {
       this.loggedIn = true;
     } else {
-      axios.get('/api/github-user')
-        .then(resp => {
-          if(!(resp.data == '401: Bad credentials')) {
-            console.log(resp);
-            this.loggedIn = true;
-            this.user = resp.data.ghdata;
-            this.userid = resp.data.id;
-            localStorage.setItem('userid', this.userid);
-            localStorage.setItem('data', JSON.stringify(this.user));
-          }
-        });
+      axios.get("/api/github-user").then(resp => {
+        if (!(resp.data == "401: Bad credentials")) {
+          console.log(resp);
+          this.loggedIn = true;
+          this.user = resp.data.ghdata;
+          this.userid = resp.data.id;
+          localStorage.setItem("userid", this.userid);
+          localStorage.setItem("data", JSON.stringify(this.user));
+        }
+      });
     }
   },
   methods: {
-
     logOut() {
       this.loggedIn = false;
-      localStorage.setItem('userid', -1);
-      localStorage.setItem('data', null);
+      localStorage.setItem("userid", -1);
+      localStorage.setItem("data", null);
     }
   }
 };

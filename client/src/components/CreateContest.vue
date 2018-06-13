@@ -196,14 +196,13 @@
 
                 <br>
                 <v-text>Groups:</v-text><br><v-divider></v-divider>
-                <v-chip :key="group.name" v-for="group in selectedgroups" close @input="unselectGroup(group.name)">   {{ group.name }}</v-chip>
+                <v-chip :key="group.groupid" v-for="group in selectedgroups" close @input="unselectGroup(group.groupid)">   {{ group.groupname }}</v-chip>
                 <v-menu v-if="groups.length">
                   <v-btn small color="primary" dark slot="activator" fab><v-icon>add</v-icon></v-btn>
-                  <!-- TODO: Get all groups this person is admin of -->
                   <v-list>
                     <v-list-tile v-if="!groups.length && !selectedgroups.length" style="color: red;">You are not a group admin!</v-list-tile>
-                    <v-list-tile v-else v-for="group in groups" :key="group.name" @click="selectGroup(group.name)">
-                      <v-list-tile-title><v-icon style="margin-top: -5px;">add</v-icon>  {{ group.name }}</v-list-tile-title>
+                    <v-list-tile v-else v-for="group in groups" :key="group.groupid" @click="selectGroup(group.groupid)">
+                      <v-list-tile-title><v-icon style="margin-top: -5px;">add</v-icon>  {{ group.groupname }}</v-list-tile-title>
                     </v-list-tile>
                   </v-list>
                 </v-menu>
@@ -250,7 +249,7 @@ export default {
       items: [],
       selectedtags: [],
       tasks: [],
-      groups: [ { name: 'Group 1' }, { name: 'Group 2' }, { name: 'Group 3' }, { name: 'Group 4' }, { name: 'Group 5' } ],
+      groups: [],
       selectedgroups: [],
       empty: [],
       loading: true
@@ -270,14 +269,14 @@ export default {
       this.items.push(temp);
     },
     // Add groups to selection
-    selectGroup(name) {
-      var temp = this.groups.find(x => x.name === name);
+    selectGroup(groupid) {
+      var temp = this.groups.find(x => x.groupid === groupid);
       this.groups.splice(this.groups.indexOf(temp), 1);
       this.selectedgroups.push(temp);
     },
     // Remove groups to selection
-    unselectGroup(name) {
-      var temp = this.selectedgroups.find(x => x.name === name);
+    unselectGroup(groupid) {
+      var temp = this.selectedgroups.find(x => x.groupid === groupid);
       this.selectedgroups.splice(this.selectedgroups.indexOf(temp), 1);
       this.groups.push(temp);
     },
@@ -359,6 +358,12 @@ export default {
       .then(response => {
         this.items = response.data;
         this.loading = false;
+      });
+
+    axios.get('/api/usergroup.memberships?admin=' + localStorage.getItem('userid') + '&user=' + localStorage.getItem('userid'))
+      .then((response) => {
+        console.log(response.data);
+        this.groups = response.data;
       });
   }
 };

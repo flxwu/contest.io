@@ -324,7 +324,7 @@ export default {
       axios.post('/api/contest', {
         'contestname': this.contestname,
         'date_start': new Date().toISOString().substring(0, 19),
-        'date_end': this.contestdate,
+        'date_end': this.contestdate + ' 23:59:59',
         'visible': this.visible,
         'usergroups': this.selectedgroups,
         'tasks': this.tasks.map(task => task.taskid),

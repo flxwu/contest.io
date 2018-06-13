@@ -70,19 +70,18 @@ export default {
       contests_joined: []
     };
   },
-  created: () => {
+  async created() {
     // axios.get("/api/contest.joined?user=" + localStorage.getItem('userid'))
     //   .then(response => {
     //     this.contests_joined = response.data;
     //   }
     // );
 
-    axios.get('/api/contests?admin=' + localStorage.getItem('userid'))
+    await axios.get("/api/contests?admin=" + localStorage.getItem('userid'))
       .then((response) => {
-        alert(typeof(this.contests_owned));
         this.contests_owned = response.data;
       }
-      );
+    );
   },
   methods: {
 

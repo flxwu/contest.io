@@ -12,7 +12,10 @@
         <v-flex xs6>
 
             <!-- Task List -->
-            <v-subheader class="display-1" style="margin-top: 2% !important;">Contest {{ name }} <v-btn v-if="notJoined" color="primary" style="margin-left: 1rem;" @click="joinContest()">Join contest</v-btn></v-subheader>
+            <v-subheader class="display-1" style="margin-top: 2% !important;">Contest {{ name }}
+              <v-btn v-if="!joined" color="primary" style="margin-left: 1rem;" @click="joinContest()">Join contest</v-btn>
+              <v-btn v-if="joined" color="error" style="margin-left: 1rem;" @click="leaveContest()">Leave contest</v-btn>
+            </v-subheader>
 
             <div>
               <v-subheader style="width: 21.2rem;">Contest code:
@@ -89,23 +92,24 @@ export default {
   data() {
     return {
       items: [],
-      notJoined: true,
       name: 'loading...',
       code: 'loading...',
       tasks: [],
       date_end: '',
       exists: 1,
-      expired: false
+      expired: false,
+      joined: false
     };
   },
   async created() {
+    var contest = {};
     await axios.get('/api/contest?code=' + this.$route.params.id)
       .then((response) => {
+        contest = response.data;
         this.name = response.data.contestname;
         this.code = response.data.contestcode;
         this.date_end = response.data.date_end;
         this.tasks = Array.isArray(response.data.tasks) ? response.data.tasks : [response.data.tasks];
-        console.log(this.tasks);
         if(momentjs(new Date()).isSameOrAfter(this.date_end)) {
           this.expired = true;
         }
@@ -114,6 +118,12 @@ export default {
         this.exists = 0;
         console.log(error);
         window.location = '/404';
+      });
+
+    await axios.get('/api/contest.joined?user=' + localStorage.getItem('userid'))
+      .then((response) => {
+        if(response.data.includes(contest))
+          this.joined = true;
       });
   },
   methods: {
@@ -143,6 +153,19 @@ export default {
           'user': localStorage.getItem('userid'),
           'contest': this.code
         });
+
+      this.joined = true;
+    },
+
+    leaveContest() {
+      // TODO: Implement leaving when endpoint is made
+      // axios.post('/api/contest.joined',
+      //   {
+      //     'user': localStorage.getItem('userid'),
+      //     'contest': this.code
+      //   });
+
+      this.joined = false;
     }
   }
 };

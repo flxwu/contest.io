@@ -1,12 +1,15 @@
 <template>
-  <v-list style="max-height: 90%; overflow: scroll; width: 90%; margin: 0 auto; margin-top: 3%;">
+  <v-list style="max-height: 90%; width: 90%; margin: 0 auto; margin-top: 3%;">
     <v-card>
       <v-toolbar color="special1" dark>
         <v-toolbar-title>New public contests</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
       <v-list two-line>
-        <v-list-tile v-for="contest in contests" :key="contest.contestcode" :to="'contest/' + contest.contestcode">
+        <p v-if="!contests.length" style="color: red; padding: 29px; font-size: 15pt;">
+                  You have not created any contests!
+        </p>
+        <v-list-tile v-else v-for="contest in contests" :key="contest.contestcode" :to="'contest/' + contest.contestcode">
           <v-list-tile-content>
             <v-list-tile-title>{{ contest.contestname }}</v-list-tile-title>
             <v-list-tile-sub-title>Ends on {{contest.date_end | moment("dddd, MMMM Do YYYY") }} ({{contest.date_end | moment("from", true) }})</v-list-tile-sub-title>
@@ -38,7 +41,8 @@ export default {
   mounted() {
     axios.get('/api/contests?visible=1')
       .then(response => {
-        this.contests = [response.data];
+        if(response.data === null || typeof(response.data) === 'undefined') return
+        this.contests = Array.isArray(response.data) ? response.data : [response.data];
       })
       .catch(error => {
         alert(error);

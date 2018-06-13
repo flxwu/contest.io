@@ -80,7 +80,7 @@ export default {
     setCfhandle() {
       console.log(this.cfHandle);
       axios.post('/api/user.cfHandle', {
-        'userid': localStorage.getItem('userid'),
+        'user': localStorage.getItem('userid'),
         'handle': this.cfHandle
       });
     }

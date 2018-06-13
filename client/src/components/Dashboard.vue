@@ -15,6 +15,8 @@
                 <v-avatar size="128px"><img :src="user.avatar_url" alt="avatar"></v-avatar><br><br>
                 <div>Username:  {{ user.login }}  ({{ user.name }})</div>
                 <div>Email:  {{ user.email }} </div><br>
+                <div><v-text-field v-model="cfHandle" label="Codeforces Handle (Username)"></v-text-field> </div>
+                <v-btn color="primary" @click.native="setCfhandle">Set</v-btn>
               </div>
             </v-card-title>
 
@@ -48,6 +50,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 
 import Groups from './Groups.vue';
 import Contests from './ContestsOverview.vue';
@@ -60,7 +63,8 @@ export default {
   data() {
     return {
       user: {},
-      id: null
+      id: null,
+      cfHandle: ''
     };
   },
   // See if a user is logged in
@@ -70,6 +74,15 @@ export default {
       console.log(this.user);
     } else {
       window.location = history.go(-1);
+    }
+  },
+  methods: {
+    setCfhandle() {
+      console.log(this.cfHandle);
+      axios.post('/api/user.cfHandle', {
+        'userid': localStorage.getItem('userid'),
+        'handle': this.cfHandle
+      });
     }
   }
 };

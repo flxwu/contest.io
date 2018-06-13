@@ -1,5 +1,5 @@
 <template>
-  <v-footer height="10vh" class="grey darken-3">
+  <v-footer height="inherit" class="grey darken-3">
     <v-layout row wrap justify-center>
       <v-btn
         v-for="link in links"
@@ -11,7 +11,7 @@
         {{ link.title }}
       </v-btn>
       <v-flex xs12 py-3 text-xs-center white--text>
-        &copy;2018 — <strong>contest.io (Quentin Oschatz and Felix Wu)</strong>
+        &copy;2018 — <strong>contest.io (<a href="http://quentin-oschatz.me" target="_blank">Quentin Oschatz</a> and <a href="https://flxwu.com" target="_blank">Felix Wu</a>)</strong>
       </v-flex>
     </v-layout>
   </v-footer>
@@ -35,3 +35,13 @@ export default {
 };
 
 </script>
+
+<style scoped>
+a {
+  text-decoration: none;
+  color: inherit;
+}
+a:hover {
+  color: #26A69A;
+}
+</style>

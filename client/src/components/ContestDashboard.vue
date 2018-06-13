@@ -12,9 +12,18 @@
         <v-flex xs6>
 
             <!-- Task List -->
-            <v-subheader class="display-1" style="margin-top: 2% !important;">Contest {{ name }}</v-subheader>
+            <v-subheader class="display-1" style="margin-top: 2% !important;">Contest {{ name }} <v-btn v-if="notJoined" color="primary" style="margin-left: 1rem;" @click="joinContest()">Join contest</v-btn></v-subheader>
 
-            <div><v-subheader style="width: 270px;">Contest code: <v-text-field :value="code" disabled style="width: 100px; margin-left: 10px; margin-top: 10px;"></v-text-field></v-subheader> </div>
+            <div>
+              <v-subheader style="width: 21.2rem;">Contest code:
+                <v-text-field :value="code" disabled style="width: 100px; margin-left: 10px; margin-top: 10px;"></v-text-field>
+                <v-tooltip right>
+                  <v-icon slot="activator" style="cursor: pointer;" tooltip @click="copyToClipboard()">open_in_new</v-icon>
+                  <span>Copy link to clipboard</span>
+                </v-tooltip>
+              </v-subheader>
+            </div>
+
             <v-expansion-panel popout>
 
              <v-expansion-panel-content v-for="task in tasks" :key="task.taskid">
@@ -80,6 +89,7 @@ export default {
   data() {
     return {
       items: [],
+      notJoined: true,
       name: 'loading...',
       code: 'loading...',
       tasks: [],
@@ -104,6 +114,35 @@ export default {
         console.log(error);
         window.location = '/404';
       });
+  },
+  methods: {
+    // Curtesy of 30-seconds-of-code
+    copyToClipboard(str) {
+      str = window.location;
+      const el = document.createElement('textarea');
+      el.value = str;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      const selected =
+        document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      if (selected) {
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(selected);
+      }
+    },
+
+    joinContest() {
+      axios.post('/api/contest.joined',
+      {
+        'user': localStorage.getItem('userid'),
+        'contest': this.code
+      });
+    }
   }
 };
 </script>

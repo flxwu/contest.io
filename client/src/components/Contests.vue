@@ -7,7 +7,7 @@
       </v-toolbar>
       <v-list two-line>
         <p v-if="!contests.length" style="color: red; padding: 29px; font-size: 15pt;">
-                  You have not created any contests!
+          There are no public contests available. Go an create one!
         </p>
         <v-list-tile v-else v-for="contest in contests" :key="contest.contestcode" :to="'contest/' + contest.contestcode">
           <v-list-tile-content>

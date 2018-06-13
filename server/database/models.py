@@ -450,7 +450,7 @@ def insert_joined_contest(user: int, contestcode: int):
     with sql.connect(DATABASE_PATH) as dbcon:
         cur = dbcon.cursor()
         cur.execute(
-            'INSERT INTO joined_contest (user, contestcode) VALUES (?,?)',
+            'INSERT INTO joined_contest (user, contest) VALUES (?,?)',
             (user, contestcode))
         dbcon.commit()
 
@@ -490,14 +490,6 @@ def select_joined_contest(params=(), conditions=()):
         return None
     else:
         return response
-
-# TODO:
-# def get_users_in_contest(contestCode: int):
-#     queryString = 'SELECT Task.* \
-#         FROM in_usergroup, Contest \
-#         WHERE in_usergroup.usergroup = Contest AND \
-#             contains_task.contest = \"{}\"'.format(contestCode)
-
 
 def get_memberships_of(user: int, admin=False):
     if admin:
@@ -592,7 +584,6 @@ def get_latest_submissions(user: str, contestCode: int):
         if cur.rowcount == 0:
             return None
         queryResult = cur.execute(queryString)
-    # TODO:
     response = queryResult.fetchall()
     if not response:
         return None

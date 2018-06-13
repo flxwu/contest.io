@@ -222,7 +222,7 @@ def api_contest():
         if get_queryparam('code') is None:
             content = {"Error": "\'code\' parameter missing"}
             return content, HTTPStatus.BAD_REQUEST
-
+        
         # get contest JSON
         contestJSON = models.select_contest(
             params=('*'),
@@ -299,8 +299,15 @@ def api_contest():
 def api_contest_join():
     if request.method == 'GET':
         user = get_queryparam('user')
-        #models.insert_
-
+        returnJSON = models.select_joined_contest(
+            params=('*'),
+            conditions=('{}=\"{}\"'.format(
+                    settings.DB_COLUMNS.JOINED_CONTEST_USER,
+                    user
+                )
+            )
+        )
+        return returnJSON
     elif request.method == 'POST':
         postJSON = request.get_json()
         models.insert_joined_contest(
@@ -320,6 +327,7 @@ def api_contest_results():
     if resultsInDatabase is not None:
         returnJSON = resultsInDatabase
     else:
+        # if no db entries, fetch user's contest submissions from cf api and insert them into db
         cfHandle = models.get_cfhandle(user)
         UserContestResultsEndpoint.get(cfHandle, contest)
         returnJSON = models.get_latest_submissions(user, contest)
@@ -331,6 +339,7 @@ def api_contest_results():
 def api_contests():
     if request.method == 'GET':
         if get_queryparam('visible'):
+            # get all visible contests
             contests = (models.select_contest(
                 params=('*'),
                 conditions=('{}=\"{}\"'.format(
@@ -339,6 +348,7 @@ def api_contests():
             ))
             return jsonify(contests)
         elif get_queryparam('admin'):
+            # get all contests created by "admin"
             contests = models.select_contest(
                 params=('*'),
                 conditions=('{}=\"{}\"'.format(
@@ -361,16 +371,19 @@ def api_user():
         return None
 
 
-@app.route('/api/user.cfHandle', methods=['POST'])
+@app.route('/api/user.cfhandle', methods=['POST'])
 def api_user_cfHandle():
+    """
+        POST endpoint to set a user's codeforces handle
+    """
     models.update_user(
         updatedValues=('{}=\"{}\"'.format(
             settings.DB_COLUMNS.USER_CODEFORCES_HANDLE,
             request.get_json()['handle']
         )),
         setConditions=('{}=\"{}\"'.format(
-            settings.DB_COLUMNS.USER_USERNAME,
-            request.get_json()['username']
+            settings.DB_COLUMNS.USER_USERID,
+            request.get_json()['user']
         ))
     )
 

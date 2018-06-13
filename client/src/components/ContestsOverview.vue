@@ -9,10 +9,10 @@
                   <v-toolbar-title>Contests you have joined</v-toolbar-title>
                   <v-spacer></v-spacer>
                 </v-toolbar>
-                <p v-if="contests_joined.length" style="color: red; padding: 29px; font-size: 15pt;">
+                <p v-if="!contests_joined.length" style="color: red; padding: 29px; font-size: 15pt;">
                   You have not joined any contests!
                 </p>
-                <v-list v-else two-line style="max-height: 50vh; overflow: scroll;">
+                <v-list v-else two-line>
                   <v-list-tile v-for="contest in contests_joined" :key="contest.contestcode" :to="'contest/' + contest.contestcode">
                     <v-list-tile-content>
                       <v-list-tile-title>{{ contest.contestname }}</v-list-tile-title>
@@ -40,7 +40,7 @@
                     <v-icon>add</v-icon>
                   </v-btn>
                 </v-toolbar>
-                <p v-if="contests_owned.length" style="color: red; padding: 29px; font-size: 15pt;">
+                <p v-if="!contests_owned.length" style="color: red; padding: 29px; font-size: 15pt;">
                   You have not created any contests!
                 </p>
                 <v-list v-else two-line>
@@ -77,17 +77,26 @@ export default {
     };
   },
   async created() {
-    axios.get('/api/contest.joined?user=' + localStorage.getItem('userid'))
+    var contests = [];
+    await axios.get("/api/contest.joined?user=" + localStorage.getItem('userid'))
       .then(response => {
-        this.contests_joined = Array.isArray(response.data) ? response.data : [response.data];
+        console.log(response.data)
+        contests = Array.isArray(response.data) ? response.data : [response.data];
+        for (var i = 0; i < contests.length; i++) {
+          axios.get("/api/contest?code=" + contests[i].contest)
+            .then((response) => {
+              this.contests_joined.push(response.data);
+            }
+          );
+        }
       }
-      );
+    );
 
-    await axios.get('/api/contests?admin=' + localStorage.getItem('userid'))
+    await axios.get("/api/contests?admin=" + localStorage.getItem('userid'))
       .then((response) => {
         this.contests_owned = response.data;
       }
-      );
+    );
   },
   methods: {
 

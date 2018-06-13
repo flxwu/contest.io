@@ -97,13 +97,13 @@ export default {
   created: function() {
     var groups_joined = [];
     // Get groups user is in
-    axios.get("/api/usergroup.memberships?admin=-1&user=" + localStorage.getItem('userid'))
+    axios.get('/api/usergroup.memberships?admin=-1&user=' + localStorage.getItem('userid'))
       .then((response) => {
         groups_joined = response.data;
       });
 
     //Get groups user is admin/owner of
-    axios.get("/api/usergroup.memberships?admin=" + localStorage.getItem('userid') + '&user=' + localStorage.getItem('userid'))
+    axios.get('/api/usergroup.memberships?admin=' + localStorage.getItem('userid') + '&user=' + localStorage.getItem('userid'))
       .then((response) => {
         this.groups_owned = response.data;
       });

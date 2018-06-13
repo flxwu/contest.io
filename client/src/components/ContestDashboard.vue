@@ -27,7 +27,7 @@
               </v-subheader>
             </div>
 
-            <v-expansion-panel popout>
+            <v-expansion-panel popout v-if="!analytics">
 
              <v-expansion-panel-content v-for="task in tasks" :key="task.taskid">
                <div slot="header">{{ task.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ task.codeforces_index }}): </small>
@@ -56,6 +56,17 @@
 
            </v-expansion-panel>
 
+           <v-data-table v-else :headers="headers" :items="desserts" hide-actions class="elevation-1">
+             <template slot="items" slot-scope="props">
+               <td>{{ props.item.name }}</td>
+               <td class="text-xs-right">{{ props.item.calories }}</td>
+               <td class="text-xs-right">{{ props.item.fat }}</td>
+               <td class="text-xs-right">{{ props.item.carbs }}</td>
+               <td class="text-xs-right">{{ props.item.protein }}</td>
+               <td class="text-xs-right">{{ props.item.iron }}</td>
+             </template>
+           </v-data-table>
+
         </v-flex>
 
         <v-flex xs2>
@@ -70,6 +81,18 @@
                 <v-divider></v-divider>
                 <div>0 / {{ tasks.length }} Tasks completed (<span>{{ (0 / tasks.length) * 100 }}%</span>)</div>
                 <div>Time remaining: {{ date_end | moment("from", true) }}</div>
+              </div>
+            </v-card-title>
+
+          </v-card>
+
+          <v-card v-if="admin" class="analytics" style="margin-top: 10%;">
+
+            <v-card-title primary-title>
+              <div  style="width: 100% !important">
+                <h3 class="headline mb-0">Track Progress</h3>
+                <v-divider></v-divider>
+                <v-btn color="primary" @click.native="analytics=!analytics">Analytics</v-btn>
               </div>
             </v-card-title>
 
@@ -98,7 +121,12 @@ export default {
       date_end: '',
       exists: 1,
       expired: false,
-      joined: false
+      joined: false,
+      admin: true,
+      analytics: true,
+      taskanalytics: [],
+      headers: [],
+      desserts: []
     };
   },
   async created() {
@@ -125,6 +153,42 @@ export default {
         if(response.data.includes(contest))
           this.joined = true;
       });
+
+    var temp = [{
+      'text':'User', 'value':'user'
+    },
+    {
+      'text': "Hid", 'value': 'hello'
+    }];
+
+    // for(var i = 0; i < 1; i++) {
+    //   temp.push({ text: "Hid", value: 'hello' });
+    // }
+
+    this.headers = temp;
+
+    if(contest.contestadmin == localStorage.getItem('userid')) {
+      axios.get('/api/contest.results?user=' + localStorage.getItem('userid') + '&contest=' + contest.contestcode)
+      .then((response) => {
+        var row = {
+          value: false,
+          user: JSON.parse(localStorage.getItem('data')).login,
+        }
+
+        for(var x = 0; x < response.data.length; x++) {
+          row[response.data[x].task] = response.data[x].verdict;
+        }
+
+        this.taskanalytics.push(row)
+        console.log(row);
+      });
+    }
+
+    this.taskanalytics = [{
+      'user': 'Qo2770',
+      '1': 'Hi'
+    }]
+
   },
   methods: {
     // Curtesy of 30-seconds-of-code
@@ -167,6 +231,9 @@ export default {
 
       this.joined = false;
     }
+  },
+  computed: {
+
   }
 };
 </script>

@@ -549,7 +549,7 @@ def get_cfhandle(user: int):
     if not response:
         return None
     else:
-        return response
+        return response[0]
 
 
 def get_userid(cfhandle: str):
@@ -561,12 +561,11 @@ def get_userid(cfhandle: str):
         if cur.rowcount == 0:
             return None
         queryResult = cur.execute(queryString)
-
     response = queryResult.fetchone()
     if not response:
         return None
     else:
-        return response
+        return response[0]
 
 
 def get_latest_submissions(user: str, contestCode: int):
@@ -575,9 +574,7 @@ def get_latest_submissions(user: str, contestCode: int):
         WHERE submits_task.task = contains_task.task\
         AND submits_task.user = \"{}\" \
         AND contains_task.contest = \"{}\" \
-        GROUP BY submits_task.task \
-        HAVING MIN(ROWID) \
-        ORDER BY ROWID'.format(user, contestCode)
+        GROUP BY submits_task.task'.format(user, contestCode)
     with sql.connect(DATABASE_PATH) as dbcon:
         dbcon.row_factory = dict_factory
         cur = dbcon.cursor()

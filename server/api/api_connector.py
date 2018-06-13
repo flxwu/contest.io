@@ -16,7 +16,7 @@ class UserContestResults(EndpointInterface):
 
     def get(self, handle: str, contestCode: int):
         self.contestTasks = models.get_tasks_in_contest(contestCode)
-        self.cfTasks = [(task['codeforces_id']+task['codeforces_index']) for task in self.contestTasks]
+        self.cfTasks = [(str(task['codeforces_id'])+task['codeforces_index']) for task in self.contestTasks]
         try:
             self.rawdata = (requests.get((CODEFORCES_BASE_URL + self.endpoint_url),
                             params = {
@@ -29,15 +29,15 @@ class UserContestResults(EndpointInterface):
         except requests.exceptions.RequestException as exception:
                 return exception
         else:
-            self.extract_submissions()
+            self.extract_submissions(contestCode)
             self.insert_to_database(handle)
             return True
 
     def extract_submissions(self, contestCode: int):
         try:
             if self.rawdata:
-                self.submissions = [submission for submission in self.rawdata['result'] 
-                    if (submission['contestId'] + submission['problem']['index']) in self.cfTasks]
+                self.submissions = [submission for submission in self.rawdata['result']
+                    if (str(submission['contestId']) + submission['problem']['index']) in self.cfTasks]
         except Exception as exception: # pylint: disable=broad-except
             print(exception)
 
@@ -45,10 +45,10 @@ class UserContestResults(EndpointInterface):
         if self.submissions:
             for submission in self.submissions:
                 verdict,time = submission['verdict'], submission['creationTimeSeconds']
-                user = models.get_userID(handle)
-                task = [task['taskid'] for task in self.contestTasks 
-                    if (task['codeforces_id'] + task['codeforces_index']) == 
-                    (submission['contestId'] + submission['problem']['index'])]
+                user = models.get_userid(handle)
+                task = [task['taskid'] for task in self.contestTasks
+                    if (str(task['codeforces_id']) + task['codeforces_index']) ==
+                    (str(submission['contestId']) + submission['problem']['index'])][0]
                 models.insert_submits_task(
                     user,
                     task,

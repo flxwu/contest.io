@@ -126,7 +126,7 @@ def select_contest(params=(), conditions=()):
     response = queryResult.fetchall()
     response = response[0] if len(response) == 1 else response
     if not response:
-        return queryString
+        return None
     else:
         return response
 

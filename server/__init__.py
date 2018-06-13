@@ -340,12 +340,12 @@ def api_contests():
     if request.method == 'GET':
         if get_queryparam('visible'):
             # get all visible contests
-            contests = (models.select_contest(
+            contests = models.select_contest(
                 params=('*'),
                 conditions=('{}=\"{}\"'.format(
                     settings.DB_COLUMNS.CONTEST_VISIBLE,
                     1))
-            ))
+            )
             return jsonify(contests)
         elif get_queryparam('admin'):
             # get all contests created by "admin"

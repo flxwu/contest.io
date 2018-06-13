@@ -307,7 +307,7 @@ def api_contest_join():
                 )
             )
         )
-        return returnJSON
+        return jsonify(returnJSON)
     elif request.method == 'POST':
         postJSON = request.get_json()
         models.insert_joined_contest(

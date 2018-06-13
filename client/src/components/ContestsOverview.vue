@@ -9,7 +9,10 @@
                   <v-toolbar-title>Contests you have joined</v-toolbar-title>
                   <v-spacer></v-spacer>
                 </v-toolbar>
-                <v-list two-line style="max-height: 50vh; overflow: scroll;">
+                <p v-if="contests_joined.length" style="color: red; padding: 29px; font-size: 15pt;">
+                  You have not joined any contests!
+                </p>
+                <v-list v-else two-line style="max-height: 50vh; overflow: scroll;">
                   <v-list-tile v-for="contest in contests_joined" :key="contest.contestcode" :to="'contest/' + contest.contestcode">
                     <v-list-tile-content>
                       <v-list-tile-title>{{ contest.contestname }}</v-list-tile-title>
@@ -37,7 +40,10 @@
                     <v-icon>add</v-icon>
                   </v-btn>
                 </v-toolbar>
-                <v-list two-line>
+                <p v-if="contests_owned.length" style="color: red; padding: 29px; font-size: 15pt;">
+                  You have not created any contests!
+                </p>
+                <v-list v-else two-line>
                   <v-list-tile v-for="contest in contests_owned" :key="contest.contestcode" :to="'contest/' + contest.contestcode">
                     <v-list-tile-content>
                       <v-list-tile-title>{{ contest.contestname }}</v-list-tile-title>
@@ -71,11 +77,11 @@ export default {
     };
   },
   async created() {
-    // axios.get("/api/contest.joined?user=" + localStorage.getItem('userid'))
-    //   .then(response => {
-    //     this.contests_joined = response.data;
-    //   }
-    // );
+    axios.get("/api/contest.joined?user=" + localStorage.getItem('userid'))
+      .then(response => {
+        this.contests_joined = Array.isArray(response.data) ? response.data : [response.data];
+      }
+    );
 
     await axios.get("/api/contests?admin=" + localStorage.getItem('userid'))
       .then((response) => {

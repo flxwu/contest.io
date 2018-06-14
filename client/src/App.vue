@@ -2,12 +2,15 @@
   <div id="app">
     <!-- all elements need to be enclosed in v-app tags -->
     <v-app>
-
       <NavBar></NavBar>
 
-      <router-view></router-view>
+      <v-content>
+        <v-container fluid>
+          <router-view></router-view>
+        </v-container>
+      </v-content>
 
-      <Footer></Footer>
+      <Footer app></Footer>
 
     </v-app>
   </div>
@@ -35,7 +38,8 @@ export default {
 }
 
 Footer {
-  position: fixed;
+  z-index: 1;
+  position: relative;
   bottom: 0;
   width: 100%;
 }

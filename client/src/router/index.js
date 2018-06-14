@@ -3,10 +3,11 @@ import Router from 'vue-router';
 
 const routerOptions = [
   { path: '/', component: 'Home' },
-  { path: '/contest/:id', component: 'ContestDashboard' }, // TODO: replace mockout with real dashboard
+  { path: '/contest/:id', component: 'ContestDashboard' },
   { path: '/profile/:id', component: 'Profile' },
   { path: '/contestcreate', component: 'CreateContest' },
   { path: '/dashboard', component: 'Dashboard' },
+  { path: '/contests', component: 'Contests' },
   { path: '*', component: '404Error' }
 ];
 

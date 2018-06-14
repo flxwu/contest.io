@@ -54,7 +54,7 @@
                 </template>
               </v-select>
             </div>
-            <div style="height: 320px; overflow: scroll; margin-top: 40px; min-width: 100%;">
+            <div style="height: 320px; overflow: hidden; margin-top: 40px; min-width: 100%;">
               <v-list>
 
                 <template v-if="!filteredItems.length">
@@ -62,7 +62,7 @@
                   <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
 
                   <v-list-tile-content v-else>
-                     <v-list-tile-title style="color: red; text-align: center;">No tasks match search parameters!</v-list-tile-title>
+                    <v-list-tile-title style="color: red; text-align: center;">No tasks match search parameters!</v-list-tile-title>
                   </v-list-tile-content>
 
                 </template>
@@ -94,22 +94,20 @@
 
                       <v-card-actions>
 
-                        <v-btn flat color="orange" :to="item.codeforces_url">Solve</v-btn>
+                        <v-btn flat color="orange" :href="item.codeforces_url" target="blank">Preview</v-btn>
                         <v-btn color="primary" flat @click.stop="detailPopup=false">Close</v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
 
-                   <v-divider :key="item.taskid + '-divider'"></v-divider>
+                  <v-list-tile avatar :key="item.taskid + '-avatar2'" @click="() => {}">
 
-                   <v-list-tile avatar :key="item.taskid + '-avatar2'" @click="alert()">
-
-                     <v-list-tile-action>
-                         <v-icon @click="addTask(item.taskid)">add</v-icon>
-                     </v-list-tile-action>
+                    <v-list-tile-action>
+                        <v-icon @click="addTask(item.taskid)">add</v-icon>
+                    </v-list-tile-action>
 
                     <v-list-tile-content @click="detailPopup=true">
-                       <v-list-tile-title v-html="item.taskname"></v-list-tile-title>
+                      <v-list-tile-title v-html="item.taskname"></v-list-tile-title>
                     </v-list-tile-content>
 
                     <small style="position: absolute; left: 380px;">Difficulty ({{ item.codeforces_index }}): </small>
@@ -122,11 +120,13 @@
 
                     <v-chip :key="tag" small v-for="tag in item.tasktags.slice(0, 2)" >{{ tag }}</v-chip>
 
-                   </v-list-tile>
+                  </v-list-tile>
 
-                 </template>
+                  <v-divider :key="item.taskid + '-divider'"></v-divider>
 
-             </v-list>
+                </template>
+
+            </v-list>
             </div>
 
             <!-- Task list -->
@@ -135,22 +135,22 @@
             <p v-if="!tasks.length" style="color: red;">No tasks selected! Browse above tasks and click the '+' icon to add them!</p>
             <v-expansion-panel popout>
 
-             <v-expansion-panel-content v-for="item in tasks" :key="item.id">
+            <v-expansion-panel-content v-for="item in tasks" :key="item.id">
 
-               <div slot="header">
-                  {{ item.taskname }}<br>
-                  <small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
-                   <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="float:left; width: 50px;" value="20" buffer-value="20" color="green"></v-progress-linear>
-                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="float:left; width: 50px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
-                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="float:left; width: 50px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
-                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="float:left; width: 50px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
-                   <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="float:left; width: 50px;" value="100" color="red"></v-progress-linear>
-                   <v-progress-linear v-else style="float:left; width: 50px;" value="100" color="red"></v-progress-linear>
-               </div>
+              <div slot="header">
+                {{ item.taskname }}<br>
+                <small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ item.codeforces_index }}): </small>
+                  <v-progress-linear v-if="item.codeforces_index.split('')[0] === 'A'" style="float:left; width: 50px;" value="20" buffer-value="20" color="green"></v-progress-linear>
+                  <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'B'" style="float:left; width: 50px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
+                  <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'C'" style="float:left; width: 50px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
+                  <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'D'" style="float:left; width: 50px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
+                  <v-progress-linear v-else-if="item.codeforces_index.split('')[0] === 'E'" style="float:left; width: 50px;" value="100" color="red"></v-progress-linear>
+                  <v-progress-linear v-else style="float:left; width: 50px;" value="100" color="red"></v-progress-linear>
+              </div>
 
               <v-card>
 
-                <v-card-text>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</v-card-text>
+
 
                 <!-- Tags -->
                 <div class="text-xs-center chiptag">
@@ -159,14 +159,14 @@
 
                 <v-card-actions>
                   <v-btn flat color="red" @click="removeTask(item.taskid)">Remove</v-btn>
-                  <v-btn flat color="orange" :href="item.codeforces_url" target="blank">Solve</v-btn>
+                  <v-btn flat color="orange" :href="item.codeforces_url" target="blank">Preview</v-btn>
                 </v-card-actions>
 
               </v-card>
 
-             </v-expansion-panel-content>
+            </v-expansion-panel-content>
 
-           </v-expansion-panel>
+          </v-expansion-panel>
           </v-flex>
 
           <!-- Divider -->
@@ -176,7 +176,7 @@
           <v-flex xs4>
             <v-card>
               <v-card-text>
-                <v-text v-if="contestdate">Contest End: {{ contestdate | moment("dddd, MMMM Do YYYY") }} (23:59)</v-text>
+                <p v-if="contestdate">Contest End: {{ contestdate | moment("dddd, MMMM Do YYYY") }} (23:59)</p>
                 <v-btn small color="primary" dark @click.stop="dialog2 = true">Choose a date...*</v-btn>
 
                 <v-dialog v-model="dialog2" max-width="500px">
@@ -195,15 +195,17 @@
                 </v-dialog>
 
                 <br>
-                <v-text>Groups:</v-text><br><v-divider></v-divider>
-                <v-chip :key="group.name" v-for="group in selectedgroups" close @input="unselectGroup(group.name)">   {{ group.name }}</v-chip>
+                  <v-text v-if="groups.length">Groups:</v-text>
+                  <v-text v-else><em>You don't have any groups to add</em></v-text>
+                <br>
+                <v-divider></v-divider>
+                <v-chip :key="group.groupid" v-for="group in selectedgroups" close @input="unselectGroup(group.groupid)">   {{ group.groupname }}</v-chip>
                 <v-menu v-if="groups.length">
                   <v-btn small color="primary" dark slot="activator" fab><v-icon>add</v-icon></v-btn>
-                  <!-- TODO: Get all groups this person is admin of -->
                   <v-list>
                     <v-list-tile v-if="!groups.length && !selectedgroups.length" style="color: red;">You are not a group admin!</v-list-tile>
-                    <v-list-tile v-else v-for="group in groups" :key="group.name" @click="selectGroup(group.name)">
-                      <v-list-tile-title><v-icon style="margin-top: -5px;">add</v-icon>  {{ group.name }}</v-list-tile-title>
+                    <v-list-tile v-else v-for="group in groups" :key="group.groupid" @click="selectGroup(group.groupid)">
+                      <v-list-tile-title><v-icon style="margin-top: -5px;">add</v-icon>  {{ group.groupname }}</v-list-tile-title>
                     </v-list-tile>
                   </v-list>
                 </v-menu>
@@ -224,15 +226,13 @@
 
 <script>
 // eslint-disable-next-line
-import moment from 'vue-moment'
+import moment from "vue-moment";
 import axios from 'axios';
 
 export default {
   name: 'createcontest',
-  components: {
-
-  },
-  data () {
+  components: {},
+  data() {
     return {
       searchtitle: '',
       searchtags: '',
@@ -250,7 +250,7 @@ export default {
       items: [],
       selectedtags: [],
       tasks: [],
-      groups: [ { name: 'Group 1' }, { name: 'Group 2' }, { name: 'Group 3' }, { name: 'Group 4' }, { name: 'Group 5' } ],
+      groups: [],
       selectedgroups: [],
       empty: [],
       loading: true
@@ -270,14 +270,14 @@ export default {
       this.items.push(temp);
     },
     // Add groups to selection
-    selectGroup(name) {
-      var temp = this.groups.find(x => x.taskname === name);
+    selectGroup(groupid) {
+      var temp = this.groups.find(x => x.groupid === groupid);
       this.groups.splice(this.groups.indexOf(temp), 1);
       this.selectedgroups.push(temp);
     },
     // Remove groups to selection
-    unselectGroup(name) {
-      var temp = this.selectedgroups.find(x => x.taskname === name);
+    unselectGroup(groupid) {
+      var temp = this.selectedgroups.find(x => x.groupid === groupid);
       this.selectedgroups.splice(this.selectedgroups.indexOf(temp), 1);
       this.groups.push(temp);
     },
@@ -286,10 +286,9 @@ export default {
       this.selectedtags = [...this.selectedtags];
     },
     // This posts data to api
-    postContest() {
-
+    postContest: async function() {
       // Ensure required fields are filled out
-      if(this.tasks.length == 0) {
+      if (this.tasks.length == 0) {
         this.alertTask = true;
         setTimeout(() => {
           this.alertTask = false;
@@ -297,7 +296,7 @@ export default {
         return false;
       }
 
-      if(this.contestdate == '') {
+      if (this.contestdate == '') {
         this.alertDate = true;
         setTimeout(() => {
           this.alertDate = false;
@@ -305,7 +304,7 @@ export default {
         return false;
       }
 
-      if(this.contestname == '') {
+      if (this.contestname == '') {
         this.alertName = true;
         setTimeout(() => {
           this.alertName = false;
@@ -321,56 +320,71 @@ export default {
       };
 
       // Create AXIOS Post request
-      axios.post('/api/contests', {
-        'contestname': this.contestname,
-        'date_start': new Date().toISOString().substring(0, 19),
-        'date_end': this.contestdate,
-        'visible': this.visible,
-        'contestgroups': this.selectedgroups,
-        'tasks': this.tasks.map(task => task.taskid)
-      }, config)
-        .then(function () {
-          window.location = '/';
+      await axios
+        .post(
+          '/api/contest',
+          {
+            contestname: this.contestname,
+            date_start: new Date().toISOString().substring(0, 19),
+            date_end: this.contestdate + ' 23:59:59',
+            visible: this.visible,
+            usergroups: this.selectedgroups,
+            tasks: this.tasks.map(task => task.taskid),
+            contestadmin: localStorage.getItem('userid')
+          },
+          config
+        )
+        .then(function(resp) {
+          window.location = '/contest/' + resp.data;
         })
-        .catch(function (error) {
+        .catch(function(error) {
           this.axiosError = error;
           this.alertAxios = true;
           setTimeout(() => {
             this.alertAxios = false;
           }, 30000);
         });
-
     }
   },
   computed: {
     // Get current date
-    now: function () {
+    now: function() {
       return new Date().toISOString().substring(0, 10);
     },
     filteredItems() {
       return this.items.filter(item => {
-        return item.taskname.toLowerCase().includes(this.searchtitle.toLowerCase()) && this.selectedtags.every(selectedtag => item.tasktags.includes(selectedtag));
+        return (
+          item.taskname
+            .toLowerCase()
+            .includes(this.searchtitle.toLowerCase()) &&
+          this.selectedtags.every(selectedtag =>
+            item.tasktags.includes(selectedtag)
+          )
+        );
       });
     }
   },
   mounted() {
-    axios.get('/api/tasks?tags=geometry')
-      .then(response => {
-        this.items = response.data;
-        this.loading = false;
+    axios.get('/api/tasks?tags=geometry').then((response) => {
+      this.items = response.data;
+      this.loading = false;
+    });
+
+    axios
+      .get(
+        `/api/usergroup.memberships?admin=${localStorage.getItem('userid')}&user=${localStorage.getItem('userid')}`
+      )
+      .then((response) => {
+        if (response.data === null || typeof(response.data) === 'undefined') return;
+        this.groups = response.data;
       });
   }
 };
 </script>
 
 <style scoped>
-
 .vlink {
   cursor: pointer;
-}
-
-#taskselection {
-  margin-left: -10%;
 }
 
 .search {

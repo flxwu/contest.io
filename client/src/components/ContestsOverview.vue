@@ -78,26 +78,26 @@ export default {
   },
   async created() {
     var contests = [];
-    await axios.get("/api/contests.joined?user=" + localStorage.getItem('userid'))
+    await axios.get('/api/contests.joined?user=' + localStorage.getItem('userid'))
       .then(response => {
-        if(response.data === null || typeof(response.data) === 'undefined') return                
+        if(response.data === null || typeof(response.data) === 'undefined') return;                
         contests = Array.isArray(response.data) ? response.data : [response.data];
         for (var i = 0; i < contests.length; i++) {
-          axios.get("/api/contest?code=" + contests[i].contest)
+          axios.get('/api/contest?code=' + contests[i].contest)
             .then((response) => {
               this.contests_joined.push(response.data);
             }
-          );
+            );
         }
       }
-    );
+      );
 
-    await axios.get("/api/contests?admin=" + localStorage.getItem('userid'))
+    await axios.get('/api/contests?admin=' + localStorage.getItem('userid'))
       .then((response) => {
-        if(response.data === null || typeof(response.data) === 'undefined') return                
+        if(response.data === null || typeof(response.data) === 'undefined') return;                
         this.contests_owned = response.data;
       }
-    );
+      );
   },
   methods: {
 

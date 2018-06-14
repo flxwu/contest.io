@@ -41,7 +41,7 @@ export default {
   mounted() {
     axios.get('/api/contests?visible=1')
       .then(response => {
-        if(response.data === null || typeof(response.data) === 'undefined') return
+        if(response.data === null || typeof(response.data) === 'undefined') return;
         this.contests = Array.isArray(response.data) ? response.data : [response.data];
       })
       .catch(error => {

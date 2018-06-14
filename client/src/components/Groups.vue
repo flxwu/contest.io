@@ -99,14 +99,14 @@ export default {
     // Get groups user is in
     await axios.get('/api/usergroup.memberships?admin=-1&user=' + localStorage.getItem('userid'))
       .then((response) => {
-        if(response.data === null || typeof(response.data) === 'undefined') return        
+        if(response.data === null || typeof(response.data) === 'undefined') return;        
         groups_joined = response.data;
       });
 
     //Get groups user is admin/owner of
     await axios.get('/api/usergroup.memberships?admin=' + localStorage.getItem('userid') + '&user=' + localStorage.getItem('userid'))
       .then((response) => {
-        if(response.data === null || typeof(response.data) === 'undefined') return
+        if(response.data === null || typeof(response.data) === 'undefined') return;
         this.groups_owned = response.data;
       });
 

@@ -68,38 +68,38 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 
 export default {
-  name: "navbar",
+  name: 'navbar',
   components: {},
   data() {
     return {
       loginDialog: false,
-      github: "",
+      github: '',
       loggedIn: false,
       user: {},
       drawer: false,
       userid: null,
       links: [
-        { title: "Home", url: "/" },
-        { title: "Contests", url: "contests" }
+        { title: 'Home', url: '/' },
+        { title: 'Contests', url: 'contests' }
       ]
     };
   },
   // See if a user is logged in
   mounted: function() {
-    if (localStorage.getItem("userid") != -1) {
+    if (localStorage.getItem('userid') != -1) {
       this.loggedIn = true;
     } else {
-      axios.get("/api/github-user").then(resp => {
-        if (!(resp.data == "401: Bad credentials")) {
+      axios.get('/api/github-user').then(resp => {
+        if (!(resp.data == '401: Bad credentials')) {
           console.log(resp);
           this.loggedIn = true;
           this.user = resp.data.ghdata;
           this.userid = resp.data.id;
-          localStorage.setItem("userid", this.userid);
-          localStorage.setItem("data", JSON.stringify(this.user));
+          localStorage.setItem('userid', this.userid);
+          localStorage.setItem('data', JSON.stringify(this.user));
         }
       });
     }
@@ -107,8 +107,8 @@ export default {
   methods: {
     logOut() {
       this.loggedIn = false;
-      localStorage.setItem("userid", -1);
-      localStorage.setItem("data", null);
+      localStorage.setItem('userid', -1);
+      localStorage.setItem('data', null);
     }
   }
 };

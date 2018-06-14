@@ -121,19 +121,19 @@
 </template>
 
 <script>
-import axios from "axios";
-import * as momentjs from "moment";
+import axios from 'axios';
+import * as momentjs from 'moment';
 
 export default {
-  name: "contestdashboard",
+  name: 'contestdashboard',
   components: {},
   data() {
     return {
-      name: "loading...",
-      code: "loading...",
+      name: 'loading...',
+      code: 'loading...',
       tasks: [],
       solved: 0,
-      date_end: "",
+      date_end: '',
       exists: 1,
       expired: false,
       joined: false,
@@ -142,10 +142,10 @@ export default {
       taskanalytics: [],
       headers: [
         {
-          text: "User",
-          value: "user",
-          align: "center",
-          class: "header-1"
+          text: 'User',
+          value: 'user',
+          align: 'center',
+          class: 'header-1'
         },
         {
           text: 'Progess',
@@ -161,7 +161,7 @@ export default {
     await axios
       .get(`/api/contest?code=${this.$route.params.id}`)
       .then(response => {
-        if (response.data === null || typeof response.data === "undefined")
+        if (response.data === null || typeof response.data === 'undefined')
           return;
         contest = response.data;
         this.name = response.data.contestname;
@@ -173,8 +173,8 @@ export default {
         this.tasks.forEach(task => this.headers.push({
           text: `${task.taskname} (${task.codeforces_id+task.codeforces_index})`,
           value: task.taskid,
-          align: "center"
-        }))
+          align: 'center'
+        }));
         if (momentjs(new Date()).isSameOrAfter(this.date_end)) {
           this.expired = true;
         }
@@ -182,27 +182,27 @@ export default {
       .catch(error => {
         this.exists = 0;
         console.log(error);
-        window.location = "/404";
+        window.location = '/404';
       });
 
     // check if user has already joined the contest
     await axios
-      .get(`/api/contests.joined?user=${localStorage.getItem("userid")}`)
+      .get(`/api/contests.joined?user=${localStorage.getItem('userid')}`)
       .then(response => {
-        if (response.data === null || typeof response.data === "undefined")
+        if (response.data === null || typeof response.data === 'undefined')
           return;
         let res = Array.isArray(response.data) ? response.data : [response.data];
         if (res.some(joinedContest => joinedContest.contest === this.code)) this.joined = true;
       });
 
-    if (contest.contestadmin == localStorage.getItem("userid")) {
+    if (contest.contestadmin == localStorage.getItem('userid')) {
       // get all users in contest
-      let users = []
+      let users = [];
       await axios
         .get(
           `/api/contest.joined?code=${contest.contestcode}`
         ).then(response => {
-          if (response.data === null || typeof response.data === "undefined")
+          if (response.data === null || typeof response.data === 'undefined')
             return;
           users = (Array.isArray(response.data) ? response.data : [response.data]).map(contestUser => contestUser.user);
         });
@@ -213,11 +213,11 @@ export default {
             `/api/contest.results?user=${user}&contest=${contest.contestcode}`
           )
           .then(response => {
-            if (response.data === null || typeof response.data === "undefined")
+            if (response.data === null || typeof response.data === 'undefined')
               return;
 
             var row = {
-              user: JSON.parse(localStorage.getItem("data")).login,
+              user: JSON.parse(localStorage.getItem('data')).login,
               verdicts: [],
               progress: 1
             };
@@ -225,15 +225,15 @@ export default {
             var progress = 0;
 
             this.tasks.forEach(task => {
-              let filteredTaskAnalytics = response.data.filter(taskData => taskData.task === task.taskid)
+              let filteredTaskAnalytics = response.data.filter(taskData => taskData.task === task.taskid);
               if(filteredTaskAnalytics && filteredTaskAnalytics.length !== 0) {
-                row.verdicts.push(filteredTaskAnalytics[0].verdict)
+                row.verdicts.push(filteredTaskAnalytics[0].verdict);
                 if(filteredTaskAnalytics[0].verdict == 'OK')
                   progress++;
               } else {
-                row.verdicts.push("-")
+                row.verdicts.push('-');
               }
-            })
+            });
 
             row.progress = (progress / this.tasks.length) * 100;
 
@@ -244,26 +244,26 @@ export default {
             // if (err.response.status === 400) {
             //   this.alertCfHandle = true;
             // } else {
-              console.log(err);
+            console.log(err);
             // }
           });
-      })
+      });
     }
 
     await axios
       .get(
-        `/api/contest.results?user=${localStorage.getItem("userid")}&contest=${contest.contestcode}`
+        `/api/contest.results?user=${localStorage.getItem('userid')}&contest=${contest.contestcode}`
       )
       .then(response => {
-        if (response.data === null || typeof response.data === "undefined")
+        if (response.data === null || typeof response.data === 'undefined')
           return;
 
         this.tasks.forEach(task => {
-          let filteredTaskAnalytics = response.data.filter(taskData => taskData.task === task.taskid)
+          let filteredTaskAnalytics = response.data.filter(taskData => taskData.task === task.taskid);
           if(filteredTaskAnalytics && filteredTaskAnalytics.length !== 0 && filteredTaskAnalytics[0].verdict == 'OK') {
             this.solved++;
           }
-        })
+        });
       });
 
   },
@@ -271,18 +271,18 @@ export default {
     // Curtesy of 30-seconds-of-code
     copyToClipboard(str) {
       str = window.location;
-      const el = document.createElement("textarea");
+      const el = document.createElement('textarea');
       el.value = str;
-      el.setAttribute("readonly", "");
-      el.style.position = "absolute";
-      el.style.left = "-9999px";
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
       document.body.appendChild(el);
       const selected =
         document.getSelection().rangeCount > 0
           ? document.getSelection().getRangeAt(0)
           : false;
       el.select();
-      document.execCommand("copy");
+      document.execCommand('copy');
       document.body.removeChild(el);
       if (selected) {
         document.getSelection().removeAllRanges();
@@ -293,22 +293,22 @@ export default {
     async joinContest() {
       let config = {
         headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
         }
       };
-      await axios.post("/api/contests.joined", {
-        user: localStorage.getItem("userid"),
+      await axios.post('/api/contests.joined', {
+        user: localStorage.getItem('userid'),
         contest: this.code
       }, config)
-      .then((res) => this.joined = true);
+      .then((res) => this.joined = true); // eslint-disable-line
     },
 
     async leaveContest() {
       let config = {
         headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
         }
       };
       await axios.delete('/api/contests.joined',
@@ -318,34 +318,34 @@ export default {
             'contest': this.code
           },
           config
-        }).then((res) => this.joined = false);
+        }).then((res) => this.joined = false); // eslint-disable-line
     },
 
     async forceUpdate() {
-      this.taskanalytics = []
+      this.taskanalytics = [];
       this.users.forEach(async user => {
         await axios
           .get(
             `/api/contest.results?user=${user}&contest=${this.code}&force=1`
           )
           .then(response => {
-            console.log(response.data)            
-            if (response.data === null || typeof response.data === "undefined")
+            console.log(response.data);            
+            if (response.data === null || typeof response.data === 'undefined')
               return;
 
             var row = {
-              user: JSON.parse(localStorage.getItem("data")).login,
+              user: JSON.parse(localStorage.getItem('data')).login,
               verdicts: []
             };
 
             this.tasks.forEach(task => {
-              let filteredTaskAnalytics = response.data.filter(taskData => taskData.task === task.taskid)
+              let filteredTaskAnalytics = response.data.filter(taskData => taskData.task === task.taskid);
               if(filteredTaskAnalytics && filteredTaskAnalytics.length !== 0) {
-                row.verdicts.push(filteredTaskAnalytics[0].verdict)
+                row.verdicts.push(filteredTaskAnalytics[0].verdict);
               } else {
-                row.verdicts.push("-")
+                row.verdicts.push('-');
               }
-            })
+            });
             this.taskanalytics.push(row);
           })
           .catch(err => {
@@ -353,10 +353,10 @@ export default {
             // if (err.response.status === 400) {
             //   this.alertCfHandle = true;
             // } else {
-              console.log(err);
+            console.log(err);
             // }
           });
-          console.log(this.taskanalytics)
+        console.log(this.taskanalytics);
       });
     }
   },

@@ -227,18 +227,18 @@
 <script>
 // eslint-disable-next-line
 import moment from "vue-moment";
-import axios from "axios";
+import axios from 'axios';
 
 export default {
-  name: "createcontest",
+  name: 'createcontest',
   components: {},
   data() {
     return {
-      searchtitle: "",
-      searchtags: "",
-      contestdate: "",
+      searchtitle: '',
+      searchtags: '',
+      contestdate: '',
       dialog2: false,
-      contestname: "",
+      contestname: '',
       visible: false,
       detailPopup: false,
       first: 0,
@@ -246,7 +246,7 @@ export default {
       alertDate: false,
       alertName: false,
       alertAxios: false,
-      axiosError: "",
+      axiosError: '',
       items: [],
       selectedtags: [],
       tasks: [],
@@ -296,7 +296,7 @@ export default {
         return false;
       }
 
-      if (this.contestdate == "") {
+      if (this.contestdate == '') {
         this.alertDate = true;
         setTimeout(() => {
           this.alertDate = false;
@@ -304,7 +304,7 @@ export default {
         return false;
       }
 
-      if (this.contestname == "") {
+      if (this.contestname == '') {
         this.alertName = true;
         setTimeout(() => {
           this.alertName = false;
@@ -314,28 +314,28 @@ export default {
 
       let config = {
         headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
         }
       };
 
       // Create AXIOS Post request
       await axios
         .post(
-          "/api/contest",
+          '/api/contest',
           {
             contestname: this.contestname,
             date_start: new Date().toISOString().substring(0, 19),
-            date_end: this.contestdate + " 23:59:59",
+            date_end: this.contestdate + ' 23:59:59',
             visible: this.visible,
             usergroups: this.selectedgroups,
             tasks: this.tasks.map(task => task.taskid),
-            contestadmin: localStorage.getItem("userid")
+            contestadmin: localStorage.getItem('userid')
           },
           config
         )
         .then(function(resp) {
-          window.location = "/contest/" + resp.data;
+          window.location = '/contest/' + resp.data;
         })
         .catch(function(error) {
           this.axiosError = error;
@@ -365,17 +365,17 @@ export default {
     }
   },
   mounted() {
-    axios.get("/api/tasks?tags=geometry").then((response) => {
+    axios.get('/api/tasks?tags=geometry').then((response) => {
       this.items = response.data;
       this.loading = false;
     });
 
     axios
       .get(
-        `/api/usergroup.memberships?admin=${localStorage.getItem("userid")}&user=${localStorage.getItem("userid")}`
+        `/api/usergroup.memberships?admin=${localStorage.getItem('userid')}&user=${localStorage.getItem('userid')}`
       )
       .then((response) => {
-        if (response.data === null || typeof(response.data) === 'undefined') return
+        if (response.data === null || typeof(response.data) === 'undefined') return;
         this.groups = response.data;
       });
   }

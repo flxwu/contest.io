@@ -491,6 +491,13 @@ def select_joined_contest(params=(), conditions=()):
     else:
         return response
 
+
+def delete_joined_contest(user: int, contestcode: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute('DELETE FROM joined_contest WHERE user="{}" AND contest="{}"'.format(user, contestcode))
+        dbcon.commit()
+
 def get_memberships_of(user: int, admin=False):
     if admin:
         queryString = 'SELECT Usergroup.* \

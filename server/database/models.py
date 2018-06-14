@@ -445,6 +445,17 @@ def insert_submits_task(user: int, task: int, verdict: str, submissionTimestamp:
             (user, task, verdict, submissionTime))
         dbcon.commit()
 
+def update_submits_task(user: int, task: int, verdict: str, submissionTimestamp: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        submissionTime = datetime.fromtimestamp(submissionTimestamp)
+        cur.execute(
+            'UPDATE submits_task SET verdict = \"{}\", submission_time = \"{}\" \
+            WHERE user=\"{}\" AND task=\"{}\"'.format(
+                verdict, submissionTime, user, task
+            ))
+        dbcon.commit()
+
 
 def insert_joined_contest(user: int, contestcode: int):
     with sql.connect(DATABASE_PATH) as dbcon:
@@ -490,6 +501,13 @@ def select_joined_contest(params=(), conditions=()):
         return None
     else:
         return response
+
+
+def delete_joined_contest(user: int, contestcode: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        cur.execute('DELETE FROM joined_contest WHERE user="{}" AND contest="{}"'.format(user, contestcode))
+        dbcon.commit()
 
 def get_memberships_of(user: int, admin=False):
     if admin:
@@ -549,7 +567,7 @@ def get_cfhandle(user: int):
     if not response:
         return None
     else:
-        return response
+        return response[0]
 
 
 def get_userid(cfhandle: str):
@@ -561,12 +579,11 @@ def get_userid(cfhandle: str):
         if cur.rowcount == 0:
             return None
         queryResult = cur.execute(queryString)
-
     response = queryResult.fetchone()
     if not response:
         return None
     else:
-        return response
+        return response[0]
 
 
 def get_latest_submissions(user: str, contestCode: int):
@@ -575,9 +592,7 @@ def get_latest_submissions(user: str, contestCode: int):
         WHERE submits_task.task = contains_task.task\
         AND submits_task.user = \"{}\" \
         AND contains_task.contest = \"{}\" \
-        GROUP BY submits_task.task \
-        HAVING MIN(ROWID) \
-        ORDER BY ROWID'.format(user, contestCode)
+        GROUP BY submits_task.task'.format(user, contestCode)
     with sql.connect(DATABASE_PATH) as dbcon:
         dbcon.row_factory = dict_factory
         cur = dbcon.cursor()

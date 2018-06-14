@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, g, session, redirect, url_for, flash
+from flask import Flask, jsonify, render_template,send_from_directory,request, g, session, redirect, url_for, flash
 from flask_cors import CORS
 from werkzeug.routing import BaseConverter
 from http import HTTPStatus
@@ -37,8 +37,7 @@ app.url_map.converters['regex'] = RegexConverter
 
 # Set Endpoints
 TasksEndpoint = api_connector.Tasks()  # pylint: disable=invalid-name
-UserContestResultsEndpoint = api_connector.UserContestResults(
-)  # pylint: disable=invalid-name
+UserContestResultsEndpoint = api_connector.UserContestResults() # pylint: disable=invalid-name  
 
 # Github-Flask
 github = flask_github.GitHub(app)  # pylint: disable=invalid-name
@@ -221,8 +220,8 @@ def api_contest():
     if request.method == 'GET':
         if get_queryparam('code') is None:
             content = {"Error": "\'code\' parameter missing"}
-            return content, HTTPStatus.BAD_REQUEST
-        
+            return json.dumps(content), HTTPStatus.BAD_REQUEST, {'ContentType':'application/json'}
+
         # get contest JSON
         contestJSON = models.select_contest(
             params=('*'),
@@ -284,19 +283,23 @@ def api_contest():
     elif request.method == 'DELETE':
         if get_queryparam('code') is None:
             content = {"Error": "\'code\' parameter missing"}
-            return content, HTTPStatus.BAD_REQUEST
+            return json.dumps(content), HTTPStatus.BAD_REQUEST, {'ContentType':'application/json'}
         models.delete_contest(
             deleteConditions=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.CONTEST_CONTESTCODE,
                 get_queryparam('code')
             ))
         )
+        return ('', 204)
     else:
         return None
 
 
-@app.route('/api/contest.joined', methods=['GET', 'POST'])
-def api_contest_join():
+@app.route('/api/contests.joined', methods=['GET', 'POST', 'DELETE'])
+def api_contests_join():
+    """
+    Join/Leave a contest, GET all contests a user is in
+    """
     if request.method == 'GET':
         user = get_queryparam('user')
         returnJSON = models.select_joined_contest(
@@ -307,31 +310,60 @@ def api_contest_join():
                 )
             )
         )
-        return returnJSON
+        return jsonify(returnJSON)
     elif request.method == 'POST':
         postJSON = request.get_json()
         models.insert_joined_contest(
             postJSON[settings.DB_COLUMNS.JOINED_CONTEST_USER],
-            postJSON[settings.DB_COLUMNS.JOINED_CONTEST_CONTEST] 
+            postJSON[settings.DB_COLUMNS.JOINED_CONTEST_CONTEST]
         )
+        return ('', 204)
+    elif request.method == 'DELETE':
+        postJSON = request.get_json()
+        models.delete_joined_contest(
+            postJSON[settings.DB_COLUMNS.JOINED_CONTEST_USER],
+            postJSON[settings.DB_COLUMNS.JOINED_CONTEST_CONTEST]
+        )
+        return ('', 204)
 
 
 @app.route('/api/contest.results', methods=['GET'])
 def api_contest_results():
     user = get_queryparam('user')
     contest = get_queryparam('contest')
+    force = get_queryparam('force')
     returnJSON = None
 
     resultsInDatabase = models.get_latest_submissions(user, contest)
 
-    if resultsInDatabase is not None:
+    if resultsInDatabase is not None and force is None:
         returnJSON = resultsInDatabase
     else:
         # if no db entries, fetch user's contest submissions from cf api and insert them into db
         cfHandle = models.get_cfhandle(user)
+        if cfHandle is None or cfHandle is "defaultUser":
+            content = {"Error": "user's cf handle wrong or missing"}
+            return json.dumps(content), HTTPStatus.BAD_REQUEST, {'ContentType':'application/json'}
         UserContestResultsEndpoint.get(cfHandle, contest)
         returnJSON = models.get_latest_submissions(user, contest)
 
+    return jsonify(returnJSON)
+
+
+@app.route('/api/contest.joined', methods=['GET'])
+def api_contest_join():
+    """
+    GET all joined users in a contest
+    """
+    contestcode = get_queryparam('code')
+    returnJSON = models.select_joined_contest(
+        params=('user'),
+        conditions=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.JOINED_CONTEST_CONTEST,
+                contestcode
+            )
+        )
+    )
     return jsonify(returnJSON)
 
 
@@ -340,12 +372,12 @@ def api_contests():
     if request.method == 'GET':
         if get_queryparam('visible'):
             # get all visible contests
-            contests = (models.select_contest(
+            contests = models.select_contest(
                 params=('*'),
                 conditions=('{}=\"{}\"'.format(
                     settings.DB_COLUMNS.CONTEST_VISIBLE,
                     1))
-            ))
+            )
             return jsonify(contests)
         elif get_queryparam('admin'):
             # get all contests created by "admin"
@@ -372,7 +404,7 @@ def api_user():
 
 
 @app.route('/api/user.cfhandle', methods=['POST'])
-def api_user_cfHandle():
+def api_user_cfhandle():
     """
         POST endpoint to set a user's codeforces handle
     """
@@ -386,6 +418,7 @@ def api_user_cfHandle():
             request.get_json()['user']
         ))
     )
+    return request.get_json()['handle']
 
 
 @app.route('/api/usergroup', methods=['GET', 'POST'])
@@ -427,7 +460,7 @@ def api_usergroup():
 @app.route('/api/usergroup.memberships', methods=['GET'])
 def api_usergroup_membership():
     memberships = models.get_memberships_of(
-        get_queryparam('user'), admin=get_queryparam('admin'))
+        user=get_queryparam('user'), admin=get_queryparam('admin'))
     return jsonify(memberships)
 
 
@@ -471,10 +504,19 @@ def api_usergroup_members():
         return None
 
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def catch_all(path):
+@app.route('/js/<path:path>')
+def send_js(path):
+    return app.send_static_file('js/{}'.format(path))
 
-    # if app.debug:
-    #     return requests.get('http://localhost:3000/{}'.format(path)).text
-    return app.send_static_file(path)
+@app.route('/css/<path:path>')
+def send_css(path):
+    return app.send_static_file('css/{}'.format(path))
+
+@app.route('/favicon.ico')
+def send_favicon():
+    return app.send_static_file('favicon.ico')
+
+@app.route('/', defaults={'path': 'index.html'})
+@app.route('/<path:path>')
+def catch_all(path): # pylint: disable=unused-argument
+    return render_template("index.html")

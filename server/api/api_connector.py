@@ -1,6 +1,7 @@
 import requests
 from server.api.endpoint_interface import EndpointInterface
 import server.database.models as models
+import sqlite3
 
 CODEFORCES_BASE_URL = 'http://codeforces.com/api'
 
@@ -11,12 +12,12 @@ class UserContestResults(EndpointInterface):
     def __init__(self):
         self.rawdata = {}
         self.submissions = []
-        self.contestTasks = []
-        self.cfTasks = []
+        self.contest_tasks = []
+        self.cf_tasks = []
 
-    def get(self, handle: str, contestCode: int):
-        self.contestTasks = models.get_tasks_in_contest(contestCode)
-        self.cfTasks = [(task['codeforces_id']+task['codeforces_index']) for task in self.contestTasks]
+    def get(self, handle: str, contestCode: int): # pylint: disable=arguments-differ
+        self.contest_tasks = models.get_tasks_in_contest(contestCode)
+        self.cf_tasks = [(str(task['codeforces_id'])+task['codeforces_index']) for task in self.contest_tasks]
         try:
             self.rawdata = (requests.get((CODEFORCES_BASE_URL + self.endpoint_url),
                             params = {
@@ -27,34 +28,42 @@ class UserContestResults(EndpointInterface):
                             allow_redirects=False,
                             stream=True)).json()
         except requests.exceptions.RequestException as exception:
-                return exception
+            return exception
         else:
             self.extract_submissions()
             self.insert_to_database(handle)
-            return True
+            return self.submissions
 
-    def extract_submissions(self, contestCode: int):
+    def extract_submissions(self):
         try:
             if self.rawdata:
-                self.submissions = [submission for submission in self.rawdata['result'] 
-                    if (submission['contestId'] + submission['problem']['index']) in self.cfTasks]
+                self.submissions = [submission for submission in self.rawdata['result']
+                    if (str(submission['contestId']) + submission['problem']['index']) in self.cf_tasks]
         except Exception as exception: # pylint: disable=broad-except
             print(exception)
 
-    def insert_to_database(self, handle: str):
+    def insert_to_database(self, handle: str): # pylint: disable=arguments-differ
         if self.submissions:
-            for submission in self.submissions:
+            for submission in reversed(self.submissions):
                 verdict,time = submission['verdict'], submission['creationTimeSeconds']
-                user = models.get_userID(handle)
-                task = [task['taskid'] for task in self.contestTasks 
-                    if (task['codeforces_id'] + task['codeforces_index']) == 
-                    (submission['contestId'] + submission['problem']['index'])]
-                models.insert_submits_task(
-                    user,
-                    task,
-                    verdict,
-                    time
-                )
+                user = models.get_userid(handle)
+                task = [task['taskid'] for task in self.contest_tasks
+                    if (str(task['codeforces_id']) + task['codeforces_index']) ==
+                    (str(submission['contestId']) + submission['problem']['index'])][0]
+                try:
+                    models.insert_submits_task(
+                        user,
+                        task,
+                        verdict,
+                        time
+                    )
+                except sqlite3.IntegrityError:
+                    models.update_submits_task(
+                        user,
+                        task,
+                        verdict,
+                        time
+                    )
 
 
 class Tasks(EndpointInterface):
@@ -64,7 +73,7 @@ class Tasks(EndpointInterface):
         self.rawdata = {}
         self.problems = []
 
-    def get(self, tags=None):
+    def get(self, tags=None): # pylint: disable=arguments-differ
         try:
             if tags is not None:
                 self.rawdata = (requests.get((CODEFORCES_BASE_URL + self.endpoint_url),

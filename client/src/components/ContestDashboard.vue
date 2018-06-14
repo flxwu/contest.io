@@ -43,7 +43,7 @@
                   <b>{{ task.taskid }}:</b> {{ task.taskname }} ({{task.codeforces_id}})
                   <br>
                   <small style="float: left; margin-top: 9px; margin-right: 10px;">
-                    Difficulty ({{ task.codeforces_index }}): 
+                    Difficulty ({{ task.codeforces_index }}):
                   </small>
                   <v-progress-linear v-if="task.taskname === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
                   <v-progress-linear v-else-if="task.taskname === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
@@ -73,9 +73,11 @@
             <v-data-table v-else :headers="headers" :items="taskanalytics" hide-actions class="elevation-1">
               <template slot="items" slot-scope="props">
                 <td>{{ props.item.user }}</td>
-                <td class="text-xs-center" v-for="taskResult in props.item.verdicts" v-bind:key="taskResult">
+                <td>{{props.item.progress}}%</td>
+                <td class="text-xs-center" :class="{ wrong: (!(taskResult == 'OK')) }" v-bind:key="taskResult" v-for="taskResult in props.item.verdicts">
                   {{ taskResult }}
                 </td>
+
               </template>
             </v-data-table>
 
@@ -91,7 +93,7 @@
               <div  style="width: 100% !important">
                 <h3 class="headline mb-0">Progress</h3>
                 <v-divider></v-divider>
-                <div>0 / {{ tasks.length }} Tasks completed (<span>{{ (0 / tasks.length) * 100 }}%</span>)</div>
+                <div>{{ solved }} / {{ tasks.length }} Tasks completed (<span>{{ (0 / tasks.length) * 100 }}%</span>)</div>
                 <div>Time remaining: {{ date_end | moment("from", true) }}</div>
               </div>
             </v-card-title>
@@ -130,6 +132,7 @@ export default {
       name: "loading...",
       code: "loading...",
       tasks: [],
+      solved: 0,
       date_end: "",
       exists: 1,
       expired: false,
@@ -143,6 +146,10 @@ export default {
           value: "user",
           align: "center",
           class: "header-1"
+        },
+        {
+          text: 'Progess',
+          value: 'progress'
         }
       ],
       alertCfHandle: false,
@@ -164,7 +171,7 @@ export default {
           ? response.data.tasks
           : [response.data.tasks];
         this.tasks.forEach(task => this.headers.push({
-          text: `${task.taskid}(${task.codeforces_id+task.codeforces_index})`,
+          text: `${task.taskname} (${task.codeforces_id+task.codeforces_index})`,
           value: task.taskid,
           align: "center"
         }))
@@ -211,16 +218,25 @@ export default {
 
             var row = {
               user: JSON.parse(localStorage.getItem("data")).login,
-              verdicts: []
+              verdicts: [],
+              progress: 1
             };
+
+            var progress = 0;
+
             this.tasks.forEach(task => {
               let filteredTaskAnalytics = response.data.filter(taskData => taskData.task === task.taskid)
               if(filteredTaskAnalytics && filteredTaskAnalytics.length !== 0) {
                 row.verdicts.push(filteredTaskAnalytics[0].verdict)
+                if(filteredTaskAnalytics[0].verdict == 'OK')
+                  progress++;
               } else {
                 row.verdicts.push("-")
               }
             })
+
+            row.progress = (progress / this.tasks.length) * 100;
+
             this.taskanalytics.push(row);
           })
           .catch(err => {
@@ -232,7 +248,24 @@ export default {
             // }
           });
       })
-    } 
+    }
+
+    await axios
+      .get(
+        `/api/contest.results?user=${localStorage.getItem("userid")}&contest=${contest.contestcode}`
+      )
+      .then(response => {
+        if (response.data === null || typeof response.data === "undefined")
+          return;
+
+        this.tasks.forEach(task => {
+          let filteredTaskAnalytics = response.data.filter(taskData => taskData.task === task.taskid)
+          if(filteredTaskAnalytics && filteredTaskAnalytics.length !== 0 && filteredTaskAnalytics[0].verdict == 'OK') {
+            this.solved++;
+          }
+        })
+      });
+
   },
   methods: {
     // Curtesy of 30-seconds-of-code
@@ -352,5 +385,9 @@ export default {
 
 .header-1 {
   font-style: oblique;
+}
+
+.wrong {
+  color: red;
 }
 </style>

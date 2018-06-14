@@ -195,7 +195,10 @@
                 </v-dialog>
 
                 <br>
-                <v-text>Groups:</v-text><br><v-divider></v-divider>
+                  <v-text v-if="groups.length">Groups:</v-text>
+                  <v-text v-else><em>You don't have any groups to add</em></v-text>
+                <br>
+                <v-divider></v-divider>
                 <v-chip :key="group.groupid" v-for="group in selectedgroups" close @input="unselectGroup(group.groupid)">   {{ group.groupname }}</v-chip>
                 <v-menu v-if="groups.length">
                   <v-btn small color="primary" dark slot="activator" fab><v-icon>add</v-icon></v-btn>
@@ -369,10 +372,7 @@ export default {
 
     axios
       .get(
-        "/api/usergroup.memberships?admin=" +
-          localStorage.getItem("userid") +
-          "&user=" +
-          localStorage.getItem("userid")
+        `/api/usergroup.memberships?admin=${localStorage.getItem("userid")}&user=${localStorage.getItem("userid")}`
       )
       .then((response) => {
         if (response.data === null || typeof(response.data) === 'undefined') return

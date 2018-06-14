@@ -39,7 +39,12 @@
             <v-expansion-panel popout v-if="!analytics">
 
               <v-expansion-panel-content v-for="task in tasks" :key="task.taskid">
-                <div slot="header">{{ task.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ task.codeforces_index }}): </small>
+                <div slot="header">
+                  <b>{{ task.taskid }}:</b> {{ task.taskname }} ({{task.codeforces_id}})
+                  <br>
+                  <small style="float: left; margin-top: 9px; margin-right: 10px;">
+                    Difficulty ({{ task.codeforces_index }}): 
+                  </small>
                   <v-progress-linear v-if="task.taskname === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
                   <v-progress-linear v-else-if="task.taskname === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
                   <v-progress-linear v-else-if="task.taskname === 'C'" style="float:left; width: 100px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
@@ -68,7 +73,9 @@
             <v-data-table v-else :headers="headers" :items="taskanalytics" hide-actions class="elevation-1">
               <template slot="items" slot-scope="props">
                 <td>{{ props.item.user }}</td>
-                <td class="text-xs-right">{{ props.item.verdict }}</td>
+                <td class="text-xs-center" v-for="taskResult in props.item.verdicts">
+                  {{ taskResult }}
+                </td>
               </template>
             </v-data-table>
 
@@ -155,6 +162,11 @@ export default {
         this.tasks = Array.isArray(response.data.tasks)
           ? response.data.tasks
           : [response.data.tasks];
+        this.tasks.forEach(task => this.headers.push({
+          text: `${task.taskid}(${task.codeforces_id+task.codeforces_index})`,
+          value: task.taskid,
+          align: "center"
+        }))
         if (momentjs(new Date()).isSameOrAfter(this.date_end)) {
           this.expired = true;
         }
@@ -165,6 +177,7 @@ export default {
         window.location = "/404";
       });
 
+    // check if user has already joined the contest
     await axios
       .get(`/api/contests.joined?user=${localStorage.getItem("userid")}`)
       .then(response => {
@@ -176,48 +189,53 @@ export default {
 
     if (contest.contestadmin == localStorage.getItem("userid")) {
       // get all users in contest
+      let users = []
       await axios
         .get(
           `/api/contest.joined?code=${contest.contestcode}`
         ).then(response => {
           if (response.data === null || typeof response.data === "undefined")
             return;
-          this.users = response.data
-        })
-
-      await axios
-        .get(
-          `/api/contest.results?user=${localStorage.getItem(
-            "userid"
-          )}&contest=${contest.contestcode}`
-        )
-        .then(response => {
-          if (response.data === null || typeof response.data === "undefined")
-            return;
-
-          var row = {
-            user: JSON.parse(localStorage.getItem("data")).login,
-            task: null,
-            verdict: null
-          };
-
-          response.data.forEach(taskData => {
-            row.task = taskData.task;
-            row.verdict = taskData.verdict;
-          });
-
-          this.taskanalytics.push(row);
-          console.log(this.taskanalytics);
-        })
-        .catch(err => {
-          // catch 400-client error: codeforces handle wrong/missing
-          if (err.response.status === 400) {
-            this.alertCfHandle = true;
-          } else {
-            console.log(err);
-          }
+          users = (Array.isArray(response.data) ? response.data : [response.data]).map(contestUser => contestUser.user);
         });
-    }
+      this.users = users;
+      users.forEach(async user => {
+        await axios
+          .get(
+            `/api/contest.results?user=${user}&contest=${contest.contestcode}`
+          )
+          .then(response => {
+            if (response.data === null || typeof response.data === "undefined")
+              return;
+
+            var row = {
+              user: JSON.parse(localStorage.getItem("data")).login,
+              verdicts: []
+            };
+
+            this.tasks.forEach(task => {
+              let filteredTaskAnalytics = response.data.filter(taskData => taskData.task === task.taskid)
+              if(filteredTaskAnalytics && filteredTaskAnalytics.length !== 0) {
+                row.verdicts.push(filteredTaskAnalytics[0].verdict)
+              } else {
+                row.verdicts.push("-")
+              }
+            })
+            console.log(row)
+
+            this.taskanalytics.push(row);
+            console.log(this.taskanalytics);
+          })
+          .catch(err => {
+            // catch 400-client error: codeforces handle wrong/missing
+            // if (err.response.status === 400) {
+            //   this.alertCfHandle = true;
+            // } else {
+              console.log(err);
+            // }
+          });
+      })
+    } 
   },
   methods: {
     // Curtesy of 30-seconds-of-code
@@ -243,18 +261,33 @@ export default {
     },
 
     async joinContest() {
+      let config = {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        }
+      };
       await axios.post("/api/contests.joined", {
         user: localStorage.getItem("userid"),
         contest: this.code
-      })
+      }, config)
       .then((res) => this.joined = true);
     },
 
     async leaveContest() {
+      let config = {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        }
+      };
       await axios.delete('/api/contests.joined',
         {
-          'user': localStorage.getItem('userid'),
-          'contest': this.code
+          data: {
+            'user': localStorage.getItem('userid'),
+            'contest': this.code
+          },
+          config
         }).then((res) => this.joined = false);
     }
   },
@@ -282,6 +315,6 @@ export default {
 }
 
 .header-1 {
-  font-style: oblique
+  font-style: oblique;
 }
 </style>

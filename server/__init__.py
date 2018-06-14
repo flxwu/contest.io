@@ -357,7 +357,7 @@ def api_contest_join():
     """
     contestcode = get_queryparam('code')
     returnJSON = models.select_joined_contest(
-        params=('*'),
+        params=('user'),
         conditions=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.JOINED_CONTEST_CONTEST,
                 contestcode

@@ -148,10 +148,13 @@ export default {
         window.location = '/404';
       });
 
-    await axios.get('/api/contest.joined?user=' + localStorage.getItem('userid'))
-      .then((response) => {
-        if(response.data.includes(contest))
-          this.joined = true;
+    await axios
+      .get(`/api/contests.joined?user=${localStorage.getItem("userid")}`)
+      .then(response => {
+        if (response.data === null || typeof response.data === "undefined")
+          return;
+        let res = Array.isArray(response.data) ? response.data : [response.data];
+        if (res.some(joinedContest => joinedContest.contest === this.code)) this.joined = true;
       });
 
     var temp = [{

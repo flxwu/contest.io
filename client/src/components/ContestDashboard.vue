@@ -6,6 +6,15 @@
 
     <!-- Layout container -->
     <v-container v-else>
+      <!-- Required field alerts -->
+      <v-alert
+        :value="alertCfHandle"
+        type="error"
+        transition="scale-transition"
+        style="margin-bottom: 10px; width: 90%;"
+      >
+        Codeforces Handle missing or wrong! Set/Change it in your dashboard.
+      </v-alert>
 
       <v-layout>
 
@@ -29,43 +38,39 @@
 
             <v-expansion-panel popout v-if="!analytics">
 
-             <v-expansion-panel-content v-for="task in tasks" :key="task.taskid">
-               <div slot="header">{{ task.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ task.codeforces_index }}): </small>
-                 <v-progress-linear v-if="task.taskname === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
-                 <v-progress-linear v-else-if="task.taskname === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
-                 <v-progress-linear v-else-if="task.taskname === 'C'" style="float:left; width: 100px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
-                 <v-progress-linear v-else-if="task.taskname === 'D'" style="float:left; width: 100px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
-                 <v-progress-linear v-else-if="task.taskname === 'E'" style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
-                 <v-progress-linear v-else style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
-              </div>
-
-              <v-card>
-
-                <!-- Tags -->
-                <div class="chiptag">
-                  <v-chip small :key="tag"  v-for="tag in JSON.parse(task.tasktags)">{{ tag }}</v-chip>
+              <v-expansion-panel-content v-for="task in tasks" :key="task.taskid">
+                <div slot="header">{{ task.taskname }} <br><small style="float: left; margin-top: 9px; margin-right: 10px;">Difficulty ({{ task.codeforces_index }}): </small>
+                  <v-progress-linear v-if="task.taskname === 'A'" style="float:left; width: 100px;" value="20" buffer-value="20" color="green"></v-progress-linear>
+                  <v-progress-linear v-else-if="task.taskname === 'B'" style="float:left; width: 100px;" value="40" buffer-value="40" color="cyan"></v-progress-linear>
+                  <v-progress-linear v-else-if="task.taskname === 'C'" style="float:left; width: 100px;" value="60" buffer-value="60" color="yellow"></v-progress-linear>
+                  <v-progress-linear v-else-if="task.taskname === 'D'" style="float:left; width: 100px;" value="80" buffer-value="80" color="orange"></v-progress-linear>
+                  <v-progress-linear v-else-if="task.taskname === 'E'" style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
+                  <v-progress-linear v-else style="float:left; width: 100px;" value="100" color="red"></v-progress-linear>
                 </div>
 
-                <v-card-actions>
-                  <v-btn flat color="orange" :href="task.codeforces_url">Solve</v-btn>
-                </v-card-actions>
+                <v-card>
 
-              </v-card>
+                  <!-- Tags -->
+                  <div class="chiptag">
+                    <v-chip small :key="tag"  v-for="tag in JSON.parse(task.tasktags)">{{ tag }}</v-chip>
+                  </div>
 
-             </v-expansion-panel-content>
+                  <v-card-actions>
+                    <v-btn flat color="orange" :href="task.codeforces_url" target="_blank">Solve</v-btn>
+                  </v-card-actions>
 
-           </v-expansion-panel>
+                </v-card>
 
-           <v-data-table v-else :headers="headers" :items="desserts" hide-actions class="elevation-1">
-             <template slot="items" slot-scope="props">
-               <td>{{ props.item.name }}</td>
-               <td class="text-xs-right">{{ props.item.calories }}</td>
-               <td class="text-xs-right">{{ props.item.fat }}</td>
-               <td class="text-xs-right">{{ props.item.carbs }}</td>
-               <td class="text-xs-right">{{ props.item.protein }}</td>
-               <td class="text-xs-right">{{ props.item.iron }}</td>
-             </template>
-           </v-data-table>
+              </v-expansion-panel-content>
+
+            </v-expansion-panel>
+
+            <v-data-table v-else :headers="headers" :items="taskanalytics" hide-actions class="elevation-1">
+              <template slot="items" slot-scope="props">
+                <td>{{ props.item.user }}</td>
+                <td class="text-xs-right">{{ props.item.verdict }}</td>
+              </template>
+            </v-data-table>
 
         </v-flex>
 
@@ -106,46 +111,58 @@
 </template>
 
 <script>
-import axios from 'axios';
-import * as momentjs from 'moment';
+import axios from "axios";
+import * as momentjs from "moment";
 
 export default {
-  name: 'contestdashboard',
+  name: "contestdashboard",
   components: {},
   data() {
     return {
-      items: [],
-      name: 'loading...',
-      code: 'loading...',
+      name: "loading...",
+      code: "loading...",
       tasks: [],
-      date_end: '',
+      date_end: "",
       exists: 1,
       expired: false,
       joined: false,
       admin: true,
       analytics: true,
       taskanalytics: [],
-      headers: [],
-      desserts: []
+      headers: [
+        {
+          text: "User",
+          value: "user",
+          align: "center",
+          class: "header-1"
+        }
+      ],
+      alertCfHandle: false,
+      users: []
     };
   },
   async created() {
     var contest = {};
-    await axios.get('/api/contest?code=' + this.$route.params.id)
-      .then((response) => {
+    await axios
+      .get(`/api/contest?code=${this.$route.params.id}`)
+      .then(response => {
+        if (response.data === null || typeof response.data === "undefined")
+          return;
         contest = response.data;
         this.name = response.data.contestname;
         this.code = response.data.contestcode;
         this.date_end = response.data.date_end;
-        this.tasks = Array.isArray(response.data.tasks) ? response.data.tasks : [response.data.tasks];
-        if(momentjs(new Date()).isSameOrAfter(this.date_end)) {
+        this.tasks = Array.isArray(response.data.tasks)
+          ? response.data.tasks
+          : [response.data.tasks];
+        if (momentjs(new Date()).isSameOrAfter(this.date_end)) {
           this.expired = true;
         }
       })
-      .catch((error) => {
+      .catch(error => {
         this.exists = 0;
         console.log(error);
-        window.location = '/404';
+        window.location = "/404";
       });
 
     await axios
@@ -157,56 +174,67 @@ export default {
         if (res.some(joinedContest => joinedContest.contest === this.code)) this.joined = true;
       });
 
-    var temp = [{
-      'text':'User', 'value':'user'
-    },
-    {
-      'text': "Hid", 'value': 'hello'
-    }];
+    if (contest.contestadmin == localStorage.getItem("userid")) {
+      // get all users in contest
+      await axios
+        .get(
+          `/api/contest.joined?code=${contest.contestcode}`
+        ).then(response => {
+          if (response.data === null || typeof response.data === "undefined")
+            return;
+          this.users = response.data
+        })
 
-    // for(var i = 0; i < 1; i++) {
-    //   temp.push({ text: "Hid", value: 'hello' });
-    // }
+      await axios
+        .get(
+          `/api/contest.results?user=${localStorage.getItem(
+            "userid"
+          )}&contest=${contest.contestcode}`
+        )
+        .then(response => {
+          if (response.data === null || typeof response.data === "undefined")
+            return;
 
-    this.headers = temp;
+          var row = {
+            user: JSON.parse(localStorage.getItem("data")).login,
+            task: null,
+            verdict: null
+          };
 
-    if(contest.contestadmin == localStorage.getItem('userid')) {
-      axios.get('/api/contest.results?user=' + localStorage.getItem('userid') + '&contest=' + contest.contestcode)
-      .then((response) => {
-        var row = {
-          value: false,
-          user: JSON.parse(localStorage.getItem('data')).login,
-        }
+          response.data.forEach(taskData => {
+            row.task = taskData.task;
+            row.verdict = taskData.verdict;
+          });
 
-        for(var x = 0; x < response.data.length; x++) {
-          row[response.data[x].task] = response.data[x].verdict;
-        }
-
-        this.taskanalytics.push(row)
-        console.log(row);
-      });
+          this.taskanalytics.push(row);
+          console.log(this.taskanalytics);
+        })
+        .catch(err => {
+          // catch 400-client error: codeforces handle wrong/missing
+          if (err.response.status === 400) {
+            this.alertCfHandle = true;
+          } else {
+            console.log(err);
+          }
+        });
     }
-
-    this.taskanalytics = [{
-      'user': 'Qo2770',
-      '1': 'Hi'
-    }]
-
   },
   methods: {
     // Curtesy of 30-seconds-of-code
     copyToClipboard(str) {
       str = window.location;
-      const el = document.createElement('textarea');
+      const el = document.createElement("textarea");
       el.value = str;
-      el.setAttribute('readonly', '');
-      el.style.position = 'absolute';
-      el.style.left = '-9999px';
+      el.setAttribute("readonly", "");
+      el.style.position = "absolute";
+      el.style.left = "-9999px";
       document.body.appendChild(el);
       const selected =
-        document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
+        document.getSelection().rangeCount > 0
+          ? document.getSelection().getRangeAt(0)
+          : false;
       el.select();
-      document.execCommand('copy');
+      document.execCommand("copy");
       document.body.removeChild(el);
       if (selected) {
         document.getSelection().removeAllRanges();
@@ -214,49 +242,46 @@ export default {
       }
     },
 
-    joinContest() {
-      axios.post('/api/contest.joined',
+    async joinContest() {
+      await axios.post("/api/contests.joined", {
+        user: localStorage.getItem("userid"),
+        contest: this.code
+      })
+      .then((res) => this.joined = true);
+    },
+
+    async leaveContest() {
+      await axios.delete('/api/contests.joined',
         {
           'user': localStorage.getItem('userid'),
           'contest': this.code
-        });
-
-      this.joined = true;
-    },
-
-    leaveContest() {
-      // TODO: Implement leaving when endpoint is made
-      // axios.post('/api/contest.joined',
-      //   {
-      //     'user': localStorage.getItem('userid'),
-      //     'contest': this.code
-      //   });
-
-      this.joined = false;
+        }).then((res) => this.joined = false);
     }
   },
-  computed: {
-
-  }
+  computed: {}
 };
 </script>
 
 <style scoped>
 .cardprogress {
-	margin-top: 30% !important;
+  margin-top: 30% !important;
 }
 
 .avatar {
-	margin-left: -52% !important;
-	margin-bottom: 2%;
-	margin-top: 1%;
+  margin-left: -52% !important;
+  margin-bottom: 2%;
+  margin-top: 1%;
 }
 
 .chiptag {
-	margin-left: 10px;
+  margin-left: 10px;
 }
 
 .vlink {
-	cursor: pointer;
+  cursor: pointer;
+}
+
+.header-1 {
+  font-style: oblique
 }
 </style>

@@ -291,6 +291,7 @@ def api_contest():
                 get_queryparam('code')
             ))
         )
+        return ('', 204)
     else:
         return None
 
@@ -314,6 +315,14 @@ def api_contest_join():
             postJSON[settings.DB_COLUMNS.JOINED_CONTEST_USER],
             postJSON[settings.DB_COLUMNS.JOINED_CONTEST_CONTEST]
         )
+        return ('', 204)
+    elif request.method == 'DELETE':
+        postJSON = request.get_json()
+        models.delete_joined_contest(
+            postJSON[settings.DB_COLUMNS.JOINED_CONTEST_USER],
+            postJSON[settings.DB_COLUMNS.JOINED_CONTEST_CONTEST]
+        )
+        return ('', 204)
 
 
 @app.route('/api/contest.results', methods=['GET'])

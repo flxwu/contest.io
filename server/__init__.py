@@ -221,7 +221,7 @@ def api_contest():
     if request.method == 'GET':
         if get_queryparam('code') is None:
             content = {"Error": "\'code\' parameter missing"}
-            return content, HTTPStatus.BAD_REQUEST
+            return json.dumps(content), HTTPStatus.BAD_REQUEST, {'ContentType':'application/json'}
 
         # get contest JSON
         contestJSON = models.select_contest(
@@ -284,7 +284,7 @@ def api_contest():
     elif request.method == 'DELETE':
         if get_queryparam('code') is None:
             content = {"Error": "\'code\' parameter missing"}
-            return content, HTTPStatus.BAD_REQUEST
+            return json.dumps(content), HTTPStatus.BAD_REQUEST, {'ContentType':'application/json'}
         models.delete_contest(
             deleteConditions=('{}=\"{}\"'.format(
                 settings.DB_COLUMNS.CONTEST_CONTESTCODE,
@@ -296,8 +296,11 @@ def api_contest():
         return None
 
 
-@app.route('/api/contest.joined', methods=['GET', 'POST'])
-def api_contest_join():
+@app.route('/api/contests.joined', methods=['GET', 'POST', 'DELETE'])
+def api_contests_join():
+    """
+    Join/Leave a contest, GET all contests a user is in
+    """
     if request.method == 'GET':
         user = get_queryparam('user')
         returnJSON = models.select_joined_contest(
@@ -338,9 +341,29 @@ def api_contest_results():
     else:
         # if no db entries, fetch user's contest submissions from cf api and insert them into db
         cfHandle = models.get_cfhandle(user)
+        if cfHandle is None or cfHandle is "defaultUser":
+            content = {"Error": "user's cf handle wrong or missing"}
+            return json.dumps(content), HTTPStatus.BAD_REQUEST, {'ContentType':'application/json'}
         UserContestResultsEndpoint.get(cfHandle, contest)
         returnJSON = models.get_latest_submissions(user, contest)
 
+    return jsonify(returnJSON)
+
+
+@app.route('/api/contest.joined', methods=['GET'])
+def api_contest_join():
+    """
+    GET all joined users in a contest
+    """
+    contestcode = get_queryparam('code')
+    returnJSON = models.select_joined_contest(
+        params=('*'),
+        conditions=('{}=\"{}\"'.format(
+                settings.DB_COLUMNS.JOINED_CONTEST_CONTEST,
+                contestcode
+            )
+        )
+    )
     return jsonify(returnJSON)
 
 

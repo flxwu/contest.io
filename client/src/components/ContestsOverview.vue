@@ -78,7 +78,7 @@ export default {
   },
   async created() {
     var contests = [];
-    await axios.get("/api/contest.joined?user=" + localStorage.getItem('userid'))
+    await axios.get("/api/contests.joined?user=" + localStorage.getItem('userid'))
       .then(response => {
         if(response.data === null || typeof(response.data) === 'undefined') return                
         contests = Array.isArray(response.data) ? response.data : [response.data];

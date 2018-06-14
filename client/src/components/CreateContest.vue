@@ -387,10 +387,6 @@ export default {
   cursor: pointer;
 }
 
-#taskselection {
-  /* margin-left: -10%; */
-}
-
 .search {
   width: 45%;
   margin-bottom: -15px;

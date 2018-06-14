@@ -73,7 +73,7 @@
             <v-data-table v-else :headers="headers" :items="taskanalytics" hide-actions class="elevation-1">
               <template slot="items" slot-scope="props">
                 <td>{{ props.item.user }}</td>
-                <td class="text-xs-center" v-for="taskResult in props.item.verdicts">
+                <td class="text-xs-center" v-for="taskResult in props.item.verdicts" v-bind:key="taskResult">
                   {{ taskResult }}
                 </td>
               </template>
@@ -105,6 +105,7 @@
                 <h3 class="headline mb-0">Track Progress</h3>
                 <v-divider></v-divider>
                 <v-btn color="primary" @click.native="analytics=!analytics">Analytics</v-btn>
+                <v-btn color="primary" @click.native="forceUpdate()">Refresh Analytics</v-btn>                
               </div>
             </v-card-title>
 
@@ -212,7 +213,6 @@ export default {
               user: JSON.parse(localStorage.getItem("data")).login,
               verdicts: []
             };
-
             this.tasks.forEach(task => {
               let filteredTaskAnalytics = response.data.filter(taskData => taskData.task === task.taskid)
               if(filteredTaskAnalytics && filteredTaskAnalytics.length !== 0) {
@@ -221,10 +221,7 @@ export default {
                 row.verdicts.push("-")
               }
             })
-            console.log(row)
-
             this.taskanalytics.push(row);
-            console.log(this.taskanalytics);
           })
           .catch(err => {
             // catch 400-client error: codeforces handle wrong/missing
@@ -289,6 +286,45 @@ export default {
           },
           config
         }).then((res) => this.joined = false);
+    },
+
+    async forceUpdate() {
+      this.taskanalytics = []
+      this.users.forEach(async user => {
+        await axios
+          .get(
+            `/api/contest.results?user=${user}&contest=${this.code}&force=1`
+          )
+          .then(response => {
+            console.log(response.data)            
+            if (response.data === null || typeof response.data === "undefined")
+              return;
+
+            var row = {
+              user: JSON.parse(localStorage.getItem("data")).login,
+              verdicts: []
+            };
+
+            this.tasks.forEach(task => {
+              let filteredTaskAnalytics = response.data.filter(taskData => taskData.task === task.taskid)
+              if(filteredTaskAnalytics && filteredTaskAnalytics.length !== 0) {
+                row.verdicts.push(filteredTaskAnalytics[0].verdict)
+              } else {
+                row.verdicts.push("-")
+              }
+            })
+            this.taskanalytics.push(row);
+          })
+          .catch(err => {
+            // catch 400-client error: codeforces handle wrong/missing
+            // if (err.response.status === 400) {
+            //   this.alertCfHandle = true;
+            // } else {
+              console.log(err);
+            // }
+          });
+          console.log(this.taskanalytics)
+      });
     }
   },
   computed: {}

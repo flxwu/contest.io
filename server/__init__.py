@@ -37,8 +37,7 @@ app.url_map.converters['regex'] = RegexConverter
 
 # Set Endpoints
 TasksEndpoint = api_connector.Tasks()  # pylint: disable=invalid-name
-UserContestResultsEndpoint = api_connector.UserContestResults(
-)  # pylint: disable=invalid-name
+UserContestResultsEndpoint = api_connector.UserContestResults() # pylint: disable=invalid-name  
 
 # Github-Flask
 github = flask_github.GitHub(app)  # pylint: disable=invalid-name
@@ -332,11 +331,12 @@ def api_contests_join():
 def api_contest_results():
     user = get_queryparam('user')
     contest = get_queryparam('contest')
+    force = get_queryparam('force')
     returnJSON = None
 
     resultsInDatabase = models.get_latest_submissions(user, contest)
 
-    if resultsInDatabase is not None:
+    if resultsInDatabase is not None and force is None:
         returnJSON = resultsInDatabase
     else:
         # if no db entries, fetch user's contest submissions from cf api and insert them into db
@@ -404,7 +404,7 @@ def api_user():
 
 
 @app.route('/api/user.cfhandle', methods=['POST'])
-def api_user_cfHandle():
+def api_user_cfhandle():
     """
         POST endpoint to set a user's codeforces handle
     """
@@ -518,8 +518,5 @@ def send_favicon():
 
 @app.route('/', defaults={'path': 'index.html'})
 @app.route('/<path:path>')
-def catch_all(path):
-
-    # if app.debug:
-    #     return requests.get('http://localhost:3000/{}'.format(path)).text
+def catch_all(path): # pylint: disable=unused-argument
     return render_template("index.html")

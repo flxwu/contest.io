@@ -445,6 +445,17 @@ def insert_submits_task(user: int, task: int, verdict: str, submissionTimestamp:
             (user, task, verdict, submissionTime))
         dbcon.commit()
 
+def update_submits_task(user: int, task: int, verdict: str, submissionTimestamp: int):
+    with sql.connect(DATABASE_PATH) as dbcon:
+        cur = dbcon.cursor()
+        submissionTime = datetime.fromtimestamp(submissionTimestamp)
+        cur.execute(
+            'UPDATE submits_task SET verdict = \"{}\", submission_time = \"{}\" \
+            WHERE user=\"{}\" AND task=\"{}\"'.format(
+                verdict, submissionTime, user, task
+            ))
+        dbcon.commit()
+
 
 def insert_joined_contest(user: int, contestcode: int):
     with sql.connect(DATABASE_PATH) as dbcon:

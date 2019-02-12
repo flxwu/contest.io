@@ -6,7 +6,7 @@ chardet==3.0.4
 click==6.7
 -e git+https://github.com/flxwu/contest.io.git@0c3474fc8c7134d803631690fa44bcd97a5c07f3#egg=contest.io
 Flask==1.0.2
-Flask-Cors==3.0.4
+Flask-Cors==3.0.7
 Flask-Migrate==2.1.1
 Flask-SQLAlchemy==2.3.2
 GitHub-Flask==3.2.0

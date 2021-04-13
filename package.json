@@ -7,7 +7,7 @@
   "author": "Felix Wu <mail@flxwu.com>",
   "license": "MIT",
   "devDependencies": {
-    "concurrently": "^3.5.1"
+    "concurrently": "^6.0.2"
   },
   "scripts": {
     "setup": "concurrently \"virtualenv -p python3.6 venv && pip3 install -r requirements.txt && pip3 install -e .\" \"yarn install\" \"cd client/ && yarn install\"",
